@@ -1,8 +1,9 @@
 {
   "name": "poputi.az",
   "short_name": "poputi.az",
-  "description": "Carpooling platforması Azərbaycan üçün",
-  "start_url": "/index.html",
+  "description": "Azərbaycan üçün Carpooling platforması",
+  "start_url": "/poputi-az/",
+  "scope": "/poputi-az/",
   "display": "standalone",
   "background_color": "#0f1f3d",
   "theme_color": "#0f1f3d",
