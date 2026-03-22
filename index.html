@@ -10,6 +10,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>poputi.az</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -487,8 +490,8 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div id="hp">
       <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:10px">Hara getmək istəyirsiniz?</div>
       <div class="scard">
-        <div class="srow" onclick="openSheet('from')"><div class="dot-g"></div><div class="sv"><span class="ph" id="svfph">📍 Haradan?</span><span id="svfv" style="display:none"></span></div><span style="font-size:14px;color:var(--t2)">›</span></div>
-        <div class="srow" onclick="openSheet('to')"><div class="dot-b"></div><div class="sv"><span class="ph" id="svtph">📍 Hara?</span><span id="svtv" style="display:none"></span></div><span style="font-size:14px;color:var(--t2)">›</span></div>
+        <div class="srow" onclick="openMapPicker('from')"><div class="dot-g"></div><div class="sv"><span class="ph" id="svfph">📍 Haradan?</span><span id="svfv" style="display:none"></span></div><span style="font-size:14px;color:var(--t2)">›</span></div>
+        <div class="srow" onclick="openMapPicker('to')"><div class="dot-b"></div><div class="sv"><span class="ph" id="svtph">📍 Hara?</span><span id="svtv" style="display:none"></span></div><span style="font-size:14px;color:var(--t2)">›</span></div>
         <div class="srow-b">
           <button class="sbb" onclick="openSheet('date')">📅 <span id="svd">Bu gün</span></button>
           <button class="sbb" onclick="openSheet('pax')">👤 <span id="svp">1 sərnişin</span></button>
@@ -521,7 +524,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   </div>
   <div class="bnav">
     <div class="ni on" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
+    <div class="ni ni-plus2" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni ni-passreq" onclick="go('passreq')" style="display:none"><div class="ni-i">🔍</div><div class="ni-l">Axtar</div></div>
     <div class="ni" onclick="showAllTrips()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div>
     <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div><div class="nbadge" id="nb" style="display:none">2</div></div>
@@ -536,7 +539,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="scr"><div style="height:8px"></div><div id="reslist"></div><div style="height:8px"></div></div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
+    <div class="ni ni-plus2" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div>
     <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
     <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
@@ -567,7 +570,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div style="background:var(--bg);padding-bottom:4px;"><div class="arow" id="tdacts"></div><div style="height:12px"></div></div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
+    <div class="ni ni-plus2" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div>
     <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
     <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
@@ -612,8 +615,8 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <div class="rv">
         <div class="rdots"><div class="rdg"></div><div class="rln"></div><div class="rdn"></div></div>
         <div class="ri2">
-          <button class="cbtn" onclick="openSheet('pr-from')"><span id="pr-from-lbl" class="ph">📍 Haradan?</span><span>›</span></button>
-          <button class="cbtn" onclick="openSheet('pr-to')"><span id="pr-to-lbl" class="ph">📍 Hara?</span><span>›</span></button>
+          <button class="cbtn" onclick="openMapPicker('pr-from')"><span id="pr-from-lbl" class="ph">📍 Haradan?</span><span>›</span></button>
+          <button class="cbtn" onclick="openMapPicker('pr-to')"><span id="pr-to-lbl" class="ph">📍 Hara?</span><span>›</span></button>
         </div>
       </div>
       <div class="fl">Tarix</div>
@@ -688,7 +691,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="scr"><div style="height:8px"></div><div id="inboxlist"></div><div style="height:8px"></div></div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
+    <div class="ni ni-plus2" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni" onclick="showAllTrips()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div>
     <div class="ni on"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
     <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
@@ -745,7 +748,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="scr">
     <div class="fs">
       <div class="fl">Marşrut</div>
-      <div class="rv"><div class="rdots"><div class="rdg"></div><div class="rln"></div><div class="rdn"></div></div><div class="ri2"><button class="cbtn" onclick="openSheet('c-from')"><span id="cfl" class="ph">Çıxış şəhəri</span><span>›</span></button><button class="cbtn" onclick="openSheet('c-to')"><span id="ctl" class="ph">Təyinat şəhəri</span><span>›</span></button></div></div>
+      <div class="rv"><div class="rdots"><div class="rdg"></div><div class="rln"></div><div class="rdn"></div></div><div class="ri2"><button class="cbtn" onclick="openMapPicker('c-from')"><span id="cfl" class="ph">Çıxış şəhəri</span><span>›</span></button><button class="cbtn" onclick="openMapPicker('c-to')"><span id="ctl" class="ph">Təyinat şəhəri</span><span>›</span></button></div></div>
       <div class="fl">Tarix</div>
       <button class="cbtn" onclick="openSheet('c-date')"><span id="cdl">Tarix seçin</span><span>📅</span></button>
       <div class="fl">Vaxt</div>
@@ -775,7 +778,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="scr"><div style="height:10px"></div><div id="mylist"></div><div style="height:8px"></div></div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
+    <div class="ni ni-plus2" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">🗺</div><div class="ni-l">Səfərlərim</div></div>
     <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
     <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
@@ -798,7 +801,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   </div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
+    <div class="ni ni-plus2" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">💰</div><div class="ni-l">Qazanc</div></div>
     <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
     <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
@@ -822,7 +825,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="scr" style="background:var(--sf)"><div class="msec" id="pmenu"></div><div style="height:8px"></div></div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
+    <div class="ni ni-plus2" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni" onclick="showAllTrips()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div>
     <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
     <div class="ni on"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
@@ -909,6 +912,42 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showAllTrips()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
 </div>
 
+
+<!-- MAP PICKER -->
+<div class="screen" id="s-map">
+  <div style="background:var(--bg);border-bottom:1px solid var(--bd);padding:13px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;">
+    <button class="bbtn" id="map-back">←</button>
+    <div style="flex:1">
+      <div class="bhdr-t" id="map-title">Yer seçin</div>
+      <div style="font-size:11px;color:var(--t2)">Xəritəyə toxunun və ya axtarın</div>
+    </div>
+  </div>
+  <!-- Search bar -->
+  <div style="padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--bd);flex-shrink:0;">
+    <div style="display:flex;align-items:center;background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--ri);padding:0 12px;gap:8px">
+      <span style="font-size:16px">🔍</span>
+      <input id="map-search" placeholder="Ünvan və ya yer axtarın..." style="flex:1;border:none;outline:none;background:transparent;padding:10px 0;font-size:14px;color:var(--t1);font-family:Inter,sans-serif;" oninput="mapSearchDebounce(this.value)"/>
+      <span id="map-search-clear" style="font-size:16px;cursor:pointer;color:var(--t2);display:none" onclick="clearMapSearch()">✕</span>
+    </div>
+    <!-- Search results dropdown -->
+    <div id="map-search-results" style="display:none;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rc);margin-top:6px;max-height:180px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,.12)"></div>
+  </div>
+  <!-- Map container -->
+  <div id="map-container" style="flex:1;position:relative;">
+    <div id="leaflet-map" style="width:100%;height:100%"></div>
+    <!-- Center pin -->
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-100%);z-index:1000;pointer-events:none;font-size:36px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.3))">📍</div>
+    <!-- My location button -->
+    <button onclick="mapMyLocation()" style="position:absolute;bottom:16px;right:16px;z-index:1000;width:44px;height:44px;border-radius:50%;background:var(--bg);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer;">📍</button>
+  </div>
+  <!-- Selected address bar -->
+  <div style="background:var(--bg);border-top:1px solid var(--bd);padding:12px 16px;flex-shrink:0;">
+    <div style="font-size:12px;color:var(--t2);margin-bottom:4px">Seçilmiş yer:</div>
+    <div id="map-selected-addr" style="font-size:14px;font-weight:500;color:var(--t1);min-height:20px">Xəritədə yer seçin...</div>
+    <button class="gbtn g" style="margin:10px 0 0;width:100%" id="map-confirm-btn" onclick="confirmMapLocation()" disabled>Bu yeri seç ✓</button>
+  </div>
+</div>
+
 <!-- SHEET OVERLAY -->
 <div class="ovl" id="sovl" style="display:none" onclick="closeSheet()">
   <div class="sheet" onclick="event.stopPropagation()">
@@ -983,7 +1022,7 @@ const convs=[
   {id:2,peerName:'Nicat Həsənov',  pi:'N',role:'driver',  rt:'Bakı → Şəmkir', mt:'Bu gün, 16:00',unread:0,msgs:[{out:true,text:'Salam, 1 yer qaldı?',time:'10:00'},{out:false,text:'Bəli, var.',time:'10:02'},{out:true,text:'Rezerv eləyirəm!',time:'10:03'},{out:false,text:'Xoş gəldiniz!',time:'10:04'}]},
 ];
 
-const MAP={splash:'s-splash',phone:'s-phone',sms:'s-sms',hascar:'s-hascar',regcar:'s-regcar',onboard:'s-onboard',home:'s-home',results:'s-results',trip:'s-trip',driverprofile:'s-driverprofile',inbox:'s-inbox',chat:'s-chat',confirm:'s-confirm',create:'s-create',mytrips:'s-mytrips',earnings:'s-earnings',profile:'s-profile',history:'s-history',myreviews:'s-myreviews',car:'s-car','seatsел':'s-seatsел',passreq:'s-passreq',payment:'s-payment',notifs:'s-notifs'};
+const MAP={splash:'s-splash',map:'s-map',phone:'s-phone',sms:'s-sms',hascar:'s-hascar',regcar:'s-regcar',onboard:'s-onboard',home:'s-home',results:'s-results',trip:'s-trip',driverprofile:'s-driverprofile',inbox:'s-inbox',chat:'s-chat',confirm:'s-confirm',create:'s-create',mytrips:'s-mytrips',earnings:'s-earnings',profile:'s-profile',history:'s-history',myreviews:'s-myreviews',car:'s-car','seatsел':'s-seatsел',passreq:'s-passreq',payment:'s-payment',notifs:'s-notifs'};
 
 function go(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(MAP[n]).classList.add('active');if(n==='inbox')renderInbox();if(n==='history')renderHistory();if(n==='myreviews')renderMyReviews();}
 function obNext(){obStep++;if(obStep>=3){go('home');return;}document.getElementById('obs').style.transform=`translateX(-${obStep*100}%)`;[0,1,2].forEach(i=>document.getElementById('od'+i).className='obdot'+(i===obStep?' on':''));document.getElementById('ob-btn').textContent=obStep===2?'Başla':'Növbəti →';}
@@ -1290,6 +1329,144 @@ function tick(){const n=new Date();const t=`${String(n.getHours()).padStart(2,'0
 setInterval(tick,1000);tick();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
+
+// ── MAP PICKER ────────────────────────────────────────
+let leafletMap=null, mapMarker=null, mapCtx='', mapSearchTimer=null;
+let mapLat=40.4093, mapLng=49.8671; // Baku default
+
+function openMapPicker(ctx){
+  mapCtx=ctx;
+  const titles={from:'Haradan gedirsiniz?',to:'Hara gedirsiniz?','c-from':'Çıxış nöqtəsi','c-to':'Təyinat nöqtəsi','pr-from':'Haradan gedirsiniz?','pr-to':'Hara gedirsiniz?'};
+  document.getElementById('map-title').textContent=titles[ctx]||'Yer seçin';
+  document.getElementById('map-back').onclick=()=>go('home'); // will be overridden
+  document.getElementById('map-search').value='';
+  document.getElementById('map-search-results').style.display='none';
+  document.getElementById('map-selected-addr').textContent='Xəritədə yer seçin...';
+  document.getElementById('map-confirm-btn').disabled=true;
+  // Set back to previous screen
+  const backScreen={from:'home',to:'home','c-from':'create','c-to':'create','pr-from':'passreq','pr-to':'passreq'};
+  document.getElementById('map-back').onclick=()=>go(backScreen[ctx]||'home');
+  go('map');
+  setTimeout(()=>initMap(),100);
+}
+
+function initMap(){
+  const container=document.getElementById('leaflet-map');
+  if(leafletMap){
+    leafletMap.invalidateSize();
+    return;
+  }
+  leafletMap=L.map('leaflet-map',{zoomControl:true,attributionControl:false}).setView([mapLat,mapLng],12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(leafletMap);
+  // On map move: reverse geocode center
+  leafletMap.on('moveend',()=>{
+    const c=leafletMap.getCenter();
+    mapLat=c.lat;mapLng=c.lng;
+    reverseGeocode(c.lat,c.lng);
+  });
+  // On tap: move to tapped location
+  leafletMap.on('click',(e)=>{
+    leafletMap.setView([e.latlng.lat,e.latlng.lng],15);
+  });
+}
+
+let geocodeTimer=null;
+function reverseGeocode(lat,lng){
+  clearTimeout(geocodeTimer);
+  document.getElementById('map-selected-addr').textContent='Ünvan yüklənir...';
+  document.getElementById('map-confirm-btn').disabled=true;
+  geocodeTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=az`);
+      const d=await r.json();
+      const addr=d.address;
+      let label=addr.city||addr.town||addr.village||addr.county||'';
+      if(addr.road) label=(addr.road+(addr.house_number?' '+addr.house_number:'')+', '+label).trim();
+      if(!label) label=d.display_name.split(',').slice(0,2).join(',');
+      mapSelectedAddr=label;
+      mapSelectedLat=lat;mapSelectedLng=lng;
+      document.getElementById('map-selected-addr').textContent=label;
+      document.getElementById('map-confirm-btn').disabled=false;
+    }catch(e){
+      document.getElementById('map-selected-addr').textContent='Ünvan müəyyən edilmədi';
+    }
+  },600);
+}
+
+let mapSelectedAddr='', mapSelectedLat=0, mapSelectedLng=0;
+
+function confirmMapLocation(){
+  if(!mapSelectedAddr)return;
+  // Set the value in the correct field
+  const labelMap={
+    from:{ph:'svfph',val:'svfv',setter:()=>{sFrom=mapSelectedAddr;}},
+    to:{ph:'svtph',val:'svtv',setter:()=>{sTo=mapSelectedAddr;}},
+    'c-from':{lbl:'cfl',setter:()=>{cFrom=mapSelectedAddr;}},
+    'c-to':{lbl:'ctl',setter:()=>{cTo=mapSelectedAddr;}},
+    'pr-from':{lbl:'pr-from-lbl',setter:()=>{prFrom=mapSelectedAddr;}},
+    'pr-to':{lbl:'pr-to-lbl',setter:()=>{prTo=mapSelectedAddr;}},
+  };
+  const m=labelMap[mapCtx];
+  if(!m)return;
+  m.setter();
+  if(m.ph){
+    document.getElementById(m.ph).style.display='none';
+    const v=document.getElementById(m.val);v.style.display='';v.textContent=mapSelectedAddr;
+  }
+  if(m.lbl){
+    const el=document.getElementById(m.lbl);
+    if(el){el.textContent=mapSelectedAddr;el.classList.remove('ph');}
+  }
+  const backScreen={'from':'home','to':'home','c-from':'create','c-to':'create','pr-from':'passreq','pr-to':'passreq'};
+  go(backScreen[mapCtx]||'home');
+  // Auto open next field
+  if(mapCtx==='from'&&!sTo) setTimeout(()=>openMapPicker('to'),200);
+  if(mapCtx==='c-from'&&!cTo) setTimeout(()=>openMapPicker('c-to'),200);
+  if(mapCtx==='pr-from'&&!prTo) setTimeout(()=>openMapPicker('pr-to'),200);
+}
+
+function mapMyLocation(){
+  if(!navigator.geolocation){toast('Geolokasiya dəstəklənmir');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const {latitude:lat,longitude:lng}=pos.coords;
+    if(leafletMap) leafletMap.setView([lat,lng],16);
+    else{mapLat=lat;mapLng=lng;}
+  },()=>toast('Yer müəyyən edilmədi'));
+}
+
+function mapSearchDebounce(q){
+  document.getElementById('map-search-clear').style.display=q?'block':'none';
+  clearTimeout(mapSearchTimer);
+  if(!q){document.getElementById('map-search-results').style.display='none';return;}
+  mapSearchTimer=setTimeout(()=>mapSearch(q),500);
+}
+
+async function mapSearch(q){
+  try{
+    const res=await fetch('https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(q+' Azerbaijan')+'&format=json&limit=5&accept-language=az');
+    const results=await res.json();
+    const el=document.getElementById('map-search-results');
+    if(!results.length){el.innerHTML='<div style="padding:12px 16px;font-size:13px;color:var(--t2)">Nəticə tapılmadı</div>';el.style.display='block';return;}
+    el.innerHTML='';
+    results.forEach(function(item){
+      const name=item.display_name.split(',').slice(0,3).join(',');
+      const shortName=item.display_name.split(',').slice(0,2).join(',');
+      const div=document.createElement('div');
+      div.style.cssText='padding:12px 16px;font-size:13px;color:var(--t1);border-bottom:1px solid var(--bd);cursor:pointer;display:flex;align-items:center;gap:8px';
+      div.innerHTML='<span>📍</span> '+name;
+      div.onclick=function(){mapSelectResult(parseFloat(item.lat),parseFloat(item.lon),shortName);};
+      el.appendChild(div);
+    });
+    el.style.display='block';
+  }catch(e){console.log(e);}
+}
+
+function clearMapSearch(){
+  document.getElementById('map-search').value='';
+  document.getElementById('map-search-clear').style.display='none';
+  document.getElementById('map-search-results').style.display='none';
+}
+
 // ── REGISTRATION ─────────────────────────────────────
 let regPhone='', regSeats=5, selSeatNum=-1, hasCar=false;
 let prFrom='', prTo='', prDate='', prTime='';
@@ -1466,8 +1643,11 @@ function publishPassReq(){
 renderHome();renderQR();renderPMenu();updateBadge();
 updateRoleSwitcher();
 // Initial state: passenger mode - hide create, show passreq
-document.querySelectorAll('.ni-create').forEach(el=>el.style.display='none');
-document.querySelectorAll('.ni-passreq').forEach(el=>el.style.display='flex');
+// Init: passenger mode, + → passreq
+document.querySelectorAll('.ni-plus').forEach(el=>{
+  el.onclick=()=>go('passreq');
+  el.querySelector('.ni-l').textContent='Müraciət';
+});
 </script>
 </body>
 </html>
