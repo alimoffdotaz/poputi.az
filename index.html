@@ -954,6 +954,15 @@ const trips=[
   {id:8,from:'Gəncə',to:'Bakı',    time:'14:00',date:'Bu gün',  dur:'~5 saat',  price:8,  seats:1,driver:'Elnar İ.', driverFull:'Elnar İsmayılov', rating:'4.6',tc:45, exp:'2',car:'Skoda Octavia',   color:'Boz',    plate:'22-II-888',chip:'Rahat',   notes:'🎒 Bagaj var',arrive:'~19:00',pax:['Qulam','Araz'],tags:['🎒 Bagaj']},
   {id:9,from:'Bakı',to:'Naxçıvan', time:'05:00',date:'Sabah',   dur:'~7 saat',  price:15, seats:3,driver:'Əli K.',   driverFull:'Əli Kərimov',    rating:'5.0',tc:200,exp:'5',car:'Mercedes E-Class',color:'Qara',   plate:'77-JJ-007',chip:'Premium', notes:'💺 Biznes · ❄️ Kondisioner',arrive:'~12:00',pax:[],tags:['💺 Premium','❄️ Kondisioner','🚭 Siqaret yox']},
 ];
+
+const passReqs=[
+  {id:0,from:'Bakı',to:'Gəncə',    date:'Bu gün',  time:'14:00',name:'Leyla F.',  initial:'L',rating:'5.0',prefs:['🚭 Siqaret yox','🎵 Musiqi'],note:''},
+  {id:1,from:'Bakı',to:'Lənkəran', date:'Sabah',   time:'08:30',name:'Kamran H.', initial:'K',rating:'4.8',prefs:['🎒 Bagaj'],note:'Böyük çamadanım var'},
+  {id:2,from:'Gəncə',to:'Bakı',    date:'Bu gün',  time:'15:00',name:'Aynur M.',  initial:'A',rating:'4.9',prefs:['🔇 Sakit','🚭 Siqaret yox'],note:''},
+  {id:3,from:'Bakı',to:'Quba',     date:'Sabah',   time:'07:30',name:'Fərid N.',  initial:'F',rating:'5.0',prefs:['🎒 Bagaj','❄️ Kondisioner'],note:'2 nəfərik'},
+  {id:4,from:'Bakı',to:'Şirvan',   date:'Bu gün',  time:'11:00',name:'Sevinc A.', initial:'S',rating:'4.7',prefs:['💬 Söhbət','🎵 Musiqi'],note:''},
+];
+
 const myT=[
   {id:0,route:'Bakı → Gəncə',     date:'Bu gün, 14:30', total:3,pax:['Leyla','Fərid'],status:'active'},
   {id:1,route:'Bakı → Lənkəran',  date:'Sabah, 08:00',  total:1,pax:['Aynur'],        status:'full'},
@@ -1070,7 +1079,42 @@ function revHTML(r){return`<div class="revcard"><div class="rctop"><div class="r
 function tcHTML(t,back,book=false){const D=role==='driver';return`<div class="tc" onclick="openTrip(${t.id},'${back}')"><div class="tc-top"><div><div class="tc-route">${t.from} → ${t.to}</div><div class="tc-meta">🕐 ${t.date}, ${t.time} · ${t.dur}</div></div><div class="tc-price ${D?'d':''}">${t.price} AZN</div></div><div class="tc-bot"><div class="avsm ${D?'d':'p'}">${t.driver[0]}</div><div><div class="drv-n">${t.driver}</div><div class="drv-r">⭐ ${t.rating} · ${t.tc} rəy</div></div><div class="tcbadge ${D?'d':''}">${t.seats} yer</div></div><div class="tc-tags">${t.tags.map(g=>`<span class="tag">${g}</span>`).join('')}</div>${book&&!D?`<button class="tcbook" onclick="event.stopPropagation();openSeatSelect(${t.id})">🪑 Yer seç — ${t.price} AZN</button>`:''}</div>`;}
 function mtHTML(t){const lb={active:'Aktiv',full:'Dolu',open:'Açıq'};const f=t.pax.length,e=t.total-f;const dots=t.pax.map(n=>`<div class="pd2">${n[0]}</div>`).join('')+Array(e).fill('<div class="pd2 e">·</div>').join('');return`<div class="mtcard" onclick="openTrip(${t.id},'mytrips')"><div class="mttop"><div class="mtroute">${t.route}</div><div class="mtst ${t.status}">${lb[t.status]}</div></div><div style="font-size:11px;color:var(--t2);margin-bottom:8px">🕐 ${t.date} · ${f}/${t.total} yer</div><div style="display:flex;align-items:center">${dots}<span style="font-size:11px;color:var(--t2);margin-left:12px">${f} sərnişin</span></div></div>`;}
 
-function renderHome(){document.getElementById('homelist').innerHTML=role==='driver'?myT.map(t=>mtHTML(t)).join(''):trips.slice(0,5).map(t=>tcHTML(t,'home',true)).join('');}
+
+function preqHTML(r){
+  return`<div class="tc" onclick="openChatWith('${r.name}','${r.from} → ${r.to}','${r.date}, ${r.time}','passenger')" style="border-left:3px solid var(--blue)">
+    <div class="tc-top">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="avsm p">${r.initial}</div>
+          <div><div class="drv-n">${r.name}</div><div class="drv-r">⭐ ${r.rating}</div></div>
+        </div>
+        <div class="tc-route" style="margin-top:6px">${r.from} → ${r.to}</div>
+        <div class="tc-meta">🕐 ${r.date}, ${r.time}</div>
+      </div>
+      <div style="background:var(--bbg);color:var(--bp);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;white-space:nowrap">Sərnişin</div>
+    </div>
+    <div class="tc-tags" style="margin-top:8px">${r.prefs.map(p=>`<span class="tag">${p}</span>`).join('')}</div>
+    ${r.note?`<div style="font-size:12px;color:var(--t2);margin-top:6px">💬 ${r.note}</div>`:''}
+    <button class="tcbook" style="background:var(--blue);margin-top:10px" onclick="event.stopPropagation();openChatWith('${r.name}','${r.from} → ${r.to}','${r.date}, ${r.time}','passenger')">💬 Yer təklif et</button>
+  </div>`;
+}
+
+function renderHome(){
+  if(role==='driver'){
+    // Driver sees: his trips + matching passenger requests
+    const myHtml=myT.map(t=>mtHTML(t)).join('');
+    // Match passenger requests to driver's routes
+    const driverRoutes=myT.map(t=>t.route);
+    const matching=passReqs.filter(r=>driverRoutes.some(dr=>dr.includes(r.from)&&dr.includes(r.to)));
+    const allRequests=passReqs; // show all for demo
+    const preqHtml=allRequests.length?`
+      <div class="sec"><div class="sec-t" style="color:var(--blue)">🔍 Sərnişin Axtarır</div></div>
+      ${allRequests.map(r=>preqHTML(r)).join('')}`:'' ;
+    document.getElementById('homelist').innerHTML=myHtml+preqHtml;
+  } else {
+    document.getElementById('homelist').innerHTML=trips.slice(0,5).map(t=>tcHTML(t,'home',true)).join('');
+  }
+}
 function renderQR(){document.getElementById('qrc').innerHTML=QR.map(([f,t])=>`<div class="qrc" onclick="qRoute('${f}','${t}')">${f} → ${t}</div>`).join('');}
 function qRoute(f,t){sFrom=f;sTo=t;document.getElementById('svfph').style.display='none';const fv=document.getElementById('svfv');fv.style.display='';fv.textContent=f;document.getElementById('svtph').style.display='none';const tv=document.getElementById('svtv');tv.style.display='';tv.textContent=t;doSearch();}
 
@@ -1139,7 +1183,11 @@ function doSearch(){
   document.getElementById('ress').textContent=`${list.length} səfər · ${sDate} · ${sPax} nəfər`;
   lastRes=list;aFilter='all';renderRes(list);renderFilters(list);go('results');
 }
-function showAllTrips(){document.getElementById('resq').textContent='Bütün səfərlər';document.getElementById('ress').textContent=`${trips.length} səfər`;lastRes=trips;aFilter='all';renderRes(trips);renderFilters(trips);go('results');}
+function showAllTrips(){
+  document.getElementById('resq').textContent='Bütün səfərlər';
+  document.getElementById('ress').textContent=`${trips.length} səfər`;
+  lastRes=trips;aFilter='all';renderRes(trips);renderFilters(trips);go('results');
+}
 function renderRes(list){document.getElementById('reslist').innerHTML=list.length?list.map(t=>tcHTML(t,'results',true)).join(''):`<div style="text-align:center;padding:48px 24px;font-size:13px;color:var(--t2)">Heç bir səfər tapılmadı</div>`;}
 function renderFilters(list){const tags=[...new Set(list.flatMap(t=>t.tags))].slice(0,5);document.getElementById('fbar').innerHTML=`<button class="fb ${aFilter==='all'?'on':''}" onclick="applyF('all')">Hamısı (${list.length})</button>`+tags.map(tag=>`<button class="fb ${aFilter===tag?'on':''}" onclick="applyF('${tag}')">${tag}</button>`).join('');}
 function applyF(tag){aFilter=tag;renderRes(tag==='all'?lastRes:lastRes.filter(t=>t.tags.includes(tag)));renderFilters(lastRes);}
@@ -1366,18 +1414,36 @@ function togPref(el){
 }
 
 function publishPassReq(){
-  const from=document.getElementById('pr-from-lbl').textContent;
-  const to=document.getElementById('pr-to-lbl').textContent;
-  if(from.includes('Haradan')||to.includes('Hara')){toast('Marşrutu seçin');return;}
+  const fromEl=document.getElementById('pr-from-lbl');
+  const toEl=document.getElementById('pr-to-lbl');
+  const from=fromEl.textContent.replace('📍 ','');
+  const to=toEl.textContent.replace('📍 ','');
+  if(!from||fromEl.classList.contains('ph')){toast('Haradan gedəcəyinizi seçin');return;}
+  if(!to||toEl.classList.contains('ph')){toast('Hara gedəcəyinizi seçin');return;}
   if(!prDate){toast('Tarix seçin');return;}
   if(!prTime){toast('Vaxt seçin');return;}
-  // Show results filtered by route
-  sFrom=from.replace('📍 ','');sTo=to.replace('📍 ','');
-  document.getElementById('svfph').style.display='none';
-  const fv=document.getElementById('svfv');fv.style.display='';fv.textContent=sFrom;
-  document.getElementById('svtph').style.display='none';
-  const tv=document.getElementById('svtv');tv.style.display='';tv.textContent=sTo;
-  doSearch();
+  // Add to passReqs
+  const prefs=selectedPrefs.slice();
+  passReqs.unshift({id:passReqs.length,from,to,date:prDate,time:prTime,name:'Ayxan İ.',initial:'A',rating:'5.0',prefs,note:document.getElementById('pr-notes').value.trim()});
+  // Show confirm
+  document.getElementById('cfic').textContent='🔍';
+  document.getElementById('cft').textContent='Axtarış yerləşdirildi!';
+  document.getElementById('cfs').textContent='Sürücülər sizinlə əlaqə saxlayacaq.';
+  document.getElementById('cfrt').textContent=from+' → '+to;
+  document.getElementById('cftm').textContent=prDate+', '+prTime;
+  document.getElementById('cfll').textContent='Üstünlüklər';
+  document.getElementById('cfdr').textContent=prefs.join(' · ')||'—';
+  document.getElementById('cfpr').textContent='Pulsuz';
+  document.getElementById('cfchat').style.display='none';
+  // Reset form
+  prFrom='';prTo='';prDate='';prTime='';selectedPrefs=[];
+  document.getElementById('pr-from-lbl').textContent='📍 Haradan?';document.getElementById('pr-from-lbl').classList.add('ph');
+  document.getElementById('pr-to-lbl').textContent='📍 Hara?';document.getElementById('pr-to-lbl').classList.add('ph');
+  document.getElementById('pr-date-lbl').textContent='Tarix seçin';
+  document.getElementById('pr-time-lbl').textContent='Vaxt seçin';
+  document.getElementById('pr-notes').value='';
+  document.querySelectorAll('.pref-chip').forEach(c=>c.classList.remove('on'));
+  go('confirm');
 }
 
 renderHome();renderQR();renderPMenu();updateBadge();
