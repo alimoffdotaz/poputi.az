@@ -2226,7 +2226,8 @@ function selSeat(i) {
 }
 
 function confirmSeat() {
-  if (selSeats.length === 0) { toast('Əvvəlcə yer seçin'); return; }
+  toast('selSeats: ' + selSeats.length + ' seatTripId: ' + seatTripId);
+  if (selSeats.length === 0) { return; }
   doReserve(seatTripId);
 }
 
@@ -2794,6 +2795,7 @@ renderQR();
 renderPMenu();
 updateBadge();
 updateRoleSwitcher();
+
 
 
 
