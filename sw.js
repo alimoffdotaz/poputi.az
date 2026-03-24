@@ -1,4 +1,14 @@
-const CACHE = 'poputi-v1';
-const FILES = ['/index.html', '/manifest.json'];
-self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))));
-self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+const CACHE = 'poputi-v5';
+self.addEventListener('install', function(e) {
+  self.skipWaiting();
+});
+self.addEventListener('activate', function(e) {
+  e.waitUntil(
+    caches.keys().then(function(keys) {
+      return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+    }).then(function() { return self.clients.claim(); })
+  );
+});
+self.addEventListener('fetch', function(e) {
+  e.respondWith(fetch(e.request).catch(function() { return caches.match(e.request); }));
+});
