@@ -465,7 +465,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.1</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.2</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -2294,12 +2294,21 @@ function showSearchFromWidget() {
 }
 
 function getTodayTrip() {
-  // Check activeBookings for today/tomorrow trips
+  // Check activeBookings (reserves) for today/tomorrow
   for (const id in activeBookings) {
     const b = activeBookings[id];
-    if (b.status === 'pending' || b.status === 'confirmed') {
+    if (b.status === 'confirmed') {
       const t = trips[parseInt(id)];
-      if (t && (t.date === 'Bu gün' || t.date === 'Sabah')) return {trip:t, booking:b, id:parseInt(id)};
+      if (t && (t.date === 'Bu gün' || t.date === 'Sabah')) {
+        return {type:'booking', trip:t, booking:b, id:parseInt(id)};
+      }
+    }
+  }
+  // Check myRequests (requests confirmed by driver) for today/tomorrow
+  for (let i = 0; i < myRequests.length; i++) {
+    const r = myRequests[i];
+    if (r.status === 'confirmed' && r.driver && (r.date === 'Bu gün' || r.date === 'Sabah')) {
+      return {type:'request', request:r};
     }
   }
   return null;
@@ -3457,6 +3466,19 @@ myBookedTrips = Object.keys(activeBookings).map(function(id) {
   if (!t) return null;
   return {tripId:parseInt(id), trip:t, status:b.status, date:t.date, time:t.time};
 }).filter(Boolean);
+// TODO: REPLACE WITH REAL DATA - demo passenger request (confirmed by driver)
+myRequests = [
+  {
+    id: 'req1', from:'Bakı', to:'Şəmkir', date:'Sabah', time:'09:00',
+    status:'confirmed',
+    driver:{name:'Nicat H.', fullName:'Nicat Həsənov', phone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444'},
+    price: 6, notes:'Baqajım var'
+  },
+  {
+    id: 'req2', from:'Bakı', to:'Lənkəran', date:'3 Aprel', time:'08:00',
+    status:'pending', driver:null, price:null, notes:''
+  }
+];
 renderHome();
 renderQR();
 renderPMenu();
