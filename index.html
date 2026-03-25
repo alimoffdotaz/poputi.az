@@ -465,7 +465,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.3</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.4</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -1180,6 +1180,19 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <button class="gbtn g" onclick="savePrefs()">Yadda Saxla</button>
 </div>
 
+
+<!-- REQUEST DETAIL MODAL -->
+<div id="req-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end">
+  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">Müraciət məlumatları</div>
+      <button onclick="closeReqDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
+    </div>
+    <div id="req-detail-content"></div>
+    <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
+  </div>
+</div>
+
 <!-- SHEET OVERLAY -->
 <div class="ovl" id="sovl" style="display:none" onclick="closeSheet()">
   <div class="sheet" onclick="event.stopPropagation()">
@@ -1545,10 +1558,13 @@ function renderMyBookings() {
         div.className = 'hitem';
         div.style.borderLeft = '3px solid var(--blue)';
         const tags = (r.prefs||[]).map(function(p) { return '<span class="tag">' + p + '</span>'; }).join('');
+        div.onclick = function() { openRequestDetail(r); };
+        const statusColor = r.status==='confirmed' ? 'ok' : r.status==='cancelled' ? 'no' : 'up';
+        const statusText = r.status==='confirmed' ? 'Təsdiqləndi' : r.status==='cancelled' ? 'Ləğv edildi' : 'Gözləyir';
         div.innerHTML =
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
           '<div style="font-size:14px;font-weight:600;color:var(--t1)">' + r.from + ' → ' + r.to + '</div>' +
-          '<div class="hibadge up">Aktiv</div></div>' +
+          '<div class="hibadge '+statusColor+'">'+statusText+'</div></div>' +
           '<div style="font-size:12px;color:var(--t2)">📅 ' + r.date + ', ' + r.time + ' · 🪑 ' + (r.seats||1) + ' yer</div>' +
           '<div class="tc-tags" style="margin-top:6px">' + tags + '</div>';
         const btns = document.createElement('div');
@@ -3947,6 +3963,59 @@ function renderTripPrefs() {
     btn.onclick = function() { btn.classList.toggle('on'); };
     container.appendChild(btn);
   });
+}
+
+function openRequestDetail(r) {
+  const m = document.getElementById('req-detail-modal');
+  if (!m) return;
+  const D = r.driver;
+  const isConfirmed = r.status === 'confirmed' && D;
+  document.getElementById('req-detail-content').innerHTML =
+    '<div style="font-size:18px;font-weight:700;margin-bottom:4px">' + r.from + ' → ' + r.to + '</div>' +
+    '<div style="font-size:13px;color:var(--t2);margin-bottom:16px">📅 ' + r.date + ' · 🕐 ' + r.time + '</div>' +
+    (isConfirmed ?
+      '<div style="background:var(--gbg);border:1px solid var(--green);border-radius:var(--rc);padding:12px;margin-bottom:12px">' +
+      '<div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:8px">✅ Sürücü tapıldı</div>' +
+      '<div style="display:flex;align-items:center;gap:10px">' +
+        '<div class="avsm p">' + D.name[0] + '</div>' +
+        '<div><div style="font-size:14px;font-weight:600">' + D.fullName + '</div>' +
+        '<div style="font-size:12px;color:var(--t2)">⭐ ' + D.rating + ' · ' + D.car + ' · ' + D.plate + '</div></div>' +
+        '<div style="margin-left:auto;font-size:15px;font-weight:700;color:var(--green)">' + r.price + ' AZN</div>' +
+      '</div></div>' :
+      '<div style="background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:12px;text-align:center;color:var(--t2);font-size:13px">🔍 Sürücü axtarılır...</div>'
+    ) +
+    (r.notes ? '<div style="font-size:13px;color:var(--t2);margin-bottom:12px">📝 ' + r.notes + '</div>' : '');
+
+  // Buttons
+  const btns = document.getElementById('req-detail-btns');
+  btns.innerHTML = '';
+  if (isConfirmed) {
+    const msgBtn = document.createElement('button');
+    msgBtn.className = 'gbtn b'; msgBtn.style.cssText = 'flex:1;margin:0';
+    msgBtn.textContent = '💬 Mesaj';
+    msgBtn.onclick = function() {
+      closeReqDetail();
+      const ci = convs.findIndex(function(c){return c.peerName===D.fullName;});
+      openChatById(ci>=0?ci:0);
+    };
+    btns.appendChild(msgBtn);
+  }
+  const cancelBtn = document.createElement('button');
+  cancelBtn.style.cssText = 'flex:1;background:transparent;border:1px solid var(--red);border-radius:var(--rb);padding:12px;font-size:14px;color:var(--red);cursor:pointer;font-family:Inter,sans-serif';
+  cancelBtn.textContent = '× Ləğv et';
+  cancelBtn.onclick = function() {
+    const idx = myRequests.findIndex(function(req){return req.id===r.id;});
+    if (idx>-1) myRequests.splice(idx,1);
+    closeReqDetail();
+    renderMyBookings();
+  };
+  btns.appendChild(cancelBtn);
+  m.style.display = 'flex';
+}
+
+function closeReqDetail() {
+  const m = document.getElementById('req-detail-modal');
+  if (m) m.style.display = 'none';
 }
 </script>
 </body>
