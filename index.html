@@ -1214,17 +1214,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   </div>
 </div>
 
-<!-- REQUEST DETAIL MODAL -->
-<div id="req-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end">
-  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:700">Müraciət məlumatları</div>
-      <button onclick="closeReqDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
-    </div>
-    <div id="req-detail-content"></div>
-    <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
-  </div>
-</div>
+
 
 <!-- BOOKING DETAIL MODAL -->
 <div id="booking-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;overflow-y:auto">
@@ -1235,6 +1225,18 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div id="booking-detail-content"></div>
     <div id="booking-detail-btns" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- REQUEST DETAIL MODAL -->
+<div id="req-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end">
+  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">Müraciət məlumatları</div>
+      <button onclick="closeReqDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
+    </div>
+    <div id="req-detail-content"></div>
+    <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
   </div>
 </div>
 
