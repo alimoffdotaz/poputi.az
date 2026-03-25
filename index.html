@@ -469,7 +469,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v2.0.2</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v2.0.3</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -2699,7 +2699,7 @@ function openTrip(id, back) {
     pxSec.style.display = 'none';
     acts.innerHTML = '';
     const ci = convs.findIndex(c => c.peerName === t.driverFull);
-    const rbtn = document.createElement('button'); rbtn.className='act pri'; rbtn.textContent=`🪑 Yer seç — ${t.price} AZN`; rbtn.onclick=()=>openSeatSelect(id); acts.appendChild(rbtn);
+    const rbtn = document.createElement('button'); rbtn.className='act pri'; rbtn.textContent=`🪑 Yer seç — ${t.price} AZN`; rbtn.onclick=()=>openSeatSelect(id, back); acts.appendChild(rbtn);
     const cbtn = document.createElement('button'); cbtn.className='act sec'; cbtn.textContent='💬'; cbtn.onclick=()=>openChatById(ci>=0?ci:0); acts.appendChild(cbtn);
     const pbtn = document.createElement('button'); pbtn.className='act sec'; pbtn.textContent='📞'; pbtn.onclick=()=>toast('📞 Zəng...'); acts.appendChild(pbtn);
   }
@@ -2757,11 +2757,13 @@ function openDriverProfile() {
 }
 
 // ── SEAT SELECTION ──────────────────────────────────────
-function openSeatSelect(tripId) {
+let currentSeatBack = 'home';
+function openSeatSelect(tripId, back) {
+  currentSeatBack = back || 'home';
   seatTripId = tripId;
   selSeats = [];
   const t = trips[tripId];
-  document.getElementById('seat-back').onclick = function() { openTrip(tripId, 'home'); };
+  document.getElementById('seat-back').onclick = function() { openTrip(tripId, currentSeatBack||'home'); };
   document.getElementById('seat-trip-info').textContent = t.from + ' → ' + t.to + ' · ' + t.date + ', ' + t.time;
   // Reset all seats
   [1,2,3,4].forEach(function(i) {
@@ -2777,15 +2779,23 @@ function openSeatSelect(tripId) {
   // Restore previously selected seat if already booked
   const existing = myBookedTrips.find(function(b){return b.tripId===tripId;});
   if (existing && existing.seat) {
-    const nameToNum = {'Ön sağ':1,'Arxa sol':2,'Arxa orta':3,'Arxa sağ':4};
-    existing.seat.split(', ').forEach(function(name) {
-      const num = nameToNum[name];
-      if (num) {
-        selSeats.push(num);
-        const el = document.getElementById('seat-' + num);
-        if (el) el.className = 'seat-slot sel';
-      }
-    });
+    const numToName = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
+    // seat can be integer (1,2,3,4) or string ('Ön sağ, Arxa sol')
+    if (typeof existing.seat === 'number') {
+      selSeats.push(existing.seat);
+      const el = document.getElementById('seat-' + existing.seat);
+      if (el) el.className = 'seat-slot sel';
+    } else {
+      const nameToNum = {'Ön sağ':1,'Arxa sol':2,'Arxa orta':3,'Arxa sağ':4};
+      existing.seat.split(', ').forEach(function(name) {
+        const num = nameToNum[name];
+        if (num) {
+          selSeats.push(num);
+          const el = document.getElementById('seat-' + num);
+          if (el) el.className = 'seat-slot sel';
+        }
+      });
+    }
   }
   const sinfo = document.getElementById('seat-selected-info');
   const sbtn = document.getElementById('seat-confirm-btn');
@@ -4265,5 +4275,3 @@ function closeReqDetail() {
   if (m) m.style.display = 'none';
 }
 </script>
-</body>
-</html>
