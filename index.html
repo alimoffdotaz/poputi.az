@@ -465,7 +465,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.0</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.1</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -3448,8 +3448,15 @@ function tick() {
 // ── INIT ───────────────────────────────────────────────
 setInterval(tick, 1000); tick();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-// Demo: one confirmed booking
+// TODO: REPLACE WITH REAL DATA - demo confirmed booking
 activeBookings[0] = {status:'confirmed', initiator:'passenger', completedBy:null};
+// Sync myBookedTrips from activeBookings
+myBookedTrips = Object.keys(activeBookings).map(function(id) {
+  const t = trips[parseInt(id)];
+  const b = activeBookings[id];
+  if (!t) return null;
+  return {tripId:parseInt(id), trip:t, status:b.status, date:t.date, time:t.time};
+}).filter(Boolean);
 renderHome();
 renderQR();
 renderPMenu();
