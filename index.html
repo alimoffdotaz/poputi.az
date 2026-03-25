@@ -28,7 +28,7 @@
 }
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-content:center;margin:0;}
-.app{width:100%;height:100vh;max-width:430px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;position:fixed;top:0;left:50%;transform:translateX(-50%);padding-top:env(safe-area-inset-top);}
+.app{width:100%;height:100vh;max-width:430px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;position:fixed;top:0;left:0;right:0;margin:0 auto;padding-top:env(safe-area-inset-top);}
 .screen{display:none;flex-direction:column;position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;animation:fi .2s ease;}
 .screen.active{display:flex;}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -592,7 +592,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div id="homelist"></div>
     <div style="height:10px"></div>
   </div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni on" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni ni-passreq" onclick="go('passreq')" style="display:none"><div class="ni-i">🔍</div><div class="ni-l">Axtar</div></div>
@@ -607,7 +607,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div class="bhdr"><button class="bbtn" onclick="go('home')">←</button><div><div class="bhdr-t" id="resq">Bütün səfərlər</div><div style="font-size:12px;color:var(--t2)" id="ress"></div></div></div>
   <div class="fbar" id="fbar"></div>
   <div class="scr"><div style="height:8px"></div><div id="reslist"></div><div style="height:8px"></div></div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div>
@@ -638,7 +638,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div style="height:8px"></div>
   </div>
   <div style="background:var(--bg);padding-bottom:4px;"><div class="arow" id="tdacts"></div><div style="display:flex;gap:8px;padding:0 16px 4px"><button class="act sec" style="font-size:12px" onclick="shareTrip()">📤 Paylaş</button></div><div style="height:8px"></div></div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">🎫</div><div class="ni-l">Səfərlər</div></div>
@@ -723,7 +723,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div style="height:4px"></div>
   </div>
   <button class="gbtn b" onclick="publishPassReq()">🔍 Sürücü axtar</button>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni on"><div class="ni-i">🔍</div><div class="ni-l">Axtar</div></div>
     <div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div>
@@ -774,7 +774,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <div class="screen" id="s-inbox">
     <div class="bhdr"><div style="flex:1"><div class="bhdr-t">Mesajlar</div></div></div>
   <div class="scr"><div style="height:8px"></div><div id="inboxlist"></div><div style="height:8px"></div></div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div>
@@ -856,7 +856,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div style="height:4px"></div>
   </div>
   <button class="gbtn g" onclick="publishTrip()">Səfəri Yayımla</button>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni on"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni" onclick="showMyTrips()"><div class="ni-i">🗺</div><div class="ni-l">Səfərlərim</div></div>
@@ -869,7 +869,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <div class="screen" id="s-mytrips">
     <div class="bhdr gr"><button class="bbtn" onclick="go('home')">←</button><div class="bhdr-t">Mənim Səfərlərim</div></div>
   <div class="scr"><div style="height:10px"></div><div id="mylist"></div><div style="height:8px"></div></div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">🗺</div><div class="ni-l">Səfərlərim</div></div>
@@ -892,7 +892,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div style="height:8px"></div>
   </div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni on"><div class="ni-i">💰</div><div class="ni-l">Qazanc</div></div>
@@ -916,7 +916,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
   </div>
   <div class="scr" style="background:var(--sf)"><div class="msec" id="pmenu"></div><div style="height:8px"></div></div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
     <div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div>
@@ -929,7 +929,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <div class="screen" id="s-history">
     <div class="bhdr"><button class="bbtn" onclick="go('profile')">←</button><div class="bhdr-t">Səfər Tarixçəsi</div></div>
   <div class="scr"><div style="height:8px"></div><div id="histlist"></div><div style="height:8px"></div></div>
-<div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
+  <div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
 </div>
 
 <!-- MY REVIEWS -->
@@ -946,7 +946,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div style="padding:0 16px" id="myrevlist"></div>
     <div style="height:10px"></div>
   </div>
-<div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
+  <div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
 </div>
 
 <!-- MY CAR -->
@@ -1012,7 +1012,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div style="height:8px"></div>
   </div>
-<div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
+  <div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
 </div>
 
 <!-- NOTIFICATIONS -->
@@ -1034,7 +1034,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div style="height:8px"></div>
   </div>
-<div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
+  <div class="bnav"><div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div><div class="ni ni-create" onclick="go('create')"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div><div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div><div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div><div class="ni on" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div></div>
 </div>
 
 
@@ -1112,13 +1112,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 
 <!-- MY BOOKINGS (passenger) -->
 <div class="screen" id="s-mybookings">
-  <div class="bhdr"><button class="bbtn" onclick="go('home')">←</button><div class="bhdr-t">Mənim Səfərlərim</div>
-      <button onclick="closeReqDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
-    </div>
-    <div id="req-detail-content"></div>
-    <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
-  </div>
-</div>
+  <div class="bhdr"><button class="bbtn" onclick="go('home')">←</button><div class="bhdr-t">Mənim Səfərlərim</div></div>
   <div style="display:flex;background:var(--bg);border-bottom:1px solid var(--bd);flex-shrink:0;">
     <button class="tab-btn on" id="tab-trips" onclick="switchBookingTab('trips')">Rezervlər</button>
     <button class="tab-btn" id="tab-reqs" onclick="switchBookingTab('reqs')">Müraciətlərim</button>
@@ -1129,7 +1123,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div id="mybookings-reqs" style="display:none"></div>
     <div style="height:8px"></div>
   </div>
-<div class="bnav">
+  <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Müraciət</div></div>
     <div class="ni on"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div>
@@ -1162,14 +1156,18 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div id="booking-detail-content"></div>
     <div id="booking-detail-btns" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>
   </div>
+</div>
 
 <!-- REQUEST DETAIL MODAL -->
 <div id="req-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end">
   <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <div style="font-size:16px;font-weight:700">Müraciət məlumatları</div>
-
-</div>
+      <button onclick="closeReqDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
+    </div>
+    <div id="req-detail-content"></div>
+    <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
+  </div>
 </div>
 
 <!-- RATING MODAL -->
@@ -1199,8 +1197,6 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <button onclick="closeRating()" style="width:100%;margin-top:8px;background:transparent;border:none;font-size:13px;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Ləğv et</button>
   </div>
 </div>
-
-
 
 <div class="toast" id="tst"></div>
 
