@@ -466,7 +466,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.9</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.9.3</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -1191,6 +1191,37 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div id="req-detail-content"></div>
     <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
+  </div>
+</div>
+
+
+<!-- BOOKING DETAIL MODAL -->
+<div id="booking-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;overflow-y:auto">
+  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">Rezerv məlumatları</div>
+      <button onclick="closeBookingDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
+    </div>
+    <div id="booking-detail-content"></div>
+    <div id="booking-detail-btns" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- RATING MODAL -->
+<div id="rating-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center">
+  <div style="background:var(--bg);border-radius:var(--rc);padding:24px;width:88%;max-width:360px">
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px;text-align:center">Sürücünü qiymətləndirin</div>
+    <div id="rating-driver-name" style="font-size:13px;color:var(--t2);text-align:center;margin-bottom:16px"></div>
+    <div style="display:flex;justify-content:center;gap:8px;margin-bottom:20px" id="rating-stars">
+      <span class="rstar" data-v="1" onclick="selectStar(1)" style="font-size:36px;cursor:pointer">⭐</span>
+      <span class="rstar" data-v="2" onclick="selectStar(2)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+      <span class="rstar" data-v="3" onclick="selectStar(3)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+      <span class="rstar" data-v="4" onclick="selectStar(4)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+      <span class="rstar" data-v="5" onclick="selectStar(5)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+    </div>
+    <textarea id="rating-comment" placeholder="Şərh yazın (ixtiyari)..." style="width:100%;border:1px solid var(--bd);border-radius:var(--rb);padding:10px;font-size:13px;font-family:Inter,sans-serif;resize:none;height:80px;box-sizing:border-box;margin-bottom:12px"></textarea>
+    <button onclick="submitRating()" class="gbtn g" style="width:100%;margin:0">Göndər</button>
+    <button onclick="closeRating()" style="width:100%;margin-top:8px;background:transparent;border:none;font-size:13px;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Ləğv et</button>
   </div>
 </div>
 
@@ -3969,57 +4000,16 @@ function renderTripPrefs() {
   });
 }
 
-function openRequestDetail(r) {
-  const m = document.getElementById('req-detail-modal');
-  if (!m) return;
-  const D = r.driver;
-  const isConfirmed = r.status === 'confirmed' && D;
-  document.getElementById('req-detail-content').innerHTML =
-    '<div style="font-size:18px;font-weight:700;margin-bottom:4px">' + r.from + ' → ' + r.to + '</div>' +
-    '<div style="font-size:13px;color:var(--t2);margin-bottom:16px">📅 ' + r.date + ' · 🕐 ' + r.time + '</div>' +
-    (isConfirmed ?
-      '<div style="background:var(--gbg);border:1px solid var(--green);border-radius:var(--rc);padding:12px;margin-bottom:12px">' +
-      '<div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:8px">✅ Sürücü tapıldı</div>' +
-      '<div style="display:flex;align-items:center;gap:10px">' +
-        '<div class="avsm p">' + D.name[0] + '</div>' +
-        '<div><div style="font-size:14px;font-weight:600">' + D.fullName + '</div>' +
-        '<div style="font-size:12px;color:var(--t2)">⭐ ' + D.rating + ' · ' + D.car + ' · ' + D.plate + '</div></div>' +
-        '<div style="margin-left:auto;font-size:15px;font-weight:700;color:var(--green)">' + r.price + ' AZN</div>' +
-      '</div></div>' :
-      '<div style="background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:12px;text-align:center;color:var(--t2);font-size:13px">🔍 Sürücü axtarılır...</div>'
-    ) +
-    (r.notes ? '<div style="font-size:13px;color:var(--t2);margin-bottom:12px">📝 ' + r.notes + '</div>' : '');
 
-  // Buttons
-  const btns = document.getElementById('req-detail-btns');
-  btns.innerHTML = '';
-  if (isConfirmed) {
-    const msgBtn = document.createElement('button');
-    msgBtn.className = 'gbtn b'; msgBtn.style.cssText = 'flex:1;margin:0';
-    msgBtn.textContent = '💬 Mesaj';
-    msgBtn.onclick = function() {
-      closeReqDetail();
-      const ci = convs.findIndex(function(c){return c.peerName===D.fullName;});
-      openChatById(ci>=0?ci:0);
-    };
-    btns.appendChild(msgBtn);
-  }
-  const cancelBtn = document.createElement('button');
-  cancelBtn.style.cssText = 'flex:1;background:transparent;border:1px solid var(--red);border-radius:var(--rb);padding:12px;font-size:14px;color:var(--red);cursor:pointer;font-family:Inter,sans-serif';
-  cancelBtn.textContent = '× Ləğv et';
-  cancelBtn.onclick = function() {
-    const idx = myRequests.findIndex(function(req){return req.id===r.id;});
-    if (idx>-1) myRequests.splice(idx,1);
-    closeReqDetail();
-    renderMyBookings();
-  };
-  btns.appendChild(cancelBtn);
-  m.style.display = 'flex';
-}
-
-function closeReqDetail() {
-  const m = document.getElementById('req-detail-modal');
-  if (m) m.style.display = 'none';
+function acceptOffer(reqId, offer) {
+  const r = myRequests.find(function(x){return x.id===reqId;});
+  if (!r) return;
+  r.status = 'confirmed';
+  r.acceptedOffer = offer;
+  closeReqDetail();
+  renderMyBookings();
+  renderHome();
+  toast('✅ Sürücü qəbul edildi!');
 }
 </script>
 </body>
