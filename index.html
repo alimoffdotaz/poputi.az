@@ -466,7 +466,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.9.7</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.9.9</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -640,80 +640,9 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div id="homelist"></div>
     <div style="height:10px"></div>
   </div>
-  <!-- BOOKING DETAIL MODAL -->
-<div id="booking-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;overflow-y:auto">
-  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:700">Rezerv məlumatları</div>
-      <button onclick="closeBookingDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
-    </div>
-    <div id="booking-detail-content"></div>
-    <div id="booking-detail-btns" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>
   </div>
 </div>
-<!-- REQUEST DETAIL MODAL -->
-<div id="req-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end">
-  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <div style="font-size:16px;font-weight:700">Müraciət məlumatları</div>
-      <button onclick="closeReqDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
-    </div>
-    <div id="req-detail-content"></div>
-    <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
-  </div>
 </div>
-<!-- RATING MODAL -->
-<div id="rating-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center">
-  <div style="background:var(--bg);border-radius:var(--rc);padding:24px;width:88%;max-width:360px">
-    <div style="font-size:16px;font-weight:700;margin-bottom:8px;text-align:center">Sürücünü qiymətləndirin</div>
-    <div id="rating-driver-name" style="font-size:13px;color:var(--t2);text-align:center;margin-bottom:16px"></div>
-    <div style="display:flex;justify-content:center;gap:8px;margin-bottom:20px" id="rating-stars">
-      <span class="rstar" data-v="1" onclick="selectStar(1)" style="font-size:36px;cursor:pointer">⭐</span>
-      <span class="rstar" data-v="2" onclick="selectStar(2)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
-      <span class="rstar" data-v="3" onclick="selectStar(3)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
-      <span class="rstar" data-v="4" onclick="selectStar(4)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
-      <span class="rstar" data-v="5" onclick="selectStar(5)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
-    </div>
-    <div id="rating-reasons" style="display:none;margin-bottom:12px">
-      <div style="font-size:12px;color:var(--t2);margin-bottom:8px">Səbəbi seçin:</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">⏰ Gecikmə</button>
-        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">🚗 Kirli salon</button>
-        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">😠 Kobud davranış</button>
-        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">🚦 Sürücülük</button>
-        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">📍 Marşrut</button>
-      </div>
-    </div>
-    <textarea id="rating-comment" placeholder="Şərh yazın (ixtiyari)..." style="width:100%;border:1px solid var(--bd);border-radius:var(--rb);padding:10px;font-size:13px;font-family:Inter,sans-serif;resize:none;height:80px;box-sizing:border-box;margin-bottom:12px"></textarea>
-    <button onclick="submitRating()" class="gbtn g" style="width:100%;margin:0">Göndər</button>
-    <button onclick="closeRating()" style="width:100%;margin-top:8px;background:transparent;border:none;font-size:13px;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Ləğv et</button>
-  </div>
-</div>
-<!-- SOS MODAL -->
-<div id="sos-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:flex-end">
-  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
-    <div style="text-align:center;margin-bottom:20px">
-      <div style="font-size:48px">🆘</div>
-      <div style="font-size:18px;font-weight:700;color:var(--red);margin-top:8px">Təcili Yardım</div>
-      <div style="font-size:13px;color:var(--t2);margin-top:4px">Hansı xidmətə zəng etmək istəyirsiniz?</div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button onclick="sosCall('102')" style="background:#FEE2E2;border:1.5px solid #FECACA;border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
-        <span style="font-size:24px">🚔</span><div style="text-align:left"><div>Polis</div><div style="font-size:12px;font-weight:400;color:var(--t2)">102</div></div>
-      </button>
-      <button onclick="sosCall('103')" style="background:#FEE2E2;border:1.5px solid #FECACA;border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
-        <span style="font-size:24px">🚑</span><div style="text-align:left"><div>Təcili tibbi yardım</div><div style="font-size:12px;font-weight:400;color:var(--t2)">103</div></div>
-      </button>
-      <button onclick="sosCall('101')" style="background:#FEE2E2;border:1.5px solid #FECACA;border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
-        <span style="font-size:24px">🚒</span><div style="text-align:left"><div>Yanğınsöndürən</div><div style="font-size:12px;font-weight:400;color:var(--t2)">101</div></div>
-      </button>
-      <button onclick="shareLocation()" style="background:var(--bbg);border:1.5px solid var(--blue);border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
-        <span style="font-size:24px">📍</span><div style="text-align:left"><div>Yerimi paylaş</div><div style="font-size:12px;font-weight:400;color:var(--t2)">Yaxın adamlarınıza göndər</div></div>
-      </button>
-    </div>
-
-    <button onclick="closeSOS()" style="width:100%;margin-top:14px;background:transparent;border:1px solid var(--bd);border-radius:var(--rb);padding:12px;font-size:14px;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Ləğv et</button>
-  </div>
 </div>
 <div class="bnav">
     <div class="ni on" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
@@ -4255,5 +4184,83 @@ function openRequestDetail(r) {
   m.style.display = 'flex';
 }
 </script>
+
+<!-- BOOKING DETAIL MODAL -->
+<div id="booking-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;overflow-y:auto">
+  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">Rezerv məlumatları</div>
+      <button onclick="closeBookingDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
+    </div>
+    <div id="booking-detail-content"></div>
+    <div id="booking-detail-btns" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- REQUEST DETAIL MODAL -->
+<div id="req-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end">
+  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">Müraciət məlumatları</div>
+      <button onclick="closeReqDetail()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
+    </div>
+    <div id="req-detail-content"></div>
+    <div id="req-detail-btns" style="display:flex;gap:8px;margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- RATING MODAL -->
+<div id="rating-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center">
+  <div style="background:var(--bg);border-radius:var(--rc);padding:24px;width:88%;max-width:360px">
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px;text-align:center">Sürücünü qiymətləndirin</div>
+    <div id="rating-driver-name" style="font-size:13px;color:var(--t2);text-align:center;margin-bottom:16px"></div>
+    <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px" id="rating-stars">
+      <span class="rstar" data-v="1" onclick="selectStar(1)" style="font-size:36px;cursor:pointer">⭐</span>
+      <span class="rstar" data-v="2" onclick="selectStar(2)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+      <span class="rstar" data-v="3" onclick="selectStar(3)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+      <span class="rstar" data-v="4" onclick="selectStar(4)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+      <span class="rstar" data-v="5" onclick="selectStar(5)" style="font-size:36px;cursor:pointer;opacity:.3">⭐</span>
+    </div>
+    <div id="rating-reasons" style="display:none;margin-bottom:12px">
+      <div style="font-size:12px;color:var(--t2);margin-bottom:8px">Səbəbi seçin:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">⏰ Gecikmə</button>
+        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">🚗 Kirli salon</button>
+        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">😠 Kobud davranış</button>
+        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">🚦 Sürücülük</button>
+        <button class="reason-btn" onclick="toggleReason(this)" style="background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif">📍 Marşrut</button>
+      </div>
+    </div>
+    <textarea id="rating-comment" placeholder="Şərh yazın (ixtiyari)..." style="width:100%;border:1px solid var(--bd);border-radius:var(--rb);padding:10px;font-size:13px;font-family:Inter,sans-serif;resize:none;height:80px;box-sizing:border-box;margin-bottom:12px"></textarea>
+    <button onclick="submitRating()" class="gbtn g" style="width:100%;margin:0">Göndər</button>
+    <button onclick="closeRating()" style="width:100%;margin-top:8px;background:transparent;border:none;font-size:13px;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Ləğv et</button>
+  </div>
+</div>
+
+<!-- SOS MODAL -->
+<div id="sos-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:flex-end">
+  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:48px">🆘</div>
+      <div style="font-size:18px;font-weight:700;color:var(--red);margin-top:8px">Təcili Yardım</div>
+      <div style="font-size:13px;color:var(--t2);margin-top:4px">Hansı xidmətə zəng etmək istəyirsiniz?</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onclick="sosCall('102')" style="background:#FEE2E2;border:1.5px solid #FECACA;border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
+        <span style="font-size:24px">🚔</span><div style="text-align:left"><div>Polis</div><div style="font-size:12px;font-weight:400;color:var(--t2)">102</div></div>
+      </button>
+      <button onclick="sosCall('103')" style="background:#FEE2E2;border:1.5px solid #FECACA;border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
+        <span style="font-size:24px">🚑</span><div style="text-align:left"><div>Təcili tibbi yardım</div><div style="font-size:12px;font-weight:400;color:var(--t2)">103</div></div>
+      </button>
+      <button onclick="sosCall('101')" style="background:#FEE2E2;border:1.5px solid #FECACA;border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
+        <span style="font-size:24px">🚒</span><div style="text-align:left"><div>Yanğınsöndürən</div><div style="font-size:12px;font-weight:400;color:var(--t2)">101</div></div>
+      </button>
+      <button onclick="shareLocation()" style="background:var(--bbg);border:1.5px solid var(--blue);border-radius:var(--rb);padding:14px;font-size:15px;font-weight:600;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:Inter,sans-serif">
+        <span style="font-size:24px">📍</span><div style="text-align:left"><div>Yerimi paylaş</div><div style="font-size:12px;font-weight:400;color:var(--t2)">Yaxın adamlarınıza göndər</div></div>
+      </button>
+    </div>
+    <button onclick="closeSOS()" style="width:100%;margin-top:14px;background:transparent;border:1px solid var(--bd);border-radius:var(--rb);padding:12px;font-size:14px;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Ləğv et</button>
+  </div>
+</div>
 </body>
 </html>
