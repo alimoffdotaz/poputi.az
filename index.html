@@ -350,6 +350,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 .dpstv{font-size:16px;font-weight:600;color:rgba(255,255,255,.95);} .dpstl{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px;}
 .toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--t1);color:#fff;padding:10px 18px;border-radius:var(--rb);font-size:13px;font-weight:500;white-space:nowrap;opacity:0;transition:all .25s;z-index:300;pointer-events:none;}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+.hibadge.done{background:#F3F4F6;color:var(--t2);}
 .pref-tag{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:8px 14px;font-size:13px;font-weight:500;color:var(--t1);cursor:pointer;font-family:Inter,sans-serif;transition:all .2s;}
 .pref-tag.on{background:var(--bbg);border-color:var(--blue);color:var(--blue);}
 
@@ -465,7 +466,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.4</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.9</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -1496,90 +1497,74 @@ function renderMyBookings() {
   const tl = document.getElementById('mybookings-trips');
   const rl = document.getElementById('mybookings-reqs');
 
+  // ── РЕЗЕРВЫ ──
   if (tl) {
-    const booked = myBookedTrips || [];
-    if (!booked.length) {
-      tl.innerHTML = '';
-      const empty = document.createElement('div');
-      empty.style.cssText = 'text-align:center;padding:48px 24px';
-      empty.innerHTML = '<div style="font-size:48px;margin-bottom:12px">🎫</div>' +
-        '<div style="font-size:15px;font-weight:600;color:var(--t1);margin-bottom:6px">Rezervasiya yoxdur</div>' +
-        '<div style="font-size:13px;color:var(--t2)">Sürücü tapdıqdan sonra burada görünəcək</div>';
-      tl.appendChild(empty);
+    tl.innerHTML = '';
+    if (!myBookedTrips.length) {
+      tl.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🎫</div><div style="color:var(--t2);font-size:14px">Rezerv yoxdur</div></div>';
     } else {
-      tl.innerHTML = '';
-      booked.forEach(function(b) {
-        const t = trips[b.tripId];
+      myBookedTrips.forEach(function(b) {
+        const t = b.trip;
         if (!t) return;
-        const statusLabel = b.status === 'confirmed' ? 'Təsdiqləndi' : 'Gözlənilir';
-        const statusClass = b.status === 'confirmed' ? 'done' : 'up';
+        const statusMap = {
+          pending:   {text:'Gözləyir',    cls:'up'},
+          confirmed: {text:'Təsdiqləndi', cls:'ok'},
+          cancelled: {text:'Ləğv edildi', cls:'no'},
+          completed: {text:'Tamamlandı',  cls:'done'}
+        };
+        const s = statusMap[b.status] || {text:b.status, cls:'up'};
         const div = document.createElement('div');
         div.className = 'hitem';
-        div.style.cursor = 'pointer';
-        div.onclick = function() { openTrip(b.tripId, 'mybookings'); };
+        div.style.borderLeft = '3px solid var(--' + (b.status==='confirmed'?'green':b.status==='pending'?'blue':b.status==='completed'?'t2':'red') + ')';
+        div.onclick = function() { openBookingDetail(b); };
         div.innerHTML =
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
-          '<div style="font-size:14px;font-weight:600;color:var(--t1)">' + t.from + ' → ' + t.to + '</div>' +
-          '<div class="hibadge ' + statusClass + '">' + statusLabel + '</div></div>' +
-          '<div style="font-size:12px;color:var(--t2)">📅 ' + t.date + ', ' + t.time + ' · 🚗 ' + t.driver + ' · ' + t.price + ' AZN</div>' +
-          '<div style="font-size:12px;color:var(--t2);margin-top:2px">🚘 ' + t.car + ' · ' + t.color + '</div>' +
-          (b.seat ? '<div style="font-size:12px;color:var(--blue);margin-top:2px">🪑 Seçilmiş yer: ' + b.seat + '</div>' : '');
-        const cancelDiv = document.createElement('div');
-        cancelDiv.style.cssText = 'margin-top:10px';
-        const cancelBtn = document.createElement('button');
-        cancelBtn.style.cssText = 'background:var(--sf);border:1px solid var(--red);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--red);cursor:pointer';
-        cancelBtn.textContent = '✕ Rezervi ləğv et';
-        cancelBtn.onclick = (function(tripId) { return function(e) { e.stopPropagation(); cancelBooking(tripId); }; })(b.tripId);
-        cancelDiv.appendChild(cancelBtn);
-        div.appendChild(cancelDiv);
+            '<div style="font-size:14px;font-weight:600">' + t.from + ' → ' + t.to + '</div>' +
+            '<div class="hibadge ' + s.cls + '">' + s.text + '</div>' +
+          '</div>' +
+          '<div style="font-size:12px;color:var(--t2);margin-bottom:8px">📅 ' + t.date + ' · 🕐 ' + t.time + ' · 🪑 ' + b.seat + '-ci yer</div>' +
+          '<div style="font-size:12px;color:var(--t2)">👤 ' + t.driverFull + ' · 🚗 ' + t.car + '</div>' +
+          (b.status==='completed' && !b.driverRated ?
+            '<button onclick="event.stopPropagation();openRating(\''+b.id+'\')" style="margin-top:8px;width:100%;background:var(--gbg);border:1px solid var(--green);border-radius:var(--ri);padding:8px;font-size:12px;font-weight:600;color:var(--green);cursor:pointer;font-family:Inter,sans-serif">⭐ Qiymət ver</button>' : '');
         tl.appendChild(div);
       });
     }
   }
 
+  // ── ЗАПРОСЫ ──
   if (rl) {
     rl.innerHTML = '';
     if (!myRequests.length) {
-      const empty = document.createElement('div');
-      empty.style.cssText = 'text-align:center;padding:48px 24px';
-      const btn = document.createElement('button');
-      btn.className = 'gbtn b';
-      btn.style.cssText = 'width:100%;margin:0';
-      btn.textContent = '+ Müraciət yarat';
-      btn.onclick = function() { go('passreq'); };
-      empty.innerHTML = '<div style="font-size:48px;margin-bottom:12px">🔍</div>' +
-        '<div style="font-size:15px;font-weight:600;color:var(--t1);margin-bottom:6px">Müraciət yoxdur</div>' +
-        '<div style="font-size:13px;color:var(--t2);margin-bottom:20px">Sürücü tapa bilmədinizsə müraciət buraxın</div>';
-      empty.appendChild(btn);
-      rl.appendChild(empty);
+      rl.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🔍</div><div style="color:var(--t2);font-size:14px">Müraciət yoxdur</div></div>';
     } else {
       myRequests.forEach(function(r) {
+        const statusMap = {
+          active:    {text:'Aktiv',         cls:'up'},
+          offered:   {text:r.offers.length + ' təklif',  cls:'ok'},
+          confirmed: {text:'Təsdiqləndi',   cls:'ok'},
+          cancelled: {text:'Ləğv edildi',   cls:'no'},
+          completed: {text:'Tamamlandı',    cls:'done'}
+        };
+        const s = statusMap[r.status] || {text:r.status, cls:'up'};
         const div = document.createElement('div');
         div.className = 'hitem';
-        div.style.borderLeft = '3px solid var(--blue)';
-        const tags = (r.prefs||[]).map(function(p) { return '<span class="tag">' + p + '</span>'; }).join('');
+        div.style.borderLeft = '3px solid var(--' + (r.status==='confirmed'||r.status==='offered'?'green':r.status==='active'?'blue':r.status==='completed'?'t2':'red') + ')';
         div.onclick = function() { openRequestDetail(r); };
-        const statusColor = r.status==='confirmed' ? 'ok' : r.status==='cancelled' ? 'no' : 'up';
-        const statusText = r.status==='confirmed' ? 'Təsdiqləndi' : r.status==='cancelled' ? 'Ləğv edildi' : 'Gözləyir';
         div.innerHTML =
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
-          '<div style="font-size:14px;font-weight:600;color:var(--t1)">' + r.from + ' → ' + r.to + '</div>' +
-          '<div class="hibadge '+statusColor+'">'+statusText+'</div></div>' +
-          '<div style="font-size:12px;color:var(--t2)">📅 ' + r.date + ', ' + r.time + ' · 🪑 ' + (r.seats||1) + ' yer</div>' +
-          '<div class="tc-tags" style="margin-top:6px">' + tags + '</div>';
-        const btns = document.createElement('div');
-        btns.style.cssText = 'display:flex;gap:8px;margin-top:8px';
-        const editBtn = document.createElement('button');
-        editBtn.style.cssText = 'background:var(--sf);border:1px solid var(--blue);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--blue);cursor:pointer';
-        editBtn.textContent = '✏️ Dəyiş';
-        editBtn.onclick = (function(id) { return function(e) { e.stopPropagation(); editRequest(id); }; })(r.id);
-        const cancelBtn = document.createElement('button');
-        cancelBtn.style.cssText = 'background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--red);cursor:pointer';
-        cancelBtn.textContent = '✕ Ləğv et';
-        cancelBtn.onclick = (function(id) { return function(e) { e.stopPropagation(); cancelRequest(id); }; })(r.id);
-        btns.appendChild(editBtn);
-        btns.appendChild(cancelBtn);
-        div.appendChild(btns);
+            '<div style="font-size:14px;font-weight:600">' + r.from + ' → ' + r.to + '</div>' +
+            '<div class="hibadge ' + s.cls + '">' + s.text + '</div>' +
+          '</div>' +
+          '<div style="font-size:12px;color:var(--t2);margin-bottom:6px">📅 ' + r.date + ' · 🕐 ' + r.time + ' · 👤 ' + r.seats + ' nəfər</div>' +
+          (r.notes ? '<div style="font-size:12px;color:var(--t2)">📝 ' + r.notes + '</div>' : '') +
+          '';
+        if (r.status==='completed' && !r.driverRated) {
+          const rateBtn = document.createElement('button');
+          rateBtn.style.cssText = 'margin-top:8px;width:100%;background:var(--gbg);border:1px solid var(--green);border-radius:var(--ri);padding:8px;font-size:12px;font-weight:600;color:var(--green);cursor:pointer;font-family:Inter,sans-serif';
+          rateBtn.textContent = '⭐ Qiymət ver';
+          rateBtn.onclick = function(e) { e.stopPropagation(); openRating('req_' + r.id); };
+          div.appendChild(rateBtn);
+        }
         rl.appendChild(div);
       });
     }
@@ -3473,26 +3458,45 @@ function tick() {
 // ── INIT ───────────────────────────────────────────────
 setInterval(tick, 1000); tick();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-// TODO: REPLACE WITH REAL DATA - demo confirmed booking
+// TODO: REPLACE WITH REAL DATA
 activeBookings[0] = {status:'confirmed', initiator:'passenger', completedBy:null};
-// Sync myBookedTrips from activeBookings
-myBookedTrips = Object.keys(activeBookings).map(function(id) {
-  const t = trips[parseInt(id)];
-  const b = activeBookings[id];
-  if (!t) return null;
-  return {tripId:parseInt(id), trip:t, status:b.status, date:t.date, time:t.time};
-}).filter(Boolean);
-// TODO: REPLACE WITH REAL DATA - demo passenger request (confirmed by driver)
-myRequests = [
+myBookedTrips = [
   {
-    id: 'req1', from:'Bakı', to:'Şəmkir', date:'Sabah', time:'09:00',
-    status:'confirmed',
-    driver:{name:'Nicat H.', fullName:'Nicat Həsənov', phone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444'},
-    price: 6, notes:'Baqajım var'
+    id:'book1', tripId:0, status:'confirmed', seat:2, driverRated:false,
+    trip:trips[0]
   },
   {
-    id: 'req2', from:'Bakı', to:'Lənkəran', date:'3 Aprel', time:'08:00',
-    status:'pending', driver:null, price:null, notes:''
+    id:'book2', tripId:1, status:'pending', seat:1, driverRated:false,
+    trip:trips[1]
+  },
+  {
+    id:'book3', tripId:2, status:'completed', seat:3, driverRated:false,
+    trip:trips[2]
+  }
+];
+myRequests = [
+  {
+    id:'req1', from:'Bakı', to:'Şəmkir', date:'Sabah', time:'09:00', seats:1,
+    notes:'Baqajım var', prefs:['🎒 Bagaj'],
+    status:'confirmed',
+    offers:[{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6}],
+    acceptedOffer:{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6},
+    driverRated:false
+  },
+  {
+    id:'req2', from:'Bakı', to:'Lənkəran', date:'3 Aprel', time:'08:00', seats:1,
+    notes:'', prefs:[],
+    status:'active', offers:[], acceptedOffer:null, driverRated:false
+  },
+  {
+    id:'req3', from:'Bakı', to:'Quba', date:'Bu gün', time:'10:00', seats:1,
+    notes:'', prefs:[],
+    status:'offered',
+    offers:[
+      {driverName:'Kamran Əliyev', driverPhone:'+994 50 111 22 33', rating:'4.8', car:'Kia Cerato', color:'Qara', plate:'33-CC-111', price:9},
+      {driverName:'Tural Hüseynov', driverPhone:'+994 77 444 55 66', rating:'4.5', car:'Nissan Sentra', color:'Gümüşü', plate:'55-DD-222', price:8}
+    ],
+    acceptedOffer:null, driverRated:false
   }
 ];
 renderHome();
