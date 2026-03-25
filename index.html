@@ -1216,6 +1216,23 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 
 
 
+
+
+
+
+<!-- SHEET OVERLAY -->
+<div class="ovl" id="sovl" style="display:none" onclick="closeSheet()">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="shdr"><div class="stitle" id="stitle">Seçin</div><button class="sclose" onclick="closeSheet()">✕</button></div>
+    <div class="ssrch" id="ssrch" style="display:none"><input id="ssrchi" placeholder="Axtar..." oninput="filterSheet(this.value)"/></div>
+    <div class="slist" id="slist"></div>
+  </div>
+</div>
+
+
+<!-- MY BOOKINGS (passenger) -->
+<div class="screen" id="s-mybookings">
+  <div class="bhdr"><button class="bbtn" onclick="go('home')">←</button><div class="bhdr-t">Mənim Səfərlərim</div></div>
 <!-- BOOKING DETAIL MODAL -->
 <div id="booking-detail-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;overflow-y:auto">
   <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
@@ -1240,19 +1257,6 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   </div>
 </div>
 
-<!-- SHEET OVERLAY -->
-<div class="ovl" id="sovl" style="display:none" onclick="closeSheet()">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="shdr"><div class="stitle" id="stitle">Seçin</div><button class="sclose" onclick="closeSheet()">✕</button></div>
-    <div class="ssrch" id="ssrch" style="display:none"><input id="ssrchi" placeholder="Axtar..." oninput="filterSheet(this.value)"/></div>
-    <div class="slist" id="slist"></div>
-  </div>
-</div>
-
-
-<!-- MY BOOKINGS (passenger) -->
-<div class="screen" id="s-mybookings">
-  <div class="bhdr"><button class="bbtn" onclick="go('home')">←</button><div class="bhdr-t">Mənim Səfərlərim</div></div>
   <div style="display:flex;background:var(--bg);border-bottom:1px solid var(--bd);flex-shrink:0;">
     <button class="tab-btn on" id="tab-trips" onclick="switchBookingTab('trips')">Rezervlər</button>
     <button class="tab-btn" id="tab-reqs" onclick="switchBookingTab('reqs')">Müraciətlərim</button>
