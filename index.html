@@ -465,7 +465,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.2</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.8.3</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -1544,7 +1544,7 @@ function renderMyBookings() {
         const div = document.createElement('div');
         div.className = 'hitem';
         div.style.borderLeft = '3px solid var(--blue)';
-        const tags = r.prefs.map(function(p) { return '<span class="tag">' + p + '</span>'; }).join('');
+        const tags = (r.prefs||[]).map(function(p) { return '<span class="tag">' + p + '</span>'; }).join('');
         div.innerHTML =
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
           '<div style="font-size:14px;font-weight:600;color:var(--t1)">' + r.from + ' → ' + r.to + '</div>' +
