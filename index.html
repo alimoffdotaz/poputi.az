@@ -469,7 +469,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v2.0.4</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v2.1.6-debug-debug</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -873,6 +873,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <button class="gbtn b" style="flex:1;margin:0;display:flex;align-items:center;justify-content:center;gap:6px" id="cfchat"><span>💬</span><span>Mesaj</span></button>
       <button class="gbtn-s" style="flex:1;margin:0;height:48px" onclick="go('home')">🏠 Əsas</button>
     </div>
+    <button class="gbtn-s" id="cf-myreqs-btn" style="width:100%;margin:8px 0 0;display:none;border-color:var(--blue);color:var(--blue)" onclick="showMyBookings();switchMBTab('reqs')">📋 Müraciətlərimə bax</button>
     <button class="gbtn-s" style="width:100%;margin:8px 0 0;border-color:var(--green);color:var(--green)" id="cf-complete-btn" onclick="tripCompleted()" style="display:none">✓ Reys tamamlandı — Qiymətləndir</button>
   </div>
   <div class="rovl" id="rovl" style="display:none">
@@ -912,7 +913,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
-    <div class="ni" onclick="showMyBookings()"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div>
+    <div class="ni" onclick="showMyTrips()"><div class="ni-i">🗺</div><div class="ni-l">Səfərlərim</div></div>
     <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
     <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
   </div>
@@ -1236,6 +1237,23 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <!-- MY BOOKINGS (passenger) -->
 <div class="screen" id="s-mybookings">
   <div class="bhdr"><button class="bbtn" onclick="go('home')">←</button><div class="bhdr-t">Mənim Səfərlərim</div></div>
+  <div style="display:flex;background:var(--bg);border-bottom:1px solid var(--bd);flex-shrink:0">
+    <button id="mb-tab-trips" onclick="switchMBTab('trips')" style="flex:1;padding:12px;font-size:14px;font-weight:600;background:transparent;border:none;border-bottom:2px solid var(--blue);color:var(--blue);cursor:pointer;font-family:Inter,sans-serif">Rezervlər</button>
+    <button id="mb-tab-reqs" onclick="switchMBTab('reqs')" style="flex:1;padding:12px;font-size:14px;font-weight:500;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Müraciətlərim</button>
+  </div>
+  <div class="scr">
+    <div id="mybookings-trips"></div>
+    <div id="mybookings-reqs" style="display:none"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
+    <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Müraciət</div></div>
+    <div class="ni on"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div>
+    <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
+    <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
+  </div>
+</div>
+
 <!-- BOOKING DETAIL MODAL -->
 <div id="booking-detail-modal" style="display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;overflow-y:auto;">
   <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-height:90vh;overflow-y:auto">
@@ -1260,24 +1278,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   </div>
 </div>
 
-  <div style="display:flex;background:var(--bg);border-bottom:1px solid var(--bd);flex-shrink:0;">
-    <button class="tab-btn on" id="tab-trips" onclick="switchBookingTab('trips')">Rezervlər</button>
-    <button class="tab-btn" id="tab-reqs" onclick="switchBookingTab('reqs')">Müraciətlərim</button>
-  </div>
-  <div class="scr">
-    <div style="height:8px"></div>
-    <div id="mybookings-trips"></div>
-    <div id="mybookings-reqs" style="display:none"></div>
-    <div style="height:8px"></div>
-  </div>
-  <div class="bnav">
-    <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
-    <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Müraciət</div></div>
-    <div class="ni on"><div class="ni-i">🎫</div><div class="ni-l">Səfərlərim</div></div>
-    <div class="ni" onclick="go('inbox')"><div class="ni-i">💬</div><div class="ni-l">Mesajlar</div></div>
-    <div class="ni" onclick="go('profile')"><div class="ni-i">👤</div><div class="ni-l">Profil</div></div>
-  </div>
-</div>
+
 
 <!-- CUSTOM CONFIRM DIALOG -->
 <div id="confirm-ovl" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:24px">
@@ -1547,6 +1548,9 @@ function switchBookingTab(tab) {
 }
 
 function renderMyBookings() {
+  try {
+  if (!myBookedTrips) myBookedTrips = [];
+  if (!myRequests) myRequests = [];
   const tl = document.getElementById('mybookings-trips');
   const rl = document.getElementById('mybookings-reqs');
 
@@ -1593,7 +1597,7 @@ function renderMyBookings() {
       myRequests.forEach(function(r) {
         const statusMap = {
           active:    {text:'Aktiv',         cls:'up'},
-          offered:   {text:r.offers.length + ' təklif',  cls:'ok'},
+          offered:   {text:((r.offers||[]).length) + ' təklif',  cls:'ok'},
           confirmed: {text:'Təsdiqləndi',   cls:'ok'},
           cancelled: {text:'Ləğv edildi',   cls:'no'},
           completed: {text:'Tamamlandı',    cls:'done'}
@@ -1622,6 +1626,8 @@ function renderMyBookings() {
       });
     }
   }
+  toast('renderMB done');
+  } catch(e) { toast('renderMB ERR:'+e.message); }
 }
 
 
@@ -1665,9 +1671,9 @@ function cancelRequest(id) {
 
 function editRequest(id) {
   const r=myRequests.find(function(req){return req.id===id;});
-  if(!r) return;
+  if(!r) { toast('Müraciət tapılmadı'); return; }
   prFrom=r.from; prTo=r.to; prDate=r.date; prTime=r.time;
-  selectedPrefs=[...r.prefs];
+  selectedPrefs=[...(r.prefs||[])];
   const fl=document.getElementById('pr-from-lbl');
   const tl=document.getElementById('pr-to-lbl');
   if(fl){fl.textContent=r.from;fl.classList.remove('ph');}
@@ -1679,7 +1685,7 @@ function editRequest(id) {
   const notes=document.getElementById('pr-notes');
   if(notes) notes.value=r.note||'';
   document.querySelectorAll('.pref-chip').forEach(function(c){
-    c.classList.toggle('on',r.prefs.includes(c.dataset.v));
+    c.classList.toggle('on',(r.prefs||[]).includes(c.dataset.v));
   });
   // Remove old silently
   const idx=myRequests.findIndex(function(req){return req.id===id;});
@@ -1838,7 +1844,7 @@ function nowTime() {
 }
 
 // ═══════════════════════════════════════════════════════
-// poputi.az — Clean JS v0.5.1
+// poputi.az — Clean JS v2.1.6-debug
 // ═══════════════════════════════════════════════════════
 
 // ── STATE ──────────────────────────────────────────────
@@ -2006,7 +2012,8 @@ const MAP_SCREENS = {
 function go(n) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(MAP_SCREENS[n]);
-  if (el) el.classList.add('active');
+  if (!el) return;
+  el.classList.add('active');
   if (n === 'inbox') renderInbox();
   if (n === 'history') renderHistory();
   if (n === 'myreviews') renderMyReviews();
@@ -2860,6 +2867,7 @@ function doReserve(id) {
   }
   addNotification('Yeni rezervasiya: '+t.from+' → '+t.to+' — Ayxan İ.','booking');
   notifBookingConfirmed(t.from + ' → ' + t.to, t.driverFull);
+  const cmr2 = document.getElementById('cf-myreqs-btn'); if(cmr2) { cmr2.style.display='block'; cmr2.textContent='🎫 Rezervlərimə bax'; cmr2.onclick=function(){showMyBookings();switchMBTab('trips');}; }
   document.getElementById('cfic').textContent = '🎉';
   document.getElementById('cft').textContent = 'Rezervasiya Təsdiqləndi!';
   document.getElementById('cfs').textContent = 'Sürücü tezliklə sizinlə əlaqə saxlayacaq.';
@@ -2936,6 +2944,7 @@ function publishTrip() {
   document.getElementById('cfpr').textContent = `${seats} yer`;
   document.getElementById('cfchat').style.display = 'none';
   const cb = document.getElementById('cf-complete-btn'); if(cb) cb.style.display='none';
+  const cmr = document.getElementById('cf-myreqs-btn'); if(cmr) { cmr.style.display='block'; cmr.textContent='🗺 Səfərlərimə bax'; cmr.onclick=function(){showMyTrips();}; }
   cFrom=''; cTo=''; cDate=''; cTime='';
   go('confirm');
 }
@@ -2952,7 +2961,8 @@ function publishPassReq() {
   const prefs = [...selectedPrefs];
   const note = document.getElementById('pr-notes').value.trim();
   const newReq = {id:Date.now(),from,to,date:prDate,time:prTime,
-    name:'Ayxan İ.',initial:'A',rating:'5.0',prefs,note,seats:sPax||1};
+    name:'Ayxan İ.',initial:'A',rating:'5.0',prefs,notes:note,seats:sPax||1,
+    status:'active',offers:[],driverRated:false};
   passReqs.unshift(newReq);
   myRequests.unshift(newReq);
   document.getElementById('cfic').textContent = '🔍';
@@ -2965,6 +2975,7 @@ function publishPassReq() {
   document.getElementById('cfpr').textContent = 'Pulsuz';
   document.getElementById('cfchat').style.display = 'none';
   const cb = document.getElementById('cf-complete-btn'); if(cb) cb.style.display='none';
+  const cmr = document.getElementById('cf-myreqs-btn'); if(cmr) { cmr.style.display='block'; cmr.textContent='📋 Müraciətlərimə bax'; cmr.onclick=function(){showMyBookings();switchMBTab('reqs');}; }
   // Reset
   prFrom=''; prTo=''; prDate=''; prTime=''; selectedPrefs=[];
   fromEl.textContent='Haradan?'; fromEl.classList.add('ph');
@@ -2978,12 +2989,14 @@ function publishPassReq() {
 
 function showMyTrips() {
   const el = document.getElementById('mylist');
-  if (el) el.innerHTML = myT.map(t => mtHTML(t)).join('');
+  if (el) el.innerHTML = myT && myT.length
+    ? myT.map(t => mtHTML(t)).join('')
+    : '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🗺</div><div style="color:var(--t2);font-size:14px">Aktiv səfər yoxdur</div></div>';
   go('mytrips');
 }
 
 function showMyBookings() {
-  if (role==='driver') { showMyTrips(); return; }
+  if (role === 'driver') { showMyTrips(); return; }
   renderMyBookings();
   go('mybookings');
 }
@@ -4273,5 +4286,23 @@ function openRequestDetail(r) {
 function closeReqDetail() {
   const m = document.getElementById('req-detail-modal');
   if (m) m.style.display = 'none';
+}
+
+function switchMBTab(tab) {
+  const trips = document.getElementById('mybookings-trips');
+  const reqs = document.getElementById('mybookings-reqs');
+  const tabTrips = document.getElementById('mb-tab-trips');
+  const tabReqs = document.getElementById('mb-tab-reqs');
+  if (tab === 'trips') {
+    if (trips) trips.style.display = 'block';
+    if (reqs) reqs.style.display = 'none';
+    if (tabTrips) { tabTrips.style.borderBottomColor='var(--blue)'; tabTrips.style.color='var(--blue)'; tabTrips.style.fontWeight='600'; }
+    if (tabReqs) { tabReqs.style.borderBottomColor='transparent'; tabReqs.style.color='var(--t2)'; tabReqs.style.fontWeight='500'; }
+  } else {
+    if (trips) trips.style.display = 'none';
+    if (reqs) reqs.style.display = 'block';
+    if (tabTrips) { tabTrips.style.borderBottomColor='transparent'; tabTrips.style.color='var(--t2)'; tabTrips.style.fontWeight='500'; }
+    if (tabReqs) { tabReqs.style.borderBottomColor='var(--blue)'; tabReqs.style.color='var(--blue)'; tabReqs.style.fontWeight='600'; }
+  }
 }
 </script>
