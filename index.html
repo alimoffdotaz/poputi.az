@@ -466,7 +466,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.9.3</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v1.9.4</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -4010,6 +4010,221 @@ function acceptOffer(reqId, offer) {
   renderMyBookings();
   renderHome();
   toast('✅ Sürücü qəbul edildi!');
+}
+
+// ── BOOKING DETAIL ─────────────────────────────────────
+let currentRatingId = null;
+let selectedStars = 5;
+
+function openBookingDetail(b) {
+  const t = b.trip;
+  const m = document.getElementById('booking-detail-modal');
+  if (!m) return;
+  const statusMap = {
+    pending:   {text:'Gözləyir',    color:'var(--blue)'},
+    confirmed: {text:'Təsdiqləndi', color:'var(--green)'},
+    cancelled: {text:'Ləğv edildi', color:'var(--red)'},
+    completed: {text:'Tamamlandı',  color:'var(--t2)'}
+  };
+  const s = statusMap[b.status] || {text:b.status, color:'var(--t2)'};
+  document.getElementById('booking-detail-content').innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
+      '<div style="font-size:18px;font-weight:700">' + t.from + ' → ' + t.to + '</div>' +
+      '<div style="font-size:12px;font-weight:600;color:' + s.color + '">' + s.text + '</div>' +
+    '</div>' +
+    '<div style="background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:12px">' +
+      '<div style="font-size:12px;color:var(--t2);margin-bottom:4px">📅 ' + t.date + ' · 🕐 ' + t.time + ' · ⏱ ' + (t.dur||'') + '</div>' +
+      '<div style="font-size:13px;font-weight:600;color:var(--green)">' + t.price + ' AZN · ' + b.seat + '-ci yer</div>' +
+    '</div>' +
+    '<div style="display:flex;align-items:center;gap:10px;background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:12px">' +
+      '<div class="avsm p">' + t.driver[0] + '</div>' +
+      '<div><div style="font-size:14px;font-weight:600">' + t.driverFull + '</div>' +
+      '<div style="font-size:12px;color:var(--t2)">⭐ ' + t.rating + ' · ' + t.car + ' · ' + t.plate + '</div></div>' +
+    '</div>';
+  const btns = document.getElementById('booking-detail-btns');
+  btns.innerHTML = '';
+  if (b.status === 'pending') {
+    const seatBtn = document.createElement('button');
+    seatBtn.className = 'gbtn b'; seatBtn.style.cssText = 'width:100%;margin:0';
+    seatBtn.textContent = '💺 Yeri dəyiş';
+    seatBtn.onclick = function() { closeBookingDetail(); openTrip(b.tripId, 'mybookings'); };
+    btns.appendChild(seatBtn);
+  }
+  if (b.status === 'confirmed') {
+    const msgBtn = document.createElement('button');
+    msgBtn.className = 'gbtn b'; msgBtn.style.cssText = 'width:100%;margin:0';
+    msgBtn.textContent = '💬 Sürücüyə yaz';
+    msgBtn.onclick = function() {
+      closeBookingDetail();
+      const ci = convs.findIndex(function(c){return c.peerName===t.driverFull;});
+      openChatById(ci>=0?ci:0);
+    };
+    btns.appendChild(msgBtn);
+  }
+  if (b.status === 'completed' && !b.driverRated) {
+    const rateBtn = document.createElement('button');
+    rateBtn.className = 'gbtn g'; rateBtn.style.cssText = 'width:100%;margin:0';
+    rateBtn.textContent = '⭐ Qiymət ver';
+    rateBtn.onclick = function() { closeBookingDetail(); openRating(b.id, t.driverFull); };
+    btns.appendChild(rateBtn);
+  }
+  if (b.status !== 'completed' && b.status !== 'cancelled') {
+    const cancelBtn = document.createElement('button');
+    cancelBtn.style.cssText = 'width:100%;background:transparent;border:1px solid var(--red);border-radius:var(--rb);padding:12px;font-size:14px;color:var(--red);cursor:pointer;font-family:Inter,sans-serif;margin-top:4px';
+    cancelBtn.textContent = '× Rezervi ləğv et';
+    cancelBtn.onclick = function() {
+      const idx = myBookedTrips.findIndex(function(x){return x.id===b.id;});
+      if (idx>-1) myBookedTrips[idx].status = 'cancelled';
+      delete activeBookings[b.tripId];
+      closeBookingDetail();
+      renderMyBookings();
+      renderHome();
+    };
+    btns.appendChild(cancelBtn);
+  }
+  m.style.display = 'flex';
+}
+
+function closeBookingDetail() {
+  const m = document.getElementById('booking-detail-modal');
+  if (m) m.style.display = 'none';
+}
+
+// ── RATING ─────────────────────────────────────────────
+function openRating(id, driverName) {
+  currentRatingId = id;
+  selectedStars = 5;
+  const m = document.getElementById('rating-modal');
+  if (!m) return;
+  const dn = document.getElementById('rating-driver-name');
+  if (dn) dn.textContent = driverName || 'Sürücü';
+  selectStar(5);
+  const comment = document.getElementById('rating-comment');
+  if (comment) comment.value = '';
+  m.style.display = 'flex';
+}
+
+function closeRating() {
+  const m = document.getElementById('rating-modal');
+  if (m) m.style.display = 'none';
+}
+
+function selectStar(n) {
+  selectedStars = n;
+  document.querySelectorAll('.rstar').forEach(function(s) {
+    s.style.opacity = parseInt(s.dataset.v) <= n ? '1' : '0.3';
+  });
+}
+
+function submitRating() {
+  // TODO: REPLACE WITH REAL DATA - send to backend
+  const booking = myBookedTrips.find(function(b){return b.id===currentRatingId;});
+  if (booking) booking.driverRated = true;
+  const req = myRequests.find(function(r){return 'req_'+r.id===currentRatingId;});
+  if (req) req.driverRated = true;
+  closeRating();
+  renderMyBookings();
+  toast('✅ Reytinq göndərildi!');
+}
+
+// ── REQUEST DETAIL ──────────────────────────────────────
+function openRequestDetail(r) {
+  const m = document.getElementById('req-detail-modal');
+  if (!m) return;
+  let content =
+    '<div style="font-size:18px;font-weight:700;margin-bottom:4px">' + r.from + ' → ' + r.to + '</div>' +
+    '<div style="font-size:13px;color:var(--t2);margin-bottom:16px">📅 ' + r.date + ' · 🕐 ' + r.time + '</div>';
+  if (r.status === 'active') {
+    content += '<div style="background:var(--sf);border-radius:var(--rc);padding:16px;text-align:center;color:var(--t2);font-size:13px">🔍 Sürücü axtarılır...</div>';
+  } else if (r.status === 'offered') {
+    content += '<div style="font-size:13px;font-weight:600;margin-bottom:8px">🚗 ' + r.offers.length + ' təklif var:</div>';
+    r.offers.forEach(function(o, oi) {
+      content +=
+        '<div style="background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:8px">' +
+          '<div style="display:flex;align-items:center;gap:8px">' +
+            '<div class="avsm p">' + o.driverName[0] + '</div>' +
+            '<div style="flex:1"><div style="font-size:13px;font-weight:600">' + o.driverName + '</div>' +
+            '<div style="font-size:11px;color:var(--t2)">⭐ ' + o.rating + ' · ' + o.car + '</div></div>' +
+            '<div style="font-size:15px;font-weight:700;color:var(--green)">' + o.price + ' AZN</div>' +
+          '</div>' +
+          '<button data-rid="' + r.id + '" data-oi="' + oi + '" class="accept-offer-btn" style="width:100%;margin-top:8px;background:var(--green);border:none;border-radius:var(--ri);padding:8px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;font-family:Inter,sans-serif">✓ Qəbul et</button>' +
+        '</div>';
+    });
+  } else if (r.status === 'confirmed') {
+    const o = r.acceptedOffer;
+    content +=
+      '<div style="background:var(--gbg);border:1px solid var(--green);border-radius:var(--rc);padding:12px">' +
+        '<div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:8px">✅ Sürücü təsdiqləndi</div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<div class="avsm p">' + o.driverName[0] + '</div>' +
+          '<div><div style="font-size:14px;font-weight:600">' + o.driverName + '</div>' +
+          '<div style="font-size:12px;color:var(--t2)">⭐ ' + o.rating + ' · ' + o.car + ' · ' + o.plate + '</div></div>' +
+          '<div style="margin-left:auto;font-size:15px;font-weight:700;color:var(--green)">' + o.price + ' AZN</div>' +
+        '</div></div>';
+  } else if (r.status === 'completed') {
+    const o = r.acceptedOffer;
+    content +=
+      '<div style="background:var(--sf);border-radius:var(--rc);padding:12px">' +
+        '<div style="font-size:12px;color:var(--t2);margin-bottom:8px">Tamamlandı</div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<div class="avsm p">' + o.driverName[0] + '</div>' +
+          '<div><div style="font-size:14px;font-weight:600">' + o.driverName + '</div>' +
+          '<div style="font-size:12px;color:var(--t2)">⭐ ' + o.rating + ' · ' + o.car + '</div></div>' +
+        '</div></div>';
+  }
+  if (r.notes) content += '<div style="font-size:13px;color:var(--t2);margin-top:12px">📝 ' + r.notes + '</div>';
+  document.getElementById('req-detail-content').innerHTML = content;
+  // Bind accept buttons
+  document.querySelectorAll('.accept-offer-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      const rid = btn.dataset.rid;
+      const oi = parseInt(btn.dataset.oi);
+      const req = myRequests.find(function(x){return x.id===rid;});
+      if (req) acceptOffer(rid, req.offers[oi]);
+    };
+  });
+  // Buttons
+  const btns = document.getElementById('req-detail-btns');
+  btns.innerHTML = '';
+  if (r.status === 'confirmed') {
+    const o = r.acceptedOffer;
+    const msgBtn = document.createElement('button');
+    msgBtn.className = 'gbtn b'; msgBtn.style.cssText = 'flex:1;margin:0';
+    msgBtn.textContent = '💬 Mesaj';
+    msgBtn.onclick = function() {
+      closeReqDetail();
+      const ci = convs.findIndex(function(c){return c.peerName===o.driverName;});
+      openChatById(ci>=0?ci:0);
+    };
+    btns.appendChild(msgBtn);
+  }
+  if (r.status === 'completed' && !r.driverRated) {
+    const rateBtn = document.createElement('button');
+    rateBtn.className = 'gbtn g'; rateBtn.style.cssText = 'flex:1;margin:0';
+    rateBtn.textContent = '⭐ Qiymət ver';
+    rateBtn.onclick = function() { closeReqDetail(); openRating('req_'+r.id, r.acceptedOffer?r.acceptedOffer.driverName:''); };
+    btns.appendChild(rateBtn);
+  }
+  if (r.status === 'active' || r.status === 'offered') {
+    const editBtn = document.createElement('button');
+    editBtn.className = 'gbtn b'; editBtn.style.cssText = 'flex:1;margin:0';
+    editBtn.textContent = '✏️ Dəyiş';
+    editBtn.onclick = function() { closeReqDetail(); editRequest(r.id); };
+    btns.appendChild(editBtn);
+  }
+  if (r.status !== 'completed' && r.status !== 'cancelled') {
+    const cancelBtn = document.createElement('button');
+    cancelBtn.style.cssText = 'flex:1;background:transparent;border:1px solid var(--red);border-radius:var(--rb);padding:12px;font-size:14px;color:var(--red);cursor:pointer;font-family:Inter,sans-serif';
+    cancelBtn.textContent = '× Ləğv et';
+    cancelBtn.onclick = function() {
+      const idx = myRequests.findIndex(function(x){return x.id===r.id;});
+      if (idx>-1) myRequests.splice(idx,1);
+      closeReqDetail();
+      renderMyBookings();
+    };
+    btns.appendChild(cancelBtn);
+  }
+  m.style.display = 'flex';
 }
 </script>
 </body>
