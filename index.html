@@ -469,7 +469,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.3);font-family:Inter,sans-serif">v2.1.6-debug-debug</div>
+    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.5);font-size:13px;font-family:Inter,sans-serif">v0.5.32</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -2583,6 +2583,7 @@ function doSearch() {
   let list = trips;
   if (sFrom) list = list.filter(function(t){return t.from.includes(sFrom);});
   if (sTo) list = list.filter(function(t){return t.to.includes(sTo);});
+  if (sPax) list = list.filter(function(t){return (t.seats - t.pax.length) >= sPax;});
   document.getElementById('resq').textContent = (sFrom||'İstənilən') + ' → ' + (sTo||'İstənilən');
   document.getElementById('ress').textContent = list.length + ' səfər · ' + sDate + ' · ' + sPax + ' nəfər';
   lastRes = list;
