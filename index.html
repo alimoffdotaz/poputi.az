@@ -92,7 +92,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 .bhdr.gr{background:linear-gradient(135deg,#145a32,#27AE60);border-bottom:none;}
 .bhdr.gr .bbtn{background:rgba(255,255,255,.2);border-color:transparent;color:#fff;}
 .bhdr.gr .bhdr-t{color:#fff;}
-.ovl{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:50;display:flex;align-items:flex-end;}
+.ovl{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;}
 .sheet{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-height:85%;display:flex;flex-direction:column;}
 .shdr{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 12px;border-bottom:1px solid var(--bd);flex-shrink:0;}
 .stitle{font-size:16px;font-weight:600;color:var(--t1);}
@@ -276,7 +276,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 .tog::after{content:'';position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
 .tog.on::after{left:21px;} .tog.off::after{left:3px;}
 /* RATING SHEET */
-.rovl{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;z-index:100;}
+.rovl{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;z-index:200;}
 .rsheet{background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;}
 .rtitle{font-size:18px;font-weight:600;color:var(--t1);text-align:center;margin-bottom:6px;}
 .rsub{font-size:13px;color:var(--t2);text-align:center;margin-bottom:20px;}
@@ -3166,7 +3166,7 @@ function openSheet(ctx) {
 
   } else if (ctx === 'pax') {
     stitle.textContent = 'Sərnişin sayı';
-    renderPaxSheet();
+    renderPax();
   }
 }
 
@@ -3304,12 +3304,32 @@ function selDate(l) {
 }
 
 function renderPax() {
-  document.getElementById('slist').innerHTML = [1,2,3,4].map(n =>
-    `<div class="popt ${sPax===n?'sel':''}" onclick="selPax(${n})">
-      <div class="pnum">${n}</div>
-      <div class="plbl">${n===1?'1 sərnişin':n+' sərnişin'}</div>
-      ${sPax===n?'<div class="pchk">✓</div>':''}
-    </div>`).join('');
+  const sl = document.getElementById('slist');
+  sl.innerHTML =
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px 4px">' +
+    [1,2,3,4].map(n =>
+      `<button onclick="selPax(${n})" style="flex:1;min-width:56px;padding:12px 8px;border-radius:12px;border:2px solid ${sPax===n?'var(--blue)':'var(--bd)'};background:${sPax===n?'var(--blue-bg)':'var(--bg)'};font-size:16px;font-weight:600;color:${sPax===n?'var(--blue)':'var(--t1)'};cursor:pointer;font-family:Inter,sans-serif">${n}</button>`
+    ).join('') +
+    `<button onclick="showPaxCustom()" style="flex:1;min-width:56px;padding:12px 8px;border-radius:12px;border:2px solid var(--bd);background:var(--bg);font-size:16px;cursor:pointer">✏️</button>` +
+    '</div>' +
+    `<div id="pax-custom" style="display:none;padding:12px 16px 0">
+      <div style="font-size:13px;color:var(--t2);margin-bottom:8px">Sayı daxil edin</div>
+      <input id="pax-custom-inp" type="number" min="1" max="20" placeholder="1-20"
+        style="width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--bd);font-size:16px;font-family:Inter,sans-serif;outline:none;box-sizing:border-box"
+        oninput="this.value=Math.min(20,Math.max(1,parseInt(this.value)||1))"/>
+      <button onclick="selPaxCustom()" style="width:100%;margin-top:8px;padding:12px;border-radius:12px;background:var(--blue);border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">Təsdiq et</button>
+    </div>`;
+}
+
+function showPaxCustom() {
+  const d = document.getElementById('pax-custom');
+  if (d) { d.style.display = 'block'; document.getElementById('pax-custom-inp').focus(); }
+}
+
+function selPaxCustom() {
+  const inp = document.getElementById('pax-custom-inp');
+  const n = parseInt(inp.value) || 1;
+  selPax(Math.min(20, Math.max(1, n)));
 }
 
 function selPax(n) {
