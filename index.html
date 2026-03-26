@@ -1901,7 +1901,8 @@ const BRANDS = ['Toyota','Hyundai','Kia','BMW','Mercedes','Volkswagen','Honda',
 const RDIST = {5:89, 4:32, 3:14, 2:5, 1:3};
 
 // ── DATA ───────────────────────────────────────────────
-const trips = [
+const // TODO: MVP — загружать trips с сервера (GET /api/trips?from=&to=&date=)
+trips = [
   {id:0,from:'Bakı',to:'Gəncə',time:'14:30',date:'Bu gün',dur:'~5 saat',price:8,seats:3,
     driver:'Rəşad M.',driverFull:'Rəşad Məmmədov',driverPhone:'+994 50 123 45 67',rating:'4.9',tc:143,exp:'2',
     car:'Toyota Camry',color:'Gümüşü',plate:'10-AA-777',chip:'Rahat',
@@ -1948,14 +1949,16 @@ const trips = [
     tags:['💺 Premium','❄️ Kondisioner','🚭 Siqaret yox']},
 ];
 
-const myT = [
+const // TODO: MVP — поездки водителя с сервера (GET /api/my-trips)
+myT = [
   {id:0,route:'Bakı → Gəncə',date:'Bu gün, 14:30',total:3,pax:['Leyla','Fərid'],status:'active'},
   {id:1,route:'Bakı → Lənkəran',date:'Sabah, 08:00',total:1,pax:['Aynur'],status:'full'},
   {id:2,route:'Gəncə → Bakı',date:'22 Mart, 09:00',total:3,pax:[],status:'open'},
   {id:3,route:'Bakı → Mingəçevir',date:'23 Mart, 15:00',total:3,pax:['Vüsal'],status:'active'},
 ];
 
-const passReqs = [
+const // TODO: MVP — загружать passReqs с сервера (GET /api/requests)
+passReqs = [
   {id:0,from:'Bakı',to:'Gəncə',date:'Bu gün',time:'14:00',name:'Leyla F.',initial:'L',
     rating:'5.0',prefs:['🚭 Siqaret yox','🎵 Musiqi'],note:'',seats:1},
   {id:1,from:'Bakı',to:'Lənkəran',date:'Sabah',time:'08:30',name:'Kamran H.',initial:'K',
@@ -1968,7 +1971,8 @@ const passReqs = [
     rating:'4.7',prefs:['💬 Söhbət','🎵 Musiqi'],note:'',seats:1},
 ];
 
-const histT = [
+const // TODO: MVP — история поездок с сервера (GET /api/history)
+histT = [
   {route:'Bakı → Gəncə',date:'18 Mart 2026',price:'8 AZN',status:'done',r:5,drv:'Rəşad M.'},
   {route:'Bakı → Lənkəran',date:'15 Mart 2026',price:'10 AZN',status:'done',r:5,drv:'Elnur K.'},
   {route:'Bakı → Şirvan',date:'10 Mart 2026',price:'5 AZN',status:'canc',r:0,drv:'Murad C.'},
@@ -1977,7 +1981,8 @@ const histT = [
   {route:'Bakı → Ağstafa',date:'20 Fevr 2026',price:'9 AZN',status:'up',r:0,drv:'Cavid M.'},
 ];
 
-const REVIEWS = [
+const // TODO: MVP — отзывы с сервера (GET /api/reviews?userId=)
+REVIEWS = [
   {n:'Leyla F.',i:'L',r:5,t:'Çox nəzakətli sürücü, vaxtında gəldi. Tövsiyə edirəm!',route:'Bakı → Gəncə',d:'18 Mart'},
   {n:'Kamran H.',i:'K',r:5,t:'Sürücü çox professional, yolda güvənli sürdü.',route:'Bakı → Lənkəran',d:'15 Mart'},
   {n:'Aynur M.',i:'A',r:4,t:'Yaxşı sürücü, bir az gecikdi amma üzr istədi.',route:'Bakı → Şirvan',d:'10 Mart'},
@@ -1985,7 +1990,8 @@ const REVIEWS = [
   {n:'Sevinc A.',i:'S',r:5,t:'Mükəmməl səfər! Rahat, təmiz, vaxtında.',route:'Gəncə → Bakı',d:'28 Fevral'},
 ];
 
-const convs = [
+const // TODO: MVP — загружать историю чатов с сервера (GET /api/chats)
+convs = [
   {id:0,peerName:'Rəşad Məmmədov',pi:'R',role:'driver',rt:'Bakı → Gəncə',mt:'Bu gün, 14:30',unread:1,
     msgs:[{out:false,text:'Salam! Məni 28 May metrosundan götürə bilərsiniz?',time:'13:15'},
           {out:true,text:'Salam! Bəli, əlbəttə.',time:'13:18'},
@@ -2050,6 +2056,7 @@ function sendSMS() {
   if (p.length < 9) { toast('Nömrəni düzgün daxil edin'); return; }
   regName=name; regAge=age; regPhone = p;
   document.getElementById('sms-hint').textContent = '+994 ' + p.slice(0,2) + ' ••• ••' + p.slice(-2) + ' nömrəsinə';
+  // TODO: MVP — вызов API для отправки реального SMS
   go('sms');
   setTimeout(() => { const b = document.querySelectorAll('.codebox')[0]; if(b) b.focus(); }, 300);
 }
@@ -2074,6 +2081,7 @@ function resendSMS() { toast('Kod yenidən göndərildi'); }
 function verifyCode() {
   const code = [...document.querySelectorAll('.codebox')].map(b => b.value).join('');
   if (code.length < 4) { toast('Kodu daxil edin'); return; }
+  // TODO: MVP — отправить код на сервер для верификации, не принимать любые 4 цифры
   go('hascar');
 }
 
@@ -2301,7 +2309,7 @@ function renderHome() {
     if (container) {
       const D = true;
       const myHtml = myT.map(t => mtHTML(t)).join('');
-      const ownNames = ['Ayxan İ.','Ayxan İlimov'];
+      const ownNames = ['Ayxan İ.','Ayxan İlimov']; // TODO: MVP — currentUser.name/fullName
       const others = passReqs.filter(r => !ownNames.includes(r.name));
       const matched = myT.length ? others.filter(r => myT.some(t => t.route.includes(r.from) && t.route.includes(r.to))) : others;
       const show = matched.length ? matched : others;
@@ -2863,7 +2871,8 @@ function doReserve(id) {
   else { myBookedTrips.unshift(bookingRecord); }
   // Add to driver pending
   if (!pendingBookings.find(function(b){return b.tripId===id;})) {
-    pendingBookings.push({tripId:id,passengerName:'Ayxan İ.',passengerInitial:'A',seat:seatLabel});
+    pendingBookings.// TODO: MVP — заменить на currentUser.name / currentUser.initial из профиля
+  push({tripId:id,passengerName:'Ayxan İ.',passengerInitial:'A',seat:seatLabel});
   }
   addNotification('Yeni rezervasiya: '+t.from+' → '+t.to+' — Ayxan İ.','booking');
   notifBookingConfirmed(t.from + ' → ' + t.to, t.driverFull);
@@ -2928,6 +2937,7 @@ function publishTrip() {
   const tripPrefs = [];
   document.querySelectorAll('#trip-prefs-list .pref-tag.on').forEach(function(el){ tripPrefs.push(el.dataset.tag); });
   trips.unshift({id:trips.length,from:cFrom,to:cTo,time:cTime,date:cDate,dur:'—',price,seats,
+    // TODO: MVP — driver/driverFull/rating/car/plate из currentUser профиля
     driver:'Ayxan İ.',driverFull:'Ayxan İlimov',rating:'5.0',tc:12,exp:'1',
     car:'Toyota Camry',color:'Gümüşü',plate:'10-AA-777',chip:'Rahat',
     notes:notes||(tripPrefs.length?tripPrefs.join(' · '):''),arrive:'—',pax:[],tags:tripPrefs.length?tripPrefs:['🎒 Bagaj']});
@@ -2961,6 +2971,7 @@ function publishPassReq() {
   const prefs = [...selectedPrefs];
   const note = document.getElementById('pr-notes').value.trim();
   const newReq = {id:Date.now(),from,to,date:prDate,time:prTime,
+    // TODO: MVP — name/initial/rating из currentUser
     name:'Ayxan İ.',initial:'A',rating:'5.0',prefs,notes:note,seats:sPax||1,
     status:'active',offers:[],driverRated:false};
   passReqs.unshift(newReq);
@@ -3064,7 +3075,8 @@ function sendMsg() {
   c.msgs.push({out:true, text:txt, time:t});
   renderMsgs(c); inp.value='';
   setTimeout(() => {
-    const r = ['Yaxşı!','Anladım!','Oldu!','Sağ olun!','Gözləyirəm.'];
+    const r = [// TODO: MVP — WebSocket / push для реальных сообщений
+    'Yaxşı!','Anladım!','Oldu!','Sağ olun!','Gözləyirəm.'];
     const replyText = r[Math.floor(Math.random()*r.length)];
     c.msgs.push({out:false, text:replyText, time:t});
     renderMsgs(c);
@@ -3638,6 +3650,7 @@ function sosCall(num) {
   closeSOS();
   window.location.href = 'tel:' + num;
 }
+// TODO: MVP — POST /api/sos { lat, lng, tripId, userId } + уведомить экстренные контакты
 function shareLocation() {
   const m = document.getElementById('sos-modal');
   const tripInfo = m ? (m.dataset.tripInfo || '') : '';
