@@ -323,7 +323,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 .splash{background:linear-gradient(155deg,#0f1f3d,#1a3a6e 60%,#0d4a1a);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;position:relative;overflow:hidden;}
 .sc{position:absolute;border-radius:50%;background:rgba(47,128,237,.07);animation:pulse 3s ease-in-out infinite;}
 .sc1{width:280px;height:280px;top:-60px;right:-60px;} .sc2{width:180px;height:180px;bottom:-30px;left:-50px;animation-delay:1s;}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}@keyframes heartbeat{0%{transform:scale(1)}14%{transform:scale(1.13)}28%{transform:scale(1)}42%{transform:scale(1.08)}60%,100%{transform:scale(1)}}
 .splogo{font-size:32px;font-weight:600;color:#fff;animation:li .6s .2s both ease;}
 .spg{color:var(--green);}
 .sptag{font-size:19px;font-weight:700;color:#a8ffc0;animation:li .6s .4s both ease;margin-top:8px;letter-spacing:-.3px;}
@@ -464,7 +464,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div class="splash">
     <div class="sc sc1"></div><div class="sc sc2"></div>
     <div style="animation:pp .6s .1s both ease;margin-bottom:16px;position:relative;display:flex;justify-content:center;align-items:center">
-      <div style="position:absolute;width:150px;height:150px;border-radius:50%;background:#ffffff;animation:pulse 3s ease-in-out infinite;animation-delay:.5s"></div>
+      <div style="position:absolute;width:150px;height:150px;border-radius:50%;background:#ffffff;animation:heartbeat 0.8s ease-in-out infinite;animation-delay:.5s"></div>
       <img src="icon-192.png?v=3" style="width:140px;height:140px;display:block;position:relative;z-index:1;background:transparent"/>
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
