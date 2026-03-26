@@ -493,8 +493,8 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <button id="gen-m" class="gen-btn on" onclick="selGender('m')">👨 Kişi</button>
       <button id="gen-f" class="gen-btn" onclick="selGender('f')">👩 Qadın</button>
     </div>
-    <div style="width:100%;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Yaş</div>
-    <input id="reg-age" type="number" min="18" max="80" placeholder="Yaşınız (min 18)" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 16px;font-size:15px;color:#fff;font-family:Inter,sans-serif;outline:none;margin-bottom:14px;box-sizing:border-box"/>
+    <div style="width:100%;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Doğum tarixi</div>
+    <input id="reg-age" type="date" max="2006-12-31" min="1944-01-01" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 16px;font-size:15px;color:#fff;font-family:Inter,sans-serif;outline:none;margin-bottom:14px;box-sizing:border-box;color-scheme:dark"/>
     <div style="width:100%;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Telefon nömrəsi</div>
     <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 16px;width:100%;display:flex;align-items:center;gap:10px;margin-bottom:16px;box-sizing:border-box">
       <div style="font-size:14px;font-weight:600;color:#fff;border-right:1px solid rgba(255,255,255,.3);padding-right:10px">🇦🇿 +994</div>
@@ -2050,9 +2050,11 @@ function sendSMS() {
   const nameEl=document.getElementById('reg-fullname');
   const ageEl=document.getElementById('reg-age');
   const name=nameEl?nameEl.value.trim():'';
-  const age=ageEl?parseInt(ageEl.value):25;
+  const dob=ageEl?ageEl.value:'';
+  const age=dob?Math.floor((new Date()-new Date(dob))/(365.25*24*3600*1000)):0;
   if(nameEl&&(!name||name.split(' ').length<2)){toast('Ad və soyadı daxil edin');return;}
-  if(ageEl&&(!age||age<18||age>80)){toast('Yaşınızı düzgün daxil edin (18-80)');return;}
+  if(ageEl&&(!dob)){toast('Doğum tarixini daxil edin');return;}
+  if(age<18){toast('Yaşınız 18-dən az ola bilməz');return;}
   const p = document.getElementById('phone-inp').value.replace(/\s/g, '');
   if (p.length < 9) { toast('Nömrəni düzgün daxil edin'); return; }
   regName=name; regAge=age; regPhone = p;
