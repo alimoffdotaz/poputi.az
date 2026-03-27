@@ -1363,7 +1363,7 @@ function driverConfirm(idx) {
   if (t && !t.pax.includes(b.passengerName)) t.pax.push(b.passengerName);
   // Update passenger booking status
   const mbIdx = myBookedTrips.findIndex(function(mb){return mb.tripId===b.tripId;});
-  if (mbIdx > -1) myBookedTrips[mbIdx].status = 'confirmed';
+  if (mbIdx > -1) { myBookedTrips[mbIdx].status = 'confirmed'; if (!myBookedTrips[mbIdx].trip && t) myBookedTrips[mbIdx].trip = t; }
   pendingBookings.splice(idx, 1);
   renderHome();
   addNotification('✅ ' + (t?t.from+' → '+t.to:'') + ' — Rezervasiyanız təsdiqləndi!', 'confirm');
@@ -2791,10 +2791,15 @@ function openSeatSelect(tripId, back) {
     el.className = 'seat-slot';
     el.style.pointerEvents = 'auto';
   });
-  // Mark taken seats
+  // Mark taken seats (occupied by passengers)
   const taken = t.pax.length;
   if (taken >= 1) markTaken(1);
   if (taken >= 2) markTaken(2);
+  // Mark seats beyond trip capacity as unavailable
+  const maxSeats = t.seats || 4;
+  if (maxSeats < 4) markTaken(4);
+  if (maxSeats < 3) markTaken(3);
+  if (maxSeats < 2) markTaken(2);
   // Restore previously selected seat if already booked
   const existing = myBookedTrips.find(function(b){return b.tripId===tripId;});
   if (existing && existing.seat) {
@@ -2870,7 +2875,7 @@ function doReserve(id) {
   const existIdx = myBookedTrips.findIndex(function(b){return b.tripId===id;});
   const seatNamesR = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
   const seatLabel = selSeats.map(function(s){return seatNamesR[s];}).join(', ')||'—';
-  const bookingRecord = {tripId:id, status:'pending', date:t.date, time:t.time, seat:seatLabel};
+  const bookingRecord = {tripId:id, status:'pending', date:t.date, time:t.time, seat:seatLabel, trip:t, driverRated:false};
   if (existIdx>-1) { myBookedTrips[existIdx]=bookingRecord; }
   else { myBookedTrips.unshift(bookingRecord); }
   // Add to driver pending
