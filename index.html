@@ -838,7 +838,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <!-- CHAT -->
 <div class="screen" id="s-chat">
     <div class="chdr">
-    <button class="bbtn" onclick="go('inbox')">←</button>
+    <button class="bbtn" onclick="chatBack()">←</button>
     <div style="flex:1"><div class="chn" id="chatn"></div><div class="chs">● Online</div></div>
     <button class="chcall" onclick="toast('📞 Zəng edilir...')">📞</button>
   </div>
@@ -1297,7 +1297,67 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <div class="toast" id="tst"></div>
 
 
-<script>const AVATAR_COLORS = [
+<script>// ── LOCALSTORAGE ────────────────────────────────────────
+function lsSave(key, val) {
+  try { localStorage.setItem('poputi_' + key, JSON.stringify(val)); } catch(e) {}
+}
+function lsLoad(key, def) {
+  try { const v = localStorage.getItem('poputi_' + key); return v !== null ? JSON.parse(v) : def; } catch(e) { return def; }
+}
+function lsClear() {
+  try {
+    ['profile','userCars','role','hasCar','userPrefs','driverPrefs',
+     'myBookedTrips','myRequests','myT','activeBookings','pendingBookings','notifPrompted']
+    .forEach(function(k){ localStorage.removeItem('poputi_' + k); });
+  } catch(e) {}
+}
+function saveState() {
+  lsSave('profile', {name:regName, phone:regPhone, gender:regGender, dob:regAge});
+  lsSave('userCars', userCars);
+  lsSave('role', role);
+  lsSave('hasCar', hasCar);
+  lsSave('userPrefs', userPrefs);
+  lsSave('driverPrefs', driverPrefs);
+  lsSave('myBookedTrips', myBookedTrips.map(function(b){
+    return {tripId:b.tripId,status:b.status,date:b.date,time:b.time,seat:b.seat,driverRated:b.driverRated||false};
+  }));
+  lsSave('myRequests', myRequests);
+  lsSave('myT', myT);
+  lsSave('activeBookings', activeBookings);
+  lsSave('pendingBookings', pendingBookings);
+}
+function loadState() {
+  const profile = lsLoad('profile', null);
+  if (profile) { regName=profile.name||''; regPhone=profile.phone||''; regGender=profile.gender||'m'; regAge=profile.dob||0; }
+  userCars = lsLoad('userCars', []);
+  role = lsLoad('role', 'passenger');
+  hasCar = lsLoad('hasCar', false);
+  userPrefs = lsLoad('userPrefs', []);
+  driverPrefs = lsLoad('driverPrefs', []);
+  const savedBookings = lsLoad('myBookedTrips', null);
+  if (Array.isArray(savedBookings)) {
+    myBookedTrips = savedBookings.map(function(b){
+      const tripId = b && typeof b.tripId === 'number' ? b.tripId : -1;
+      return Object.assign({}, b || {}, {trip: tripId >= 0 ? (trips[tripId] || null) : null});
+    });
+  } else if (savedBookings) {
+    myBookedTrips = [];
+  }
+  const savedReqs = lsLoad('myRequests', null);
+  if (Array.isArray(savedReqs)) myRequests = savedReqs;
+  else if (savedReqs) myRequests = [];
+  const savedMyT = lsLoad('myT', null);
+  if (Array.isArray(savedMyT)) myT = savedMyT;
+  else if (savedMyT) myT = [];
+  const savedActive = lsLoad('activeBookings', null);
+  if (savedActive && typeof savedActive === 'object' && !Array.isArray(savedActive)) activeBookings = savedActive;
+  else if (savedActive) activeBookings = {};
+  const savedPending = lsLoad('pendingBookings', null);
+  if (Array.isArray(savedPending)) pendingBookings = savedPending;
+  else if (savedPending) pendingBookings = [];
+}
+
+const AVATAR_COLORS = [
   '#E74C3C','#E67E22','#F1C40F','#2ECC71','#1ABC9C',
   '#3498DB','#9B59B6','#E91E63','#00BCD4','#FF5722'
 ];
@@ -1350,14 +1410,20 @@ let myRequests = [];
 let pendingBookings = [];
 let completingTripId = -1;
 let activeBookings = {};
+let userPrefs = []; // passenger prefs
+let driverPrefs = []; // driver prefs
+let notifEnabled = false;
 let notifications = [
   {text:'Poputi.az-a xoş gəldiniz! 🎉', type:'info', time:'İndi', read:false},
 ];
 
 // ── PENDING BOOKINGS (driver confirms passenger) ────────
-function driverConfirm(idx) {
+function driverConfirm(idx, source) {
   const b = pendingBookings[idx];
   if (!b) return;
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',runId:'post-fix-verify',hypothesisId:'H6',location:'index.html:driverConfirm',message:'driver confirmed reservation',data:{idx:idx,tripId:b.tripId,source:source||'unknown',pendingCountBefore:pendingBookings.length},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   activeBookings[b.tripId] = {status:'confirmed', initiator:'passenger', completedBy:null};
   const t = trips[b.tripId];
   if (t && !t.pax.includes(b.passengerName)) t.pax.push(b.passengerName);
@@ -1368,15 +1434,31 @@ function driverConfirm(idx) {
   renderHome();
   addNotification('✅ ' + (t?t.from+' → '+t.to:'') + ' — Rezervasiyanız təsdiqləndi!', 'confirm');
   toast('✅ Rezervasiya qəbul edildi');
+  saveState();
 }
 
-function driverReject(idx) {
+function driverReject(idx, source) {
+  const b = pendingBookings[idx];
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',runId:'post-fix-verify',hypothesisId:'H7',location:'index.html:driverReject',message:'driver rejected reservation',data:{idx:idx,tripId:b?b.tripId:null,source:source||'unknown',pendingCountBefore:pendingBookings.length},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  if (b) {
+    // Remove from myBookedTrips
+    const mi = myBookedTrips.findIndex(function(mb){return mb.tripId===b.tripId;});
+    if (mi > -1) myBookedTrips.splice(mi, 1);
+    // Remove from activeBookings
+    delete activeBookings[b.tripId];
+  }
   pendingBookings.splice(idx, 1);
   renderHome();
   toast('Rezervasiya rədd edildi');
+  saveState();
 }
 
 function renderPendingBookings() {
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',runId:'driver-confirm-visibility',hypothesisId:'H2',location:'index.html:renderPendingBookings',message:'render pending bookings section',data:{pendingCount:pendingBookings.length,role:role},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   if (!pendingBookings.length) return '';
   return '<div class="smart-label" style="color:var(--orange)">🔔 Yeni Rezervasiya (' + pendingBookings.length + ')</div>' +
     pendingBookings.map(function(b, i) {
@@ -1393,8 +1475,8 @@ function renderPendingBookings() {
         '</div>' +
         '<div style="font-size:13px;font-weight:700;color:var(--green)">' + (t?t.price+' AZN':'') + '</div></div>' +
         '<div style="display:flex;gap:8px;margin-top:10px">' +
-          '<button class="gbtn g" style="flex:1;margin:0;padding:10px" onclick="driverConfirm(' + i + ')">✓ Qəbul et</button>' +
-          '<button class="gbtn-s" style="flex:1;margin:0;height:44px;color:var(--red);border-color:var(--red)" onclick="driverReject(' + i + ')">✕ Rədd et</button>' +
+          '<button class="gbtn g" style="flex:1;margin:0;padding:10px" onclick="driverConfirm(' + i + ',\'home-pending\')">✓ Qəbul et</button>' +
+          '<button class="gbtn-s" style="flex:1;margin:0;height:44px;color:var(--red);border-color:var(--red)" onclick="driverReject(' + i + ',\'home-pending\')">✕ Rədd et</button>' +
         '</div></div>';
     }).join('');
 }
@@ -1525,6 +1607,8 @@ function tripCompleted(tripId) {
   completingTripId = typeof tripId==='number' ? tripId : -1;
   const t = completingTripId>=0 ? trips[completingTripId] : null;
   if (activeBookings[completingTripId]) activeBookings[completingTripId].status='completed';
+  const mbIdx = myBookedTrips.findIndex(function(b){return b.tripId===completingTripId;});
+  if (mbIdx > -1) myBookedTrips[mbIdx].status = 'completed';
   if (role==='driver') {
     const pName = t&&t.pax.length ? t.pax[0] : 'Sərnişin';
     document.getElementById('rsub').textContent = pName+' sərnişinini qiymətləndirin';
@@ -1533,6 +1617,7 @@ function tripCompleted(tripId) {
   }
   document.getElementById('rovl').style.display='flex';
   renderHome();
+  saveState();
 }
 
 function driverRatePassenger(name) {
@@ -1657,6 +1742,7 @@ function cancelBooking(tripId) {
     renderMyBookings();
     renderHome();
     go('mybookings');
+    saveState();
   });
 }
 
@@ -1694,6 +1780,7 @@ function editRequest(id) {
   const pidx=passReqs.findIndex(function(req){return req.id===id;});
   if(pidx>-1) passReqs.splice(pidx,1);
   go('passreq');
+  saveState();
 }
 
 // ── GENDER ─────────────────────────────────────────────
@@ -1950,8 +2037,8 @@ trips = [
     tags:['💺 Premium','❄️ Kondisioner','🚭 Siqaret yox']},
 ];
 
-const // TODO: MVP — поездки водителя с сервера (GET /api/my-trips)
-myT = [
+// TODO: MVP — поездки водителя с сервера (GET /api/my-trips)
+let myT = [
   {id:0,route:'Bakı → Gəncə',date:'Bu gün, 14:30',total:3,pax:['Leyla','Fərid'],status:'active'},
   {id:1,route:'Bakı → Lənkəran',date:'Sabah, 08:00',total:1,pax:['Aynur'],status:'full'},
   {id:2,route:'Gəncə → Bakı',date:'22 Mart, 09:00',total:3,pax:[],status:'open'},
@@ -1991,8 +2078,8 @@ REVIEWS = [
   {n:'Sevinc A.',i:'S',r:5,t:'Mükəmməl səfər! Rahat, təmiz, vaxtında.',route:'Gəncə → Bakı',d:'28 Fevral'},
 ];
 
-const // TODO: MVP — загружать историю чатов с сервера (GET /api/chats)
-convs = [
+// TODO: MVP — загружать историю чатов с сервера (GET /api/chats)
+const convs = [
   {id:0,peerName:'Rəşad Məmmədov',pi:'R',role:'driver',rt:'Bakı → Gəncə',mt:'Bu gün, 14:30',unread:1,
     msgs:[{out:false,text:'Salam! Məni 28 May metrosundan götürə bilərsiniz?',time:'13:15'},
           {out:true,text:'Salam! Bəli, əlbəttə.',time:'13:18'},
@@ -2019,17 +2106,29 @@ const MAP_SCREENS = {
 function go(n) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(MAP_SCREENS[n]);
-  if (!el) return;
+  if (!el) {
+    return;
+  }
   el.classList.add('active');
   if (n === 'inbox') renderInbox();
   if (n === 'history') renderHistory();
   if (n === 'myreviews') renderMyReviews();
   if (n === 'mybookings') renderMyBookings();
+  if (n === 'mytrips') {
+    const mtEl = document.getElementById('mylist');
+    if (mtEl) mtEl.innerHTML = myT && myT.length
+      ? myT.map(t => mtHTML(t)).join('')
+      : '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🗺</div><div style="color:var(--t2);font-size:14px">Aktiv səfər yoxdur</div></div>';
+  }
   if (n === 'notifs') renderNotifs();
   if (n === 'car') renderCarList();
   if (n === 'profile') renderPMenu();
   if (n === 'create') renderTripPrefs();
-  if (n === 'home') { renderHome(); if (!notifEnabled) requestNotifPermission(); setTimeout(initScrollCollapse, 100); }
+  if (n === 'home') {
+    renderHome();
+    if (!notifEnabled) requestNotifPermission();
+    setTimeout(initScrollCollapse, 100);
+  }
 }
 
 // ── ONBOARDING ─────────────────────────────────────────
@@ -2085,6 +2184,7 @@ function verifyCode() {
   const code = [...document.querySelectorAll('.codebox')].map(b => b.value).join('');
   if (code.length < 4) { toast('Kodu daxil edin'); return; }
   // TODO: MVP — отправить код на сервер для верификации, не принимать любые 4 цифры
+  saveState();
   go('hascar');
 }
 
@@ -2126,7 +2226,7 @@ function selSeatsProfile(n) {
   if (customEl) customEl.style.display = 'none';
 }
 
-function setNoCar() { hasCar = false; updateRoleSwitcher(); go('onboard'); }
+function setNoCar() { hasCar = false; updateRoleSwitcher(); go('onboard'); saveState(); }
 
 function saveRegCar() {
   const brandLbl = document.getElementById('reg-brand-lbl');
@@ -2147,6 +2247,7 @@ function saveRegCar() {
   hasCar = true;
   updateRoleSwitcher();
   go('onboard');
+  saveState();
 }
 
 function saveCarFromProfile() {
@@ -2171,6 +2272,7 @@ function saveCarFromProfile() {
   document.getElementById('car-add-view').style.display = 'none';
   document.getElementById('car-save-btn').style.display = 'none';
   renderPMenu();
+  saveState();
   go('car');
 }
 
@@ -2211,6 +2313,7 @@ function setRole(r) {
   }
   renderPMenu();
   renderHome();
+  saveState();
 }
 
 // ── RENDER HELPERS ──────────────────────────────────────
@@ -2309,6 +2412,9 @@ function renderHome() {
   if (role === 'driver') {
     // Driver home unchanged
     const container = document.getElementById('homelist');
+    // #region agent log
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',runId:'driver-confirm-visibility',hypothesisId:'H3',location:'index.html:renderHome(driver)',message:'driver home render starts',data:{pendingCount:pendingBookings.length,myTripsCount:myT.length,containerExists:!!container},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     if (container) {
       const D = true;
       const myHtml = myT.map(t => mtHTML(t)).join('');
@@ -2319,7 +2425,7 @@ function renderHome() {
       const preqSection = show.length
         ? '<div class="sec"><div class="sec-t" style="color:var(--blue)">🔍 Sərnişin Axtarır ('+show.length+')</div></div>' + show.map(r => preqHTML(r)).join('')
         : '';
-      container.innerHTML = myHtml + preqSection;
+      container.innerHTML = renderPendingBookings() + myHtml + preqSection;
     }
     document.getElementById('hfilters').style.display = 'none';
     document.getElementById('home-widget').innerHTML = '';
@@ -2480,7 +2586,7 @@ function renderPMenu() {
     {i:'🔔',l:'Bildirişlər',f:() => go('notifs'),b:'2'},
     {i:'💳',l:'Ödəniş üsulları',f:() => go('payment')},
     {i:'👤',l:'Sərnişin rejimi',f:() => switchRole('passenger')},
-    {i:'🚪',l:'Çıxış',f:() => go('splash'),red:true},
+    {i:'🚪',l:'Çıxış',f:() => { lsClear(); go('splash'); },red:true},
   ] : [
     {i:'🗺',l:'Səfər tarixçəsi',f:() => go('history')},
     {i:'💬',l:'Mesajlar',f:() => go('inbox')},
@@ -2488,7 +2594,7 @@ function renderPMenu() {
     {i:'💳',l:'Ödəniş üsulları',f:() => go('payment')},
     {i:'🔔',l:'Bildirişlər',f:() => go('notifs'),b:'2'},
     {i:'🚗',l:hasCar ? 'Sürücü ol' : 'Maşın əlavə et',f:() => hasCar ? switchRole('driver') : go('car')},
-    {i:'🚪',l:'Çıxış',f:() => go('splash'),red:true},
+    {i:'🚪',l:'Çıxış',f:() => { lsClear(); go('splash'); },red:true},
   ];
   const el = document.getElementById('pmenu');
   if (!el) return;
@@ -2671,7 +2777,9 @@ function openTrip(id, back) {
   const t = trips[id]; if (!t) return;
   const D = role === 'driver';
 
-  document.getElementById('tripback').onclick = () => go(back);
+  document.getElementById('tripback').onclick = () => {
+    go(back);
+  };
   document.getElementById('tdrt').textContent = `${t.from} → ${t.to}`;
   document.getElementById('tddt').textContent = `${t.date} · ${t.time}`;
   document.getElementById('tdpr').textContent = `${t.price} AZN`;
@@ -2697,6 +2805,9 @@ function openTrip(id, back) {
   const acts = document.getElementById('tdacts');
 
   if (D) {
+    // #region agent log
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',runId:'driver-confirm-visibility',hypothesisId:'H1',location:'index.html:openTrip(driver)',message:'driver opened trip detail',data:{tripId:id,pendingCount:pendingBookings.length,back:back},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     pxSec.style.display = 'block';
     const paxList = document.getElementById('tdpaxlist');
     paxList.innerHTML = '';
@@ -2713,7 +2824,32 @@ function openTrip(id, back) {
     }
     acts.innerHTML = '';
     const zbtn = document.createElement('button'); zbtn.className='act sec'; zbtn.textContent='📞 Zəng'; zbtn.onclick=()=>toast('📞 Zəng...'); acts.appendChild(zbtn);
-    const lbtn = document.createElement('button'); lbtn.className='act dan'; lbtn.textContent='✕ Ləğv et'; lbtn.onclick=()=>toast('Ləğv edildi'); acts.appendChild(lbtn);
+    const pendingIdx = pendingBookings.findIndex(function(b){ return b.tripId===id; });
+    if (pendingIdx > -1) {
+      const abtn = document.createElement('button');
+      abtn.className = 'act pri';
+      abtn.textContent = '✓ Qəbul et';
+      abtn.onclick = function() {
+        driverConfirm(pendingIdx, 'trip-card');
+        go(back);
+      };
+      acts.appendChild(abtn);
+    }
+    const lbtn = document.createElement('button');
+    lbtn.className='act dan';
+    lbtn.textContent = pendingIdx > -1 ? '✕ Rədd et' : '✕ Ləğv et';
+    lbtn.onclick=()=>{
+      // #region agent log
+      fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',runId:'driver-confirm-visibility',hypothesisId:'H5',location:'index.html:openTrip(driver):cancelClick',message:'driver tapped cancel/reject in trip detail',data:{tripId:id,pendingCountBefore:pendingBookings.length,activeBooking:activeBookings[id]||null,pendingIdx:pendingIdx},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      if (pendingIdx > -1) {
+        driverReject(pendingIdx, 'trip-card');
+        go(back);
+      } else {
+        toast('Ləğv edildi');
+      }
+    };
+    acts.appendChild(lbtn);
   } else {
     pxSec.style.display = 'none';
     acts.innerHTML = '';
@@ -2790,16 +2926,14 @@ function openSeatSelect(tripId, back) {
     if (!el) return;
     el.className = 'seat-slot';
     el.style.pointerEvents = 'auto';
+    el.onclick = function(){ selSeat(i); };
   });
-  // Mark taken seats (occupied by passengers)
-  const taken = t.pax.length;
-  if (taken >= 1) markTaken(1);
-  if (taken >= 2) markTaken(2);
-  // Mark seats beyond trip capacity as unavailable
+  // Mark seats beyond trip capacity as unavailable (TODO:MVP — use real seat data)
   const maxSeats = t.seats || 4;
-  if (maxSeats < 4) markTaken(4);
-  if (maxSeats < 3) markTaken(3);
-  if (maxSeats < 2) markTaken(2);
+  [1,2,3,4].forEach(function(i){ if (i > maxSeats) markTaken(i); });
+  // Mark taken seats by passenger count (positional, demo only)
+  const taken = t.pax.length;
+  for (var si = 1; si <= taken && si <= maxSeats; si++) { markTaken(si); }
   // Restore previously selected seat if already booked
   const existing = myBookedTrips.find(function(b){return b.tripId===tripId;});
   if (existing && existing.seat) {
@@ -2836,7 +2970,10 @@ function openSeatSelect(tripId, back) {
 
 function markTaken(i) {
   const el = document.getElementById('seat-' + i);
-  if (el) { el.className = 'seat-slot taken'; el.onclick = null; }
+  if (el) {
+    el.className = 'seat-slot taken';
+    el.onclick = null;
+  }
 }
 
 function selSeat(i) {
@@ -2883,6 +3020,9 @@ function doReserve(id) {
     pendingBookings.// TODO: MVP — заменить на currentUser.name / currentUser.initial из профиля
   push({tripId:id,passengerName:'Ayxan İ.',passengerInitial:'A',seat:seatLabel});
   }
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',runId:'driver-confirm-visibility',hypothesisId:'H4',location:'index.html:doReserve',message:'passenger created reservation request',data:{tripId:id,pendingCount:pendingBookings.length,seatLabel:seatLabel,bookingStatus:'pending'},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   addNotification('Yeni rezervasiya: '+t.from+' → '+t.to+' — Ayxan İ.','booking');
   notifBookingConfirmed(t.from + ' → ' + t.to, t.driverFull);
   const cmr2 = document.getElementById('cf-myreqs-btn'); if(cmr2) { cmr2.style.display='block'; cmr2.textContent='🎫 Rezervlərimə bax'; cmr2.onclick=function(){showMyBookings();switchMBTab('trips');}; }
@@ -2904,6 +3044,7 @@ function doReserve(id) {
     cb.onclick = function(){tripCompleted(id);};
   }
   go('confirm');
+  saveState();
 }
 
 function tripCompleted(driverName) {
@@ -2966,6 +3107,7 @@ function publishTrip() {
   const cmr = document.getElementById('cf-myreqs-btn'); if(cmr) { cmr.style.display='block'; cmr.textContent='🗺 Səfərlərimə bax'; cmr.onclick=function(){showMyTrips();}; }
   cFrom=''; cTo=''; cDate=''; cTime='';
   go('confirm');
+  saveState();
 }
 
 function publishPassReq() {
@@ -3005,6 +3147,7 @@ function publishPassReq() {
   document.getElementById('pr-notes').value='';
   document.querySelectorAll('.pref-chip').forEach(c => c.classList.remove('on'));
   go('confirm');
+  saveState();
 }
 
 function showMyTrips() {
@@ -3022,7 +3165,27 @@ function showMyBookings() {
 }
 
 // ── CHAT ───────────────────────────────────────────────
+let lastChatSource = 'inbox';
+const CHAT_BACK_ALLOWED = {confirm:true, trip:true, driverprofile:true, inbox:true, mybookings:true, passreq:true, home:true};
+function currentScreenKey() {
+  const active = document.querySelector('.screen.active');
+  if (!active) return null;
+  const activeId = active.id;
+  const keys = Object.keys(MAP_SCREENS);
+  for (var i = 0; i < keys.length; i++) {
+    if (MAP_SCREENS[keys[i]] === activeId) return keys[i];
+  }
+  return null;
+}
+
+function chatBack() {
+  var target = (lastChatSource && CHAT_BACK_ALLOWED[lastChatSource]) ? lastChatSource : 'inbox';
+  go(target);
+}
+
 function openChatById(id) {
+  const src = currentScreenKey();
+  if (src && src !== 'chat') lastChatSource = CHAT_BACK_ALLOWED[src] ? src : 'inbox';
   let idx = typeof id === 'number' && convs[id] && convs[id].id === id ? id : convs.findIndex(function(c){return c.id===id;});
   if (idx < 0) idx = id;
   curChat = idx;
@@ -3573,54 +3736,61 @@ function tick() {
 }
 
 // ── INIT ───────────────────────────────────────────────
+loadState();
 setInterval(tick, 1000); tick();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-// TODO: REPLACE WITH REAL DATA
-activeBookings[0] = {status:'confirmed', initiator:'passenger', completedBy:null};
-myBookedTrips = [
-  {
-    id:'book1', tripId:0, status:'confirmed', seat:2, driverRated:false,
-    trip:trips[0]
-  },
-  {
-    id:'book2', tripId:1, status:'pending', seat:1, driverRated:false,
-    trip:trips[1]
-  },
-  {
-    id:'book3', tripId:2, status:'completed', seat:3, driverRated:false,
-    trip:trips[2]
-  }
-];
-myRequests = [
-  {
-    id:'req1', from:'Bakı', to:'Şəmkir', date:'Sabah', time:'09:00', seats:1,
-    notes:'Baqajım var', prefs:['🎒 Bagaj'],
-    status:'confirmed',
-    offers:[{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6}],
-    acceptedOffer:{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6},
-    driverRated:false
-  },
-  {
-    id:'req2', from:'Bakı', to:'Lənkəran', date:'3 Aprel', time:'08:00', seats:1,
-    notes:'', prefs:[],
-    status:'active', offers:[], acceptedOffer:null, driverRated:false
-  },
-  {
-    id:'req3', from:'Bakı', to:'Quba', date:'Bu gün', time:'10:00', seats:1,
-    notes:'', prefs:[],
-    status:'offered',
-    offers:[
-      {driverName:'Kamran Əliyev', driverPhone:'+994 50 111 22 33', rating:'4.8', car:'Kia Cerato', color:'Qara', plate:'33-CC-111', price:9},
-      {driverName:'Tural Hüseynov', driverPhone:'+994 77 444 55 66', rating:'4.5', car:'Nissan Sentra', color:'Gümüşü', plate:'55-DD-222', price:8}
-    ],
-    acceptedOffer:null, driverRated:false
-  }
-];
+const hasSavedTripData = myBookedTrips.length > 0 || myRequests.length > 0 || Object.keys(activeBookings || {}).length > 0;
+if (!hasSavedTripData) {
+  // TODO: REPLACE WITH REAL DATA
+  activeBookings[0] = {status:'confirmed', initiator:'passenger', completedBy:null};
+  myBookedTrips = [
+    {
+      id:'book1', tripId:0, status:'confirmed', seat:2, driverRated:false,
+      trip:trips[0]
+    },
+    {
+      id:'book2', tripId:1, status:'pending', seat:1, driverRated:false,
+      trip:trips[1]
+    },
+    {
+      id:'book3', tripId:2, status:'completed', seat:3, driverRated:false,
+      trip:trips[2]
+    }
+  ];
+  myRequests = [
+    {
+      id:'req1', from:'Bakı', to:'Şəmkir', date:'Sabah', time:'09:00', seats:1,
+      notes:'Baqajım var', prefs:['🎒 Bagaj'],
+      status:'confirmed',
+      offers:[{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6}],
+      acceptedOffer:{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6},
+      driverRated:false
+    },
+    {
+      id:'req2', from:'Bakı', to:'Lənkəran', date:'3 Aprel', time:'08:00', seats:1,
+      notes:'', prefs:[],
+      status:'active', offers:[], acceptedOffer:null, driverRated:false
+    },
+    {
+      id:'req3', from:'Bakı', to:'Quba', date:'Bu gün', time:'10:00', seats:1,
+      notes:'', prefs:[],
+      status:'offered',
+      offers:[
+        {driverName:'Kamran Əliyev', driverPhone:'+994 50 111 22 33', rating:'4.8', car:'Kia Cerato', color:'Qara', plate:'33-CC-111', price:9},
+        {driverName:'Tural Hüseynov', driverPhone:'+994 77 444 55 66', rating:'4.5', car:'Nissan Sentra', color:'Gümüşü', plate:'55-DD-222', price:8}
+      ],
+      acceptedOffer:null, driverRated:false
+    }
+  ];
+}
 renderHome();
 renderQR();
 renderPMenu();
 updateBadge();
 updateRoleSwitcher();
+const startupRole = (role === 'driver' && hasCar) ? 'driver' : 'passenger';
+setRole(startupRole);
+if (regPhone) go('home');
 
 
 // ── SOS ────────────────────────────────────────────────
@@ -3754,7 +3924,6 @@ function shareTrip() {
 }
 
 // ── NOTIFICATIONS ──────────────────────────────────────
-let notifEnabled = false;
 
 function requestNotifPermission() {
   if (!('Notification' in window)) return;
@@ -3763,6 +3932,11 @@ function requestNotifPermission() {
     return;
   }
   if (Notification.permission !== 'denied') {
+    const alreadyPrompted = lsLoad('notifPrompted', false);
+    if (alreadyPrompted) {
+      return;
+    }
+    lsSave('notifPrompted', true);
     Notification.requestPermission().then(function(p) {
       notifEnabled = p === 'granted';
       if (notifEnabled) toast('🔔 Bildirişlər aktiv edildi');
@@ -3946,9 +4120,7 @@ function clearField(field) {
 }
 
 // ── USER PREFERENCES ───────────────────────────────────
-let userPrefs = []; // passenger prefs
 const ALL_TAGS = ['🚭 Siqaret yox', '🎒 Bagaj', '🎵 Musiqi', '🔇 Sakit', '💬 Söhbət', '❄️ Kondisioner', '🛋 Premium', '👩 Yalnız qadınlar'];
-let driverPrefs = []; // driver prefs
 
 function openPrefs() {
   const prefs = role === 'driver' ? driverPrefs : userPrefs;
@@ -4070,6 +4242,7 @@ function switchRole(newRole) {
   renderPMenu();
   renderHome();
   toast(D ? '🚗 Sürücü rejiminə keçdiniz' : '👤 Sərnişin rejiminə keçdiniz');
+  saveState();
 }
 
 function renderTripPrefs() {
@@ -4097,6 +4270,7 @@ function acceptOffer(reqId, offer) {
   renderMyBookings();
   renderHome();
   toast('✅ Sürücü qəbul edildi!');
+  saveState();
 }
 
 // ── BOOKING DETAIL ─────────────────────────────────────
