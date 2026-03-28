@@ -146,6 +146,8 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 .sbt:active{background:var(--green);color:#fff;border-color:var(--green);}
 .scnt{font-size:18px;font-weight:600;color:var(--t1);min-width:20px;text-align:center;}
 .gbtn{display:block;margin:8px 16px 16px;width:calc(100% - 32px);color:#fff;border:none;border-radius:var(--rb);height:48px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+/* Modal #dpo-content: inline width:100% + .gbtn horizontal margin caused overflow → buttons shifted right */
+#dpo-content .gbtn,#dpo-content .gbtn-s{margin-left:0;margin-right:0;width:100%;max-width:100%;box-sizing:border-box;}
 .gbtn.g{background:var(--green);} .gbtn.g:active{background:var(--gp);}
 .gbtn.b{background:var(--blue);} .gbtn.b:active{background:var(--bp);}
 .gbtn-s{display:block;margin:0 16px 12px;width:calc(100% - 32px);background:transparent;color:var(--t1);border:1px solid var(--bd);border-radius:var(--rb);height:44px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;}
@@ -302,7 +304,8 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 .mttop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
 .mtroute{font-size:14px;font-weight:600;color:var(--t1);}
 .mtst{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;}
-.mtst.active{background:#FEF3C7;color:#92400E;} .mtst.full{background:#FEE2E2;color:#991B1B;} .mtst.open{background:var(--gbg);color:var(--gp);}
+.mtst.active{background:#FEF3C7;color:#92400E;} .mtst.full{background:#FEE2E2;color:#991B1B;} .mtst.open{background:var(--gbg);color:var(--gp);} .mtst.cancelled{background:#FEE2E2;color:#991B1B;}
+.mtcard-cancelled{cursor:default;border-left:3px solid var(--red);} .mtcard-cancelled:active{border-color:var(--bd);}
 .pd2{width:22px;height:22px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600;border:2px solid var(--bg);margin-right:-6px;}
 .pd2.e{background:var(--bd);color:var(--t2);}
 /* EARN */
@@ -469,7 +472,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     </div>
     <div class="splogo"><span class="spg">poputi</span>.az</div>
     <div class="sptag">Gəl bir yerdə gedək!</div>
-    <div style="position:absolute;bottom:24px;font-size:11px;color:rgba(255,255,255,.5);font-size:13px;font-family:Inter,sans-serif">v0.5.32</div>
+    <div id="app-release-splash" style="position:absolute;bottom:24px;font-size:12px;color:rgba(255,255,255,.55);font-family:Inter,sans-serif">—</div>
     <div class="spst">
       <div style="text-align:center"><div class="sstv">12K+</div><div class="sstl">İstifadəçi</div></div>
       <div style="text-align:center"><div class="sstv">850+</div><div class="sstl">Gündəlik Səfər</div></div>
@@ -486,8 +489,10 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div style="animation:pp .5s both ease;margin-bottom:16px;position:relative;display:flex;justify-content:center;align-items:center"><div style="position:absolute;width:110px;height:110px;border-radius:50%;background:#ffffff;animation:pulse 3s ease-in-out infinite;animation-delay:.5s"></div><img src="icon-192.png?v=3" style="width:100px;height:100px;display:block;position:relative;z-index:1;background:transparent"/></div>
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px">Xoş gəldiniz!</div>
     <div style="font-size:13px;color:rgba(255,255,255,.6);margin-bottom:24px">Hesab yaratmaq üçün məlumatlarınızı daxil edin</div>
-    <div style="width:100%;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Ad Soyad</div>
-    <input id="reg-fullname" type="text" placeholder="Ad və soyadınız" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 16px;font-size:15px;color:#fff;font-family:Inter,sans-serif;outline:none;margin-bottom:14px;box-sizing:border-box"/>
+    <div style="width:100%;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Ad</div>
+    <input id="reg-firstname" type="text" placeholder="Adınız" autocomplete="given-name" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 16px;font-size:15px;color:#fff;font-family:Inter,sans-serif;outline:none;margin-bottom:10px;box-sizing:border-box"/>
+    <div style="width:100%;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Soyad</div>
+    <input id="reg-lastname" type="text" placeholder="Soyadınız" autocomplete="family-name" style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:13px 16px;font-size:15px;color:#fff;font-family:Inter,sans-serif;outline:none;margin-bottom:14px;box-sizing:border-box"/>
     <div style="width:100%;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Cins</div>
     <div style="display:flex;gap:8px;width:100%;margin-bottom:14px">
       <button id="gen-m" class="gen-btn on" onclick="selGender('m')">👨 Kişi</button>
@@ -512,11 +517,11 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div style="font-family:Inter,sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">Kodu daxil edin</div>
     <div style="font-size:14px;color:rgba(255,255,255,.65);margin-bottom:4px" id="sms-hint">+994 50 ••• ••67 nömrəsinə</div>
     <div style="font-size:13px;color:var(--green);margin-bottom:28px">SMS göndərildi</div>
-    <div style="display:flex;gap:10px;margin-bottom:20px" id="code-boxes">
-      <input class="codebox" maxlength="1" type="tel" oninput="codeInput(this,0)" onkeydown="codeDel(this,event)"/>
-      <input class="codebox" maxlength="1" type="tel" oninput="codeInput(this,1)" onkeydown="codeDel(this,event)"/>
-      <input class="codebox" maxlength="1" type="tel" oninput="codeInput(this,2)" onkeydown="codeDel(this,event)"/>
-      <input class="codebox" maxlength="1" type="tel" oninput="codeInput(this,3)" onkeydown="codeDel(this,event)"/>
+    <div style="display:flex;gap:10px;margin-bottom:20px" id="code-boxes" onpaste="onSmsCodePaste(event)">
+      <input class="codebox" maxlength="1" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" oninput="codeInput(this,0)" onkeydown="codeDel(this,event)"/>
+      <input class="codebox" maxlength="1" type="tel" inputmode="numeric" pattern="[0-9]*" oninput="codeInput(this,1)" onkeydown="codeDel(this,event)"/>
+      <input class="codebox" maxlength="1" type="tel" inputmode="numeric" pattern="[0-9]*" oninput="codeInput(this,2)" onkeydown="codeDel(this,event)"/>
+      <input class="codebox" maxlength="1" type="tel" inputmode="numeric" pattern="[0-9]*" oninput="codeInput(this,3)" onkeydown="codeDel(this,event)"/>
     </div>
     <div id="sms-err" style="font-size:13px;color:var(--red);min-height:20px;margin-bottom:8px"></div>
     <div style="font-size:13px;color:rgba(255,255,255,.5);cursor:pointer" onclick="resendSMS()">Kodu yenidən göndər</div>
@@ -616,7 +621,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       </div>
     </div>
     <div id="hd" style="display:none">
-      <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:10px">Salam, Ayxan! 🚗</div>
+      <div id="driver-home-greet" style="font-size:15px;font-weight:600;color:#fff;margin-bottom:10px">Salam, Dost! 🚗</div>
       <div class="dpanel">
         <div class="dprow">
           <button class="dpbtn" onclick="go('create')"><span class="dpico">➕</span>Yarat</button>
@@ -760,6 +765,19 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <button class="cbtn" onclick="openSheet('pr-date')"><span id="pr-date-lbl">Tarix seçin</span><span>📅</span></button>
       <div class="fl">Vaxt</div>
       <button class="cbtn" onclick="openSheet('pr-time')"><span id="pr-time-lbl">Vaxt seçin</span><span>🕐</span></button>
+      <div class="fl">Neçə nəfər? (max <span id="pr-pax-max-lbl">20</span>)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px" id="pr-pax-row">
+        <button type="button" class="seat-opt on" id="pr-pax-1" onclick="selPrPaxQuick(1)">1</button>
+        <button type="button" class="seat-opt" id="pr-pax-2" onclick="selPrPaxQuick(2)">2</button>
+        <button type="button" class="seat-opt" id="pr-pax-3" onclick="selPrPaxQuick(3)">3</button>
+        <button type="button" class="seat-opt" id="pr-pax-4" onclick="selPrPaxQuick(4)">4</button>
+        <button type="button" class="seat-opt" id="pr-pax-5" onclick="selPrPaxQuick(5)">5</button>
+        <button type="button" class="seat-opt" id="pr-pax-6" onclick="selPrPaxQuick(6)">6</button>
+        <button type="button" class="seat-opt" id="pr-pax-8" onclick="selPrPaxQuick(8)">8</button>
+        <button type="button" class="seat-opt" id="pr-pax-10" onclick="selPrPaxQuick(10)">10</button>
+        <button type="button" class="seat-opt" id="pr-pax-edit" onclick="selPrPaxManual()">✏️</button>
+      </div>
+      <input class="fi" id="pr-pax-custom" type="number" inputmode="numeric" min="1" max="20" placeholder="1–20 əl ilə daxil edin" style="display:none;margin-bottom:14px" oninput="onPrPaxCustomInput(this)"/>
       <div class="fl">Üstünlüklər</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px" id="pref-chips">
         <div class="pref-chip" onclick="togPref(this)" data-v="🚭 Siqaret yox">🚭 Siqaret yox</div>
@@ -768,9 +786,14 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
         <div class="pref-chip" onclick="togPref(this)" data-v="💬 Söhbət">💬 Söhbətsevər</div>
         <div class="pref-chip" onclick="togPref(this)" data-v="🔇 Sakit">🔇 Sakit səfər</div>
         <div class="pref-chip" onclick="togPref(this)" data-v="❄️ Kondisioner">❄️ Kondisioner</div>
+        <div class="pref-chip" onclick="togPref(this)" data-v="👩 Yalnız qadınlar">👩 Yalnız qadınlar</div>
       </div>
       <div class="fl">Əlavə qeyd</div>
       <input class="fi" id="pr-notes" placeholder="Məs. Uşaqla gedirəm, yaxud..."/>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--t1);cursor:pointer">
+        <input type="checkbox" id="pr-buyout-all" onchange="togglePrBuyoutAll(this.checked)">
+        <span>💳 Bütün yerləri ödəyirəm</span>
+      </label>
     </div>
     <div style="height:4px"></div>
   </div>
@@ -789,8 +812,8 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   <div class="bhdr"><button class="bbtn" id="seat-back">←</button><div class="bhdr-t">Yer seçin</div></div>
   <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:24px 20px;background:var(--sf);">
     <div style="font-size:13px;color:var(--t2);margin-bottom:20px;text-align:center" id="seat-trip-info"></div>
-    <!-- Car top view -->
-    <div style="background:var(--bg);border:1.5px solid var(--bd);border-radius:20px;padding:20px 16px;width:100%;max-width:300px;">
+    <!-- Car top view (≤4 sərnişin yeri) və ya geniş layout üçün şəbəkə -->
+    <div id="seat-classic-layout" style="background:var(--bg);border:1.5px solid var(--bd);border-radius:20px;padding:20px 16px;width:100%;max-width:300px;">
       <!-- Steering wheel SVG -->
       <div style="display:flex;justify-content:flex-start;margin-bottom:4px;padding-left:16px">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#9CA3AF" stroke-width="3"/><circle cx="16" cy="16" r="5" fill="#9CA3AF"/><line x1="16" y1="2" x2="16" y2="11" stroke="#9CA3AF" stroke-width="3"/><line x1="4" y1="22" x2="12" y2="17" stroke="#9CA3AF" stroke-width="3"/><line x1="28" y1="22" x2="20" y2="17" stroke="#9CA3AF" stroke-width="3"/></svg>
@@ -799,18 +822,23 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <div style="display:flex;gap:10px;margin-bottom:10px;justify-content:space-between">
         <div class="seat-slot occupied" id="seat-0"><div class="seat-icon">💺</div><div class="seat-lbl">Sürücü</div></div>
         <div style="flex:1"></div>
-        <div class="seat-slot" id="seat-1" onclick="selSeat(1)"><div class="seat-icon">💺</div><div class="seat-lbl">Ön</div></div>
+        <div class="seat-slot" id="seat-1" onclick="selSeat(1)"><div class="seat-icon">💺</div><div class="seat-lbl">Ön sağ</div></div>
       </div>
       <!-- Divider -->
       <div style="height:1px;background:var(--bd);margin:4px 0"></div>
       <!-- Back row: 3 seats symmetric -->
       <div style="display:flex;gap:8px;margin-top:8px;justify-content:space-between">
-        <div class="seat-slot" id="seat-2" onclick="selSeat(2)"><div class="seat-icon">💺</div><div class="seat-lbl">Sol</div></div>
-        <div class="seat-slot" id="seat-3" onclick="selSeat(3)"><div class="seat-icon">💺</div><div class="seat-lbl">Orta</div></div>
-        <div class="seat-slot" id="seat-4" onclick="selSeat(4)"><div class="seat-icon">💺</div><div class="seat-lbl">Sağ</div></div>
+        <div class="seat-slot" id="seat-2" onclick="selSeat(2)"><div class="seat-icon">💺</div><div class="seat-lbl">Arxa sol</div></div>
+        <div class="seat-slot" id="seat-3" onclick="selSeat(3)"><div class="seat-icon">💺</div><div class="seat-lbl">Arxa orta</div></div>
+        <div class="seat-slot" id="seat-4" onclick="selSeat(4)"><div class="seat-icon">💺</div><div class="seat-lbl">Arxa sağ</div></div>
       </div>
     </div>
-    <div style="margin-top:16px;display:flex;gap:16px;font-size:12px;color:var(--t2)">
+    <div id="seat-extended-block" style="display:none;width:100%;max-width:340px;margin-top:4px">
+      <div id="seat-qty-panel" style="display:none;width:100%"></div>
+      <div id="seat-extended-hint" style="font-size:12px;color:var(--t2);margin-bottom:10px;text-align:center;line-height:1.4;display:none">Əlavə yerlər (sxemsiz)</div>
+      <div id="seat-extended-grid" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center"></div>
+    </div>
+    <div id="seat-legend-row" style="margin-top:16px;display:flex;gap:16px;font-size:12px;color:var(--t2)">
       <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:14px;border-radius:4px;background:var(--gbg);border:1.5px solid var(--green)"></div>Boş</div>
       <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:14px;border-radius:4px;background:var(--bd)"></div>Tutulub</div>
       <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:14px;border-radius:4px;background:var(--blue)"></div>Seçilmiş</div>
@@ -875,7 +903,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <button class="gbtn-s" style="flex:1;margin:0;height:48px" onclick="go('home')">🏠 Əsas</button>
     </div>
     <button class="gbtn-s" id="cf-myreqs-btn" style="width:100%;margin:8px 0 0;display:none;border-color:var(--blue);color:var(--blue)" onclick="showMyBookings();switchMBTab('reqs')">📋 Müraciətlərimə bax</button>
-    <button class="gbtn-s" style="width:100%;margin:8px 0 0;border-color:var(--green);color:var(--green)" id="cf-complete-btn" onclick="tripCompleted()" style="display:none">✓ Reys tamamlandı — Qiymətləndir</button>
+    <button class="gbtn-s" id="cf-complete-btn" style="width:100%;margin:8px 0 0;border-color:var(--green);color:var(--green);display:none" onclick="tripCompleted()">✓ Reys tamamlandı — Qiymətləndir</button>
   </div>
   <div class="rovl" id="rovl" style="display:none">
     <div class="rsheet">
@@ -902,7 +930,10 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <div class="fl">Qiymət (bir yer)</div>
       <div class="pbox"><div class="pd" id="pdv">8 AZN</div><div class="pd-s">Tövsiyə olunan qiymət</div><input class="slider" id="cpr" type="range" min="2" max="30" value="8" oninput="document.getElementById('pdv').textContent=this.value+' AZN'"/></div>
       <div class="fl">Mövcud yerlər</div>
-      <div class="sbox"><div class="slbl">Sərnişin sayı</div><div class="sctl"><button class="sbt" onclick="cs(-1)">−</button><div class="scnt" id="sc">3</div><button class="sbt" onclick="cs(1)">+</button></div></div>
+      <div class="fl">Avtomobil</div>
+      <select class="fi" id="create-car-select" onchange="onCreateCarChange(this.value)"></select>
+      <div class="fl">Boş yerlər</div>
+      <div id="create-seat-availability" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>
       <div class="fl">Qeyd (ixtiyari)</div>
       <input class="fi" id="cnotes" placeholder="Məs. Bagaj qəbul edilir..."/>
       <div class="fl">Səfər şərtləri</div>
@@ -923,7 +954,17 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <!-- MY TRIPS -->
 <div class="screen" id="s-mytrips">
     <div class="bhdr gr"><button class="bbtn" onclick="go('home')">←</button><div class="bhdr-t">Mənim Səfərlərim</div></div>
-  <div class="scr"><div style="height:10px"></div><div id="mylist"></div><div style="height:8px"></div></div>
+  <div class="scr">
+    <div id="myt-filter-wrap" class="fbar" style="margin:0;padding-top:10px">
+      <button type="button" class="fb myt-f on" data-v="all" onclick="setMyTStatusFilter('all')">Hamısı</button>
+      <button type="button" class="fb myt-f" data-v="open" onclick="setMyTStatusFilter('open')">Açıq</button>
+      <button type="button" class="fb myt-f" data-v="active" onclick="setMyTStatusFilter('active')">Aktiv</button>
+      <button type="button" class="fb myt-f" data-v="full" onclick="setMyTStatusFilter('full')">Dolu</button>
+      <button type="button" class="fb myt-f" data-v="cancelled" onclick="setMyTStatusFilter('cancelled')">Ləğv</button>
+    </div>
+    <div id="mylist"></div>
+    <div style="height:8px"></div>
+  </div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
@@ -960,7 +1001,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <div class="screen" id="s-profile">
     <div class="phdr" id="phdr">
     <div class="pavw"><div class="pav" id="pav-el">A</div><div class="pave" onclick="changeAvatar()">✏</div></div>
-    <div class="pname">Ayxan İlimov</div>
+    <div class="pname" id="profile-fullname">—</div>
     <div class="pphone">+994 50 ••• ••56</div>
     <div class="prb" id="prole">👤 Sərnişin rejimi</div>
     <button onclick="showSOS()" style="margin-top:8px;background:#FEE2E2;border:1.5px solid #FECACA;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;color:var(--red);cursor:pointer;font-family:Inter,sans-serif">🆘 SOS</button>
@@ -971,7 +1012,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <div class="pst"><div class="pstv" id="ps3v">⭐5.0</div><div class="pstl" id="ps3l">Reytinq</div></div>
     </div>
   </div>
-  <div class="scr" style="background:var(--sf)"><div class="msec" id="pmenu"></div><div style="height:8px"></div></div>
+  <div class="scr" style="background:var(--sf)"><div class="msec" id="pmenu"></div><div id="app-release-profile" style="text-align:center;padding:10px 16px 2px;font-size:11px;color:var(--t2)">—</div><div style="height:8px"></div></div>
   <div class="bnav">
     <div class="ni" onclick="go('home')"><div class="ni-i">🏠</div><div class="ni-l">Əsas</div></div>
     <div class="ni ni-plus" onclick="plusBtn()"><div class="ni-i">➕</div><div class="ni-l">Yarat</div></div>
@@ -1078,10 +1119,10 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <div id="notiflist"></div>
     <div style="padding:12px 16px 0">
       <div class="fl">Bildiriş parametrləri</div>
-      <div class="togrow"><div><div class="togl">Rezervasiya bildirişi</div><div class="togs">Yeni rezerv olunanda</div></div><button class="tog on" onclick="togBtn(this)"></button></div>
-      <div class="togrow"><div><div class="togl">Mesaj bildirişi</div><div class="togs">Yeni mesaj gələndə</div></div><button class="tog on" data-type="push" onclick="togBtn(this)"></button></div>
-      <div class="togrow"><div><div class="togl">Səfər xatırlatması</div><div class="togs">Səfərdən 1 saat əvvəl</div></div><button class="tog on" onclick="togBtn(this)"></button></div>
-      <div class="togrow"><div><div class="togl">Promosyonlar</div><div class="togs">Endirim və təkliflər</div></div><button class="tog off" onclick="togBtn(this)"></button></div>
+      <div class="togrow"><div><div class="togl">Rezervasiya bildirişi</div><div class="togs">Yeni rezerv olunanda</div></div><button type="button" class="tog on" data-notif="booking" onclick="togBtn(this)"></button></div>
+      <div class="togrow"><div><div class="togl">Mesaj bildirişi</div><div class="togs">Yeni mesaj gələndə</div></div><button type="button" class="tog on" data-notif="message" data-type="push" onclick="togBtn(this)"></button></div>
+      <div class="togrow"><div><div class="togl">Səfər xatırlatması</div><div class="togs">Səfərdən 1 saat əvvəl</div></div><button type="button" class="tog on" data-notif="tripReminder" onclick="togBtn(this)"></button></div>
+      <div class="togrow"><div><div class="togl">Promosyonlar</div><div class="togs">Endirim və təkliflər</div></div><button type="button" class="tog off" data-notif="promo" onclick="togBtn(this)"></button></div>
       <div class="fl" style="margin-top:8px">Son bildirişlər</div>
       <div class="nitem unread"><div class="nico">🎫</div><div><div class="nt">Yeni rezervasiya</div><div class="ns">Aynur Hüseynova — Bakı → Lənkəran</div><div class="ntm">5 dəqiqə əvvəl</div></div></div>
       <div class="nitem unread"><div class="nico">💬</div><div><div class="nt">Yeni mesaj</div><div class="ns">Rəşad: "Bagajım var, problem deyil ki?"</div><div class="ntm">20 dəqiqə əvvəl</div></div></div>
@@ -1176,7 +1217,12 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <button class="pref-tag" id="pref-no_smoke" data-tag="🚭 Siqaret yox" onclick="togglePref(this)">🚭 Siqaret yox</button><button class="pref-tag" id="pref-quiet" data-tag="🔇 Sakit" onclick="togglePref(this)">🔇 Sakit səfər</button><button class="pref-tag" id="pref-music" data-tag="🎵 Musiqi" onclick="togglePref(this)">🎵 Musiqi</button><button class="pref-tag" id="pref-luggage" data-tag="🎒 Bagaj" onclick="togglePref(this)">🎒 Bagaj</button><button class="pref-tag" id="pref-chat" data-tag="💬 Söhbət" onclick="togglePref(this)">💬 Söhbətsevər</button><button class="pref-tag" id="pref-ac" data-tag="❄️ Kondisioner" onclick="togglePref(this)">❄️ Kondisioner</button><button class="pref-tag" id="pref-premium" data-tag="🛋 Premium" onclick="togglePref(this)">🛋 Premium</button>
         <button class="pref-tag" id="pref-women" data-tag="👩 Yalnız qadınlar" onclick="togglePref(this)">👩 Yalnız qadınlar</button>
       </div>
-      <div class="fl">Bu nədir?</div>
+      <div id="pref-strictness-wrap" style="display:none;margin-top:20px">
+        <div class="fl">Müraciətdə ciddi uyğunluq</div>
+        <div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.5">Açıq olan üstünlüklər üçün sürücü tərəfindən tam uyğunluq tələb olunur (məs. «Yalnız qadınlar» + maşında kişi sərnişin olmamalıdır). Söndürsəniz, üstünlük yalnız göstərici kimi qalır.</div>
+        <div id="pref-strictness-list"></div>
+      </div>
+      <div class="fl" style="margin-top:16px">Bu nədir?</div>
       <div style="background:var(--bbg);border-radius:var(--rc);padding:14px;font-size:13px;color:var(--t2);line-height:1.6">
         🔍 Axtarış açılanda seçilmiş üstünlüklər avtomatik filter kimi tətbiq olunur.<br>
         ✏️ Axtarış zamanı istəsəniz filteri dəyişə bilərsiniz.
@@ -1243,6 +1289,19 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
     <button id="mb-tab-reqs" onclick="switchMBTab('reqs')" style="flex:1;padding:12px;font-size:14px;font-weight:500;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--t2);cursor:pointer;font-family:Inter,sans-serif">Müraciətlərim</button>
   </div>
   <div class="scr">
+    <div id="mb-filter-bookings-wrap" class="fbar" style="margin:0">
+      <button type="button" class="fb mb-book-f on" data-v="all" onclick="setMBBookingFilter('all')">Hamısı</button>
+      <button type="button" class="fb mb-book-f" data-v="active" onclick="setMBBookingFilter('active')">Aktiv</button>
+      <button type="button" class="fb mb-book-f" data-v="completed" onclick="setMBBookingFilter('completed')">Tamamlandı</button>
+      <button type="button" class="fb mb-book-f" data-v="closed" onclick="setMBBookingFilter('closed')">Ləğv / Rədd</button>
+    </div>
+    <div id="mb-filter-reqs-wrap" class="fbar" style="margin:0;display:none">
+      <button type="button" class="fb mb-req-f on" data-v="all" onclick="setMBRequestFilter('all')">Hamısı</button>
+      <button type="button" class="fb mb-req-f" data-v="running" onclick="setMBRequestFilter('running')">Aktiv / Təklif</button>
+      <button type="button" class="fb mb-req-f" data-v="confirmed" onclick="setMBRequestFilter('confirmed')">Təsdiqləndi</button>
+      <button type="button" class="fb mb-req-f" data-v="completed" onclick="setMBRequestFilter('completed')">Tamamlandı</button>
+      <button type="button" class="fb mb-req-f" data-v="cancelled" onclick="setMBRequestFilter('cancelled')">Ləğv</button>
+    </div>
     <div id="mybookings-trips"></div>
     <div id="mybookings-reqs" style="display:none"></div>
   </div>
@@ -1279,7 +1338,16 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
   </div>
 </div>
 
-
+<!-- DRIVER: offer seat from passenger request (match trip / create / chat) -->
+<div id="dpo-modal" style="display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;background:rgba(0,0,0,.5);z-index:510;align-items:flex-end;">
+  <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-height:92vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:16px;font-weight:700">Yer təklifi</div>
+      <button type="button" onclick="closeDriverPassReqOfferModal()" style="background:var(--sf);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer">×</button>
+    </div>
+    <div id="dpo-content"></div>
+  </div>
+</div>
 
 <!-- CUSTOM CONFIRM DIALOG -->
 <div id="confirm-ovl" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:24px">
@@ -1297,7 +1365,17 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 <div class="toast" id="tst"></div>
 
 
-<script>// ── LOCALSTORAGE ────────────────────────────────────────
+<script>
+/** Hər buraxılışda yeniləyin — splash və profil altında göstərilir. */
+var APP_RELEASE = '2.1.15';
+/** Sərnişin müraciətində «neçə nəfər» üst həddi (tətbiq limiti). */
+var APP_PASS_REQ_PAX_MAX = 20;
+/** Bir elanda maksimum sərnişin oturacağı indeksi (UI + uyğunluq). */
+var APP_MAX_PASSENGER_SEAT_LAYOUT = 24;
+/** Bu saydan çoxdursa salon sxemi yox, yalnız «neçə yer» (minik avtobus). */
+var APP_NAMED_SEAT_UI_MAX = 4;
+
+// ── LOCALSTORAGE ────────────────────────────────────────
 function lsSave(key, val) {
   try { localStorage.setItem('poputi_' + key, JSON.stringify(val)); } catch(e) {}
 }
@@ -1307,38 +1385,92 @@ function lsLoad(key, def) {
 function lsClear() {
   try {
     ['profile','userCars','role','hasCar','userPrefs','driverPrefs',
-     'myBookedTrips','myRequests','myT','activeBookings','pendingBookings','notifPrompted']
+     'myBookedTrips','myRequests','myT','activeBookings','pendingBookings','notifPrompted','notifPrefs',
+     'trips','passReqs','prefStrictness']
     .forEach(function(k){ localStorage.removeItem('poputi_' + k); });
   } catch(e) {}
 }
+function replaceArray(target, source) {
+  target.splice(0, target.length);
+  source.forEach(function(item){ target.push(item); });
+}
 function saveState() {
-  lsSave('profile', {name:regName, phone:regPhone, gender:regGender, dob:regAge});
+  lsSave('profile', {
+    firstName: regFirstName,
+    lastName: regLastName,
+    name: (String(regFirstName).trim() + ' ' + String(regLastName).trim()).trim(),
+    phone: regPhone,
+    gender: regGender,
+    dob: regAge
+  });
   lsSave('userCars', userCars);
   lsSave('role', role);
   lsSave('hasCar', hasCar);
   lsSave('userPrefs', userPrefs);
   lsSave('driverPrefs', driverPrefs);
   lsSave('myBookedTrips', myBookedTrips.map(function(b){
-    return {tripId:b.tripId,status:b.status,date:b.date,time:b.time,seat:b.seat,driverRated:b.driverRated||false};
+    var row = {
+      id: b.id,
+      tripId: b.tripId,
+      status: b.status,
+      date: b.date,
+      time: b.time,
+      seat: b.seat,
+      seatNumbers: Array.isArray(b.seatNumbers) ? b.seatNumbers.slice() : [],
+      driverRated: b.driverRated || false
+    };
+    if (b.routeSnapshot && typeof b.routeSnapshot === 'object') {
+      row.routeSnapshot = {
+        from: b.routeSnapshot.from, to: b.routeSnapshot.to, date: b.routeSnapshot.date, time: b.routeSnapshot.time,
+        driver: b.routeSnapshot.driver, driverFull: b.routeSnapshot.driverFull, rating: b.routeSnapshot.rating,
+        car: b.routeSnapshot.car, color: b.routeSnapshot.color, plate: b.routeSnapshot.plate,
+        price: b.routeSnapshot.price, dur: b.routeSnapshot.dur
+      };
+    }
+    return row;
   }));
   lsSave('myRequests', myRequests);
   lsSave('myT', myT);
   lsSave('activeBookings', activeBookings);
   lsSave('pendingBookings', pendingBookings);
+  lsSave('trips', trips);
+  lsSave('passReqs', passReqs);
+  lsSave('prefStrictness', prefStrictness);
 }
 function loadState() {
   const profile = lsLoad('profile', null);
-  if (profile) { regName=profile.name||''; regPhone=profile.phone||''; regGender=profile.gender||'m'; regAge=profile.dob||0; }
+  if (profile) {
+    regFirstName = profile.firstName || '';
+    regLastName = profile.lastName || '';
+    if (!String(regFirstName).trim() && !String(regLastName).trim() && profile.name) {
+      var legacy = String(profile.name).trim().split(/\s+/).filter(Boolean);
+      if (legacy.length >= 2) {
+        regLastName = legacy.pop();
+        regFirstName = legacy.join(' ');
+      } else if (legacy.length === 1) {
+        regFirstName = legacy[0];
+      }
+    }
+    regPhone = profile.phone || '';
+    regGender = profile.gender || 'm';
+    regAge = profile.dob || 0;
+  }
   userCars = lsLoad('userCars', []);
   role = lsLoad('role', 'passenger');
   hasCar = lsLoad('hasCar', false);
   userPrefs = lsLoad('userPrefs', []);
   driverPrefs = lsLoad('driverPrefs', []);
+  var psLoad = lsLoad('prefStrictness', null);
+  prefStrictness = psLoad && typeof psLoad === 'object' ? psLoad : {};
   const savedBookings = lsLoad('myBookedTrips', null);
   if (Array.isArray(savedBookings)) {
     myBookedTrips = savedBookings.map(function(b){
-      const tripId = b && typeof b.tripId === 'number' ? b.tripId : -1;
-      return Object.assign({}, b || {}, {trip: tripId >= 0 ? (trips[tripId] || null) : null});
+      const tripId = b && b.tripId !== undefined && b.tripId !== null ? Number(b.tripId) : -1;
+      const tid = tripId >= 0 && !isNaN(tripId) ? tripId : -1;
+      const o = Object.assign({}, b || {}, {trip: tid >= 0 ? (trips[tid] || null) : null});
+      if (!o.id && tid >= 0) o.id = 'bk_' + tid + '_' + (o.date || '') + '_' + (o.time || '');
+      if (!Array.isArray(o.seatNumbers)) o.seatNumbers = [];
+      return o;
     });
   } else if (savedBookings) {
     myBookedTrips = [];
@@ -1346,15 +1478,76 @@ function loadState() {
   const savedReqs = lsLoad('myRequests', null);
   if (Array.isArray(savedReqs)) myRequests = savedReqs;
   else if (savedReqs) myRequests = [];
+  const savedTrips = lsLoad('trips', null);
+  if (Array.isArray(savedTrips) && savedTrips.length) replaceArray(trips, savedTrips);
+  trips.forEach(migrateTripPaxGenders);
+  const savedPassReqs = lsLoad('passReqs', null);
+  if (Array.isArray(savedPassReqs)) replaceArray(passReqs, savedPassReqs);
   const savedMyT = lsLoad('myT', null);
   if (Array.isArray(savedMyT)) myT = savedMyT;
   else if (savedMyT) myT = [];
+  // Migrate old myT records to stable trip links.
+  myT.forEach(function(mt){
+    if (typeof mt.tripId === 'number') return;
+    if (!mt.route || !mt.date) return;
+    var parts = mt.route.split('→').map(function(x){ return x.trim(); });
+    var from = parts[0] || '';
+    var to = parts[1] || '';
+    var idx = trips.findIndex(function(tr){ return tr.from === from && tr.to === to && (tr.date + ', ' + tr.time) === mt.date; });
+    if (idx < 0) idx = trips.findIndex(function(tr){ return tr.from === from && tr.to === to; });
+    if (idx > -1) mt.tripId = idx;
+  });
+  myT.forEach(function(mt) {
+    if (typeof mt.listKey === 'number' && mt.listKey >= myTListKeySeq) myTListKeySeq = mt.listKey + 1;
+  });
+  myT.forEach(function(mt) {
+    if (typeof mt.listKey !== 'number') mt.listKey = myTListKeySeq++;
+  });
   const savedActive = lsLoad('activeBookings', null);
   if (savedActive && typeof savedActive === 'object' && !Array.isArray(savedActive)) activeBookings = savedActive;
   else if (savedActive) activeBookings = {};
   const savedPending = lsLoad('pendingBookings', null);
   if (Array.isArray(savedPending)) pendingBookings = savedPending;
   else if (savedPending) pendingBookings = [];
+  pendingBookings.forEach(function(b) { if (!b.passengerGender) b.passengerGender = 'u'; });
+  syncMyTCardPaxFromTrips();
+  var passReqSynced = syncPassRequestsCompletedByBookings();
+  if (hydrateDriverCancelledCardsFromBookings() || passReqSynced) saveState();
+  loadNotifPrefsFromStorage();
+  updateProfileDisplay();
+}
+
+/** Köhnə ləğv: sərnişin myBookedTrips-də cancelled+routeSnapshot var, sürücü myT köhnə kodda silinmiş ola bilər — bərpa. */
+function hydrateDriverCancelledCardsFromBookings() {
+  if (!Array.isArray(myBookedTrips) || !Array.isArray(myT)) return false;
+  var seen = {};
+  myT.forEach(function(mt) {
+    if (mt.status === 'cancelled' && mt.route) {
+      seen[String(mt.route).replace(/\s+/g, ' ').trim() + '|' + String(mt.date || '').replace(/\s+/g, ' ').trim()] = true;
+    }
+  });
+  var added = false;
+  myBookedTrips.forEach(function(mb) {
+    if (mb.status !== 'cancelled' || !mb.routeSnapshot || typeof mb.routeSnapshot !== 'object') return;
+    var snap = mb.routeSnapshot;
+    var routeStr = (String(snap.from || '').trim() + ' → ' + String(snap.to || '').trim()).replace(/\s+/g, ' ').trim();
+    if (!snap.from && !snap.to) return;
+    var dateStr = (snap.date && snap.time) ? (String(snap.date).trim() + ', ' + String(snap.time).trim()) : String(mb.date || '').replace(/\s+/g, ' ').trim();
+    var k = routeStr + '|' + dateStr;
+    if (seen[k]) return;
+    seen[k] = true;
+    myT.push({
+      listKey: myTListKeySeq++,
+      tripId: -1,
+      route: routeStr,
+      date: dateStr,
+      total: 4,
+      pax: [],
+      status: 'cancelled'
+    });
+    added = true;
+  });
+  return added;
 }
 
 const AVATAR_COLORS = [
@@ -1412,41 +1605,314 @@ let completingTripId = -1;
 let activeBookings = {};
 let userPrefs = []; // passenger prefs
 let driverPrefs = []; // driver prefs
+/** Sərnişin profili: hansı üstünlük müraciətdə seçiləndə ciddi uyğunluq tələb olunur (false = yalnız göstərici). */
+let prefStrictness = {};
 let notifEnabled = false;
+let _notifPermRequesting = false;
+/** Bildiriş ekranındakı keçidlərlə sinxron: booking | message | tripReminder | promo */
+var notifPrefs = { booking: true, message: true, tripReminder: true, promo: false };
+function saveNotifPrefs() {
+  lsSave('notifPrefs', notifPrefs);
+}
+function loadNotifPrefsFromStorage() {
+  var np = lsLoad('notifPrefs', null);
+  if (!np || typeof np !== 'object') return;
+  if (typeof np.booking === 'boolean') notifPrefs.booking = np.booking;
+  if (typeof np.message === 'boolean') notifPrefs.message = np.message;
+  if (typeof np.tripReminder === 'boolean') notifPrefs.tripReminder = np.tripReminder;
+  if (typeof np.promo === 'boolean') notifPrefs.promo = np.promo;
+}
+/** sendNotif/addNotification kateqoriyası: booking | message | trip | promo */
+function isNotifCategoryEnabled(cat) {
+  if (cat === 'booking') return notifPrefs.booking;
+  if (cat === 'message') return notifPrefs.message;
+  if (cat === 'trip') return notifPrefs.tripReminder;
+  if (cat === 'promo') return notifPrefs.promo;
+  return true;
+}
+function applyNotifToggleButtonsUI() {
+  document.querySelectorAll('#s-notifs button.tog[data-notif]').forEach(function(btn) {
+    var k = btn.getAttribute('data-notif');
+    if (!k || !Object.prototype.hasOwnProperty.call(notifPrefs, k)) return;
+    btn.className = 'tog ' + (notifPrefs[k] ? 'on' : 'off');
+  });
+}
+function applyAppReleaseLabels() {
+  var label = 'Buraxılış ' + APP_RELEASE;
+  var sp = document.getElementById('app-release-splash');
+  if (sp) sp.textContent = label;
+  var pr = document.getElementById('app-release-profile');
+  if (pr) pr.textContent = label;
+}
 let notifications = [
   {text:'Poputi.az-a xoş gəldiniz! 🎉', type:'info', time:'İndi', read:false},
 ];
 
 // ── PENDING BOOKINGS (driver confirms passenger) ────────
+/** Driver home cards (myT) show mt.pax; trip detail uses trips[].pax — keep them in sync. */
+function syncMyTCardPaxFromTrips() {
+  if (!Array.isArray(myT) || !Array.isArray(trips)) return;
+  myT.forEach(function(mt) {
+    if (mt.status === 'cancelled') return;
+    var tid = (typeof mt.tripId === 'number' && !isNaN(mt.tripId)) ? mt.tripId : -1;
+    if (tid < 0 || tid >= trips.length) return;
+    var tr = trips[tid];
+    if (!tr) return;
+    mt.pax = Array.isArray(tr.pax) ? tr.pax.slice() : [];
+    var cap = typeof getTripSeatLayoutMax === 'function' ? getTripSeatLayoutMax(tr) : Math.max(1, Math.min(APP_MAX_PASSENGER_SEAT_LAYOUT, parseInt(tr.seatLayoutMax, 10) || 4));
+    mt.total = cap;
+  });
+}
+
+function migrateTripPaxGenders(t) {
+  if (!t) return;
+  if (!Array.isArray(t.pax)) t.pax = [];
+  if (!Array.isArray(t.paxGenders)) t.paxGenders = [];
+  while (t.paxGenders.length < t.pax.length) t.paxGenders.push('u');
+  while (t.paxGenders.length > t.pax.length) t.paxGenders.pop();
+}
+
+/** Full name — only for own profile UI (Ad + Soyad). */
+function getProfileFullName() {
+  var f = (typeof regFirstName === 'string' && regFirstName.trim()) ? regFirstName.trim() : '';
+  var l = (typeof regLastName === 'string' && regLastName.trim()) ? regLastName.trim() : '';
+  return (f + ' ' + l).trim();
+}
+/** First name for greeting / avatar (explicit field). */
+function getProfileFirstName() {
+  var f = (typeof regFirstName === 'string' && regFirstName.trim()) ? regFirstName.trim() : '';
+  if (f) return f;
+  return getFirstNameFromFull(getProfileFullName());
+}
+/** Public for others: "Ayxan A." from arbitrary "First ... Last" string. */
+function getPublicDisplayNameFromFull(fullName) {
+  var t = (fullName || '').trim();
+  if (!t) return 'Sərnişin';
+  var parts = t.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0];
+  var sur = parts[parts.length - 1];
+  var firstParts = parts.slice(0, -1).join(' ');
+  var ini = sur.charAt(0);
+  try { ini = ini.toLocaleUpperCase('az-AZ'); } catch (e) { ini = ini.toUpperCase(); }
+  return firstParts + ' ' + ini + '.';
+}
+function getPublicDisplayNameForCurrentUser() {
+  var f = (typeof regFirstName === 'string' && regFirstName.trim()) ? regFirstName.trim() : '';
+  var l = (typeof regLastName === 'string' && regLastName.trim()) ? regLastName.trim() : '';
+  if (!f && !l) return 'Sərnişin';
+  if (!l) return f;
+  var ini = l.charAt(0);
+  try { ini = ini.toLocaleUpperCase('az-AZ'); } catch (e) { ini = ini.toUpperCase(); }
+  return f + ' ' + ini + '.';
+}
+function getSurnameInitialForCurrentUser() {
+  var l = (typeof regLastName === 'string' && regLastName.trim()) ? regLastName.trim() : '';
+  if (l) {
+    var c = l.charAt(0);
+    try { return c.toLocaleUpperCase('az-AZ'); } catch (e) { return c.toUpperCase(); }
+  }
+  return getSurnameInitialFromFull(getProfileFullName());
+}
+function getFirstNameFromFull(fullName) {
+  var t = (fullName || '').trim();
+  if (!t) return 'Dost';
+  var w = t.split(/\s+/).filter(Boolean)[0];
+  return w || 'Dost';
+}
+/** Initial for lists — first letter of surname (last word). */
+function getSurnameInitialFromFull(fullName) {
+  var t = (fullName || '').trim();
+  if (!t) return '?';
+  var parts = t.split(/\s+/).filter(Boolean);
+  var c = parts.length < 2 ? parts[0].charAt(0) : parts[parts.length - 1].charAt(0);
+  try { return c.toLocaleUpperCase('az-AZ'); } catch (e) { return c.toUpperCase(); }
+}
+function getOwnPublicNamesForFilter() {
+  var pub = getPublicDisplayNameForCurrentUser();
+  var full = getProfileFullName();
+  var a = [];
+  if (pub && pub !== 'Sərnişin') a.push(pub);
+  if (full) a.push(full);
+  return a;
+}
+/** Sürücü feed: defolt olaraq bütün müraciətlər (öz adınızla da). Gizlətmək: localStorage.setItem('poputi_hide_own_passreqs','1'); yeniləyin. */
+function getPassReqsForDriverFeed() {
+  var list;
+  try {
+    if (localStorage.getItem('poputi_hide_own_passreqs') === '1') {
+      var ownNames = getOwnPublicNamesForFilter();
+      list = passReqs.filter(function(r) { return ownNames.indexOf(r.name) === -1; });
+    } else {
+      list = passReqs.slice();
+    }
+  } catch (e) {
+    list = passReqs.slice();
+  }
+  var activeOnly = list.filter(function(r) {
+    var st = r && r.status;
+    return st === 'active' || st === 'offered';
+  });
+  var withCapacity = activeOnly.filter(driverHasAnyCarForPassReq);
+  var withStrict = withCapacity.filter(driverProfileMatchesPassReqStrictPrefs);
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:getPassReqsForDriverFeed',message:'driver feed pass reqs',data:{hypothesisId:'H8',total:passReqs.length,active:activeOnly.length,afterCar:withCapacity.length,afterStrict:withStrict.length},timestamp:Date.now()})}).catch(function(){});
+  // #endregion
+  return withStrict;
+}
+function updateProfileDisplay() {
+  var fnEl = document.getElementById('profile-fullname');
+  if (fnEl) {
+    var full = getProfileFullName();
+    fnEl.textContent = full || '—';
+  }
+  var greet = document.getElementById('driver-home-greet');
+  if (greet) greet.textContent = 'Salam, ' + getProfileFirstName() + '! 🚗';
+  updateAvatarDisplay();
+}
+
 function driverConfirm(idx, source) {
   const b = pendingBookings[idx];
   if (!b) return;
   activeBookings[b.tripId] = {status:'confirmed', initiator:'passenger', completedBy:null};
   const t = trips[b.tripId];
-  if (t && !t.pax.includes(b.passengerName)) t.pax.push(b.passengerName);
+  if (t && !t.pax.includes(b.passengerName)) {
+    t.pax.push(b.passengerName);
+    if (!Array.isArray(t.paxGenders)) t.paxGenders = [];
+    t.paxGenders.push(b.passengerGender || getProfileBookingGenderCode());
+    migrateTripPaxGenders(t);
+  }
+  syncMyTCardPaxFromTrips();
   // Update passenger booking status
-  const mbIdx = myBookedTrips.findIndex(function(mb){return mb.tripId===b.tripId;});
+  const mbIdx = myBookedTrips.findIndex(function(mb){ return Number(mb.tripId) === Number(b.tripId); });
   if (mbIdx > -1) { myBookedTrips[mbIdx].status = 'confirmed'; if (!myBookedTrips[mbIdx].trip && t) myBookedTrips[mbIdx].trip = t; }
+  if (t) {
+    var matchReq = function(req) {
+      if (String(req.from) !== String(t.from) || String(req.to) !== String(t.to) || String(req.date) !== String(t.date)) return false;
+      if (b.passengerName && req.name && String(req.name).trim() !== String(b.passengerName).trim()) return false;
+      return true;
+    };
+    var finish = function(req) {
+      if (req.status === 'active' || req.status === 'offered' || req.status === 'confirmed') req.status = 'completed';
+    };
+    myRequests.forEach(function(req) { if (matchReq(req)) finish(req); });
+    passReqs.forEach(function(req) { if (matchReq(req)) finish(req); });
+  }
   pendingBookings.splice(idx, 1);
   renderHome();
   addNotification('✅ ' + (t?t.from+' → '+t.to:'') + ' — Rezervasiyanız təsdiqləndi!', 'confirm');
+  if (t) notifBookingConfirmed(t.from + ' → ' + t.to, t.driverFull);
   toast('✅ Rezervasiya qəbul edildi');
   saveState();
+  renderDriverMyTrips();
 }
 
 function driverReject(idx, source) {
   const b = pendingBookings[idx];
-  if (b) {
-    // Remove from myBookedTrips
-    const mi = myBookedTrips.findIndex(function(mb){return mb.tripId===b.tripId;});
-    if (mi > -1) myBookedTrips.splice(mi, 1);
-    // Remove from activeBookings
-    delete activeBookings[b.tripId];
+  if (!b) return;
+  const t = trips[b.tripId];
+  if (t && Array.isArray(t.freeSeats) && Array.isArray(b.seatNumbers)) {
+    b.seatNumbers.forEach(function(s){
+      var seatNum = parseInt(s, 10);
+      if (seatNum >= 1 && seatNum <= getTripSeatLayoutMax(t) && t.freeSeats.indexOf(seatNum) === -1) t.freeSeats.push(seatNum);
+    });
+    normalizeTripFreeSeats(t);
   }
+  const mi = myBookedTrips.findIndex(function(mb){ return Number(mb.tripId) === Number(b.tripId); });
+  if (mi > -1) {
+    myBookedTrips[mi].status = 'rejected';
+    if (t) myBookedTrips[mi].trip = t;
+  }
+  delete activeBookings[b.tripId];
   pendingBookings.splice(idx, 1);
+  const routeTxt = t ? (t.from + ' → ' + t.to) : 'Səfər';
+  addNotification('❌ ' + routeTxt + ' — Sürücü rezervasiyanı rədd etdi', 'cancel');
+  notifBookingRejected(routeTxt, t ? t.driverFull : '');
   renderHome();
   toast('Rezervasiya rədd edildi');
   saveState();
+  renderDriverMyTrips();
+}
+
+/** Sürücü bütün elanı silir: gözləyən rezervlər əvvəlcə rədd, təsdiqlənmişlər ləğv, trips/myT yenilənir. */
+function cancelDriverTrip(tripIndex, back) {
+  const idx = Number(tripIndex);
+  const t = trips[idx];
+  if (!t) return;
+  showConfirm('Səfəri ləğv et', 'Bu elan silinəcək. Gözləyən və təsdiqlənmiş sərnişinlər xəbərdar olunacaq.', function() {
+    while (pendingBookings.some(function(b) { return Number(b.tripId) === idx; })) {
+      var pIdx = pendingBookings.findIndex(function(b) { return Number(b.tripId) === idx; });
+      if (pIdx < 0) break;
+      driverReject(pIdx, 'trip-cancel');
+    }
+    myBookedTrips.forEach(function(mb) {
+      if (Number(mb.tripId) !== idx) return;
+      if (mb.status === 'confirmed') {
+        addNotification('❌ ' + (t.from + ' → ' + t.to) + ' — Sürücü səfəri ləğv etdi', 'cancel');
+        notifTripCancelledByDriver(t.from + ' → ' + t.to, t.driverFull);
+      }
+      var src = mb.trip || t;
+      mb.routeSnapshot = {
+        from: src.from, to: src.to, date: src.date, time: src.time,
+        driver: src.driver || src.driverFull || 'S',
+        driverFull: src.driverFull || '', rating: src.rating || '—',
+        car: src.car || '', color: src.color || '', plate: src.plate || '',
+        price: src.price, dur: src.dur || '—'
+      };
+      mb.status = 'cancelled';
+      mb.trip = null;
+      mb.tripId = -1;
+    });
+    trips.splice(idx, 1);
+    trips.forEach(function(tr, i) { tr.id = i; });
+    var wantRoute = (t.from + ' → ' + t.to).replace(/\s+/g, ' ').trim();
+    var wantDate = (t.date + ', ' + t.time).replace(/\s+/g, ' ').trim();
+    myT = myT.map(function(mt) {
+      var tid = Number(mt.tripId);
+      var matchIdx = !isNaN(tid) && tid === idx;
+      var matchRoute = false;
+      if (!matchIdx && mt.route) {
+        var gotR = String(mt.route).replace(/\s+/g, ' ').trim();
+        if (gotR === wantRoute) {
+          var gotD = String(mt.date || '').replace(/\s+/g, ' ').trim();
+          matchRoute = !gotD || gotD === wantDate || gotD.indexOf(String(t.date).trim()) === 0;
+        }
+      }
+      if (!matchIdx && !matchRoute) return mt;
+      if (typeof mt.listKey !== 'number') mt.listKey = myTListKeySeq++;
+      return {
+        listKey: mt.listKey,
+        tripId: -1,
+        route: mt.route || (t.from + ' → ' + t.to),
+        date: mt.date || (t.date + ', ' + t.time),
+        total: mt.total || t.seats || 1,
+        pax: Array.isArray(mt.pax) ? mt.pax.slice() : (Array.isArray(t.pax) ? t.pax.slice() : []),
+        status: 'cancelled'
+      };
+    });
+    myT.forEach(function(mt) {
+      if (typeof mt.tripId === 'number' && mt.tripId > idx) mt.tripId--;
+    });
+    myBookedTrips.forEach(function(mb) {
+      if (typeof mb.tripId === 'number' && mb.tripId > idx) mb.tripId--;
+    });
+    pendingBookings.forEach(function(b) {
+      if (typeof b.tripId === 'number' && b.tripId > idx) b.tripId--;
+    });
+    var nab = {};
+    Object.keys(activeBookings).forEach(function(k) {
+      var tk = parseInt(k, 10);
+      if (isNaN(tk)) return;
+      if (tk === idx) return;
+      nab[tk > idx ? tk - 1 : tk] = activeBookings[k];
+    });
+    activeBookings = nab;
+    syncMyTCardPaxFromTrips();
+    renderHome();
+    renderDriverMyTrips();
+    saveState();
+    toast('Səfər ləğv edildi');
+    go(back || 'home');
+  });
 }
 
 function renderPendingBookings() {
@@ -1478,7 +1944,17 @@ function openPendingBookingCard(tripId) {
 
 // ── NOTIFICATIONS ──────────────────────────────────────
 function addNotification(text, type) {
-  notifications.unshift({text:text, type:type||'info', time:'İndi', read:false});
+  var t = type || 'info';
+  if (t === 'confirm' || t === 'cancel' || t === 'booking') {
+    if (!notifPrefs.booking) return;
+  } else if (t === 'promo') {
+    if (!notifPrefs.promo) return;
+  } else if (t === 'trip') {
+    if (!notifPrefs.tripReminder) return;
+  } else if (t === 'message') {
+    if (!notifPrefs.message) return;
+  }
+  notifications.unshift({text:text, type:t, time:'İndi', read:false});
 }
 
 function renderNotifs() {
@@ -1530,6 +2006,8 @@ function renderActiveWidget(tripId, booking) {
   const ci = convs.findIndex(function(c){return c.rt&&c.rt.includes(t.from);});
   const completer = getTripCompleter(tripId);
   const canComplete = role===completer;
+  const mbRow = !D ? getMyBookingRecordForTripId(tripId) : null;
+  const totalAzn = D ? parseFloat(t.price, 10) || 0 : passengerBookingTotalPrice(t, mbRow || booking);
   return '<div class="active-trip-widget">' +
     '<div class="atw-header" onclick="openTrip('+tripId+',\'home\')">' +
       '<div style="font-size:13px;font-weight:600;color:#fff">🚗 Aktiv Səfər</div>' +
@@ -1542,7 +2020,7 @@ function renderActiveWidget(tripId, booking) {
         '<div class="avsm '+personAv+'">'+personName[0]+'</div>' +
         '<div><div style="font-size:13px;font-weight:600;color:var(--t1)">'+personName+'</div>' +
         '<div style="font-size:11px;color:var(--t2)">⭐ '+t.rating+' · '+t.car+'</div></div>' +
-        '<div style="margin-left:auto;font-size:14px;font-weight:700;color:var(--green)">'+t.price+' AZN</div>' +
+        '<div style="margin-left:auto;font-size:14px;font-weight:700;color:var(--green)">'+totalAzn+' AZN</div>' +
       '</div>' +
       '<div class="atw-actions">' +
         '<button class="atw-btn primary" onclick="openChatById('+(ci>=0?ci:0)+')">💬 Mesaj</button>' +
@@ -1570,10 +2048,10 @@ function getSmartTrips() {
   const h = new Date().getHours();
   const D = role==='driver';
   if (D) {
-    const own=['Ayxan İ.','Ayxan İlimov'];
-    const others=passReqs.filter(function(r){return !own.includes(r.name);});
-    const ds=myT.length?Math.max.apply(null,myT.map(function(t){return t.total-t.pax.length;})):4;
-    return others.filter(function(r){return (r.seats||1)<=ds;}).slice(0,5);
+    const others=getPassReqsForDriverFeed();
+    var actT = myT.filter(function(t){ return t.status !== 'cancelled'; });
+    if (!actT.length) return others.slice(0, 5);
+    return others.filter(function(r){ return passReqVisibleForDriverAnyTrip(r); }).slice(0, 5);
   }
   const rc={};
   histT.forEach(function(t){rc[t.route]=(rc[t.route]||0)+1;});
@@ -1595,14 +2073,16 @@ function getSmartTrips() {
   } else {
     list.sort(function(a,b){return parseFloat(b.rating)-parseFloat(a.rating);});
   }
+  list = list.filter(tripPassengerCanStillBook);
   return list.slice(0,6);
 }
 
 function tripCompleted(tripId) {
-  completingTripId = typeof tripId==='number' ? tripId : -1;
-  const t = completingTripId>=0 ? trips[completingTripId] : null;
+  var tid = (typeof tripId === 'number' && !isNaN(tripId)) ? tripId : (typeof curTripId === 'number' && !isNaN(curTripId) ? curTripId : -1);
+  completingTripId = tid;
+  const t = completingTripId >= 0 ? trips[completingTripId] : null;
   if (activeBookings[completingTripId]) activeBookings[completingTripId].status='completed';
-  const mbIdx = myBookedTrips.findIndex(function(b){return b.tripId===completingTripId;});
+  const mbIdx = myBookedTrips.findIndex(function(b){ return Number(b.tripId) === Number(completingTripId); });
   if (mbIdx > -1) myBookedTrips[mbIdx].status = 'completed';
   if (role==='driver') {
     const pName = t&&t.pax.length ? t.pax[0] : 'Sərnişin';
@@ -1628,6 +2108,138 @@ function switchBookingTab(tab) {
   document.getElementById('mybookings-reqs').style.display=tab==='reqs'?'block':'none';
 }
 
+function getBookingTripDisplay(b) {
+  if (!b) return null;
+  if (b.trip) return b.trip;
+  if (b.routeSnapshot && typeof b.routeSnapshot === 'object' && (b.routeSnapshot.from || b.routeSnapshot.to)) {
+    return b.routeSnapshot;
+  }
+  return {
+    from: '—', to: '—', date: b.date || '', time: b.time || '', driver: '?', driverFull: '', rating: '—',
+    car: '', color: '', plate: '', price: '', dur: ''
+  };
+}
+
+function getMyBookingRecordForTripId(tripId) {
+  if (!Array.isArray(myBookedTrips)) return null;
+  var id = Number(tripId);
+  if (isNaN(id) || id < 0) return null;
+  for (var i = 0; i < myBookedTrips.length; i++) {
+    var mb = myBookedTrips[i];
+    if (Number(mb.tripId) !== id) continue;
+    if (mb.status === 'confirmed' || mb.status === 'pending') return mb;
+  }
+  return null;
+}
+
+function countPassengerBookingSeats(b) {
+  if (!b || !Array.isArray(b.seatNumbers) || !b.seatNumbers.length) return 1;
+  return b.seatNumbers.length;
+}
+
+function passengerBookingTotalPrice(t, b) {
+  var unit = parseFloat(t && t.price, 10);
+  if (isNaN(unit)) unit = 0;
+  return Math.round(unit * countPassengerBookingSeats(b));
+}
+
+function tripPassengerCanStillBook(t) {
+  return countTripFreePassengerSeats(t) > 0;
+}
+
+function passReqSupersededByConfirmedBooking(r) {
+  if (!r || r.status === 'completed' || r.status === 'cancelled') return false;
+  return myBookedTrips.some(function(b) {
+    if (b.status !== 'confirmed') return false;
+    var disp = getBookingTripDisplay(b);
+    if (!disp || !disp.from) return false;
+    return String(disp.from) === String(r.from) && String(disp.to) === String(r.to) && String(disp.date) === String(r.date);
+  });
+}
+
+function syncPassRequestsCompletedByBookings() {
+  if (!Array.isArray(myRequests) || !Array.isArray(passReqs)) return false;
+  var changed = false;
+  function maybeComplete(req) {
+    if (req.status !== 'active' && req.status !== 'offered' && req.status !== 'confirmed') return;
+    if (passReqSupersededByConfirmedBooking(req)) {
+      req.status = 'completed';
+      changed = true;
+    }
+  }
+  myRequests.forEach(maybeComplete);
+  passReqs.forEach(maybeComplete);
+  return changed;
+}
+
+function setMBBookingFilter(val) {
+  mbFilterBooking = val;
+  document.querySelectorAll('.mb-book-f').forEach(function(btn) {
+    btn.classList.toggle('on', btn.getAttribute('data-v') === val);
+  });
+  renderMyBookings();
+}
+function setMBRequestFilter(val) {
+  mbFilterRequest = val;
+  document.querySelectorAll('.mb-req-f').forEach(function(btn) {
+    btn.classList.toggle('on', btn.getAttribute('data-v') === val);
+  });
+  renderMyBookings();
+}
+function setMyTStatusFilter(val) {
+  myTFilterStatus = val;
+  document.querySelectorAll('.myt-f').forEach(function(btn) {
+    btn.classList.toggle('on', btn.getAttribute('data-v') === val);
+  });
+  renderDriverMyTrips();
+}
+function filterBookingsForMB(list) {
+  if (mbFilterBooking === 'all') return list.slice();
+  return list.filter(function(b) {
+    if (mbFilterBooking === 'active') return b.status === 'pending' || b.status === 'confirmed';
+    if (mbFilterBooking === 'completed') return b.status === 'completed';
+    if (mbFilterBooking === 'closed') return b.status === 'cancelled' || b.status === 'rejected';
+    return true;
+  });
+}
+function filterRequestsForMB(list) {
+  if (mbFilterRequest === 'all') return list.slice();
+  return list.filter(function(r) {
+    if (mbFilterRequest === 'running') return r.status === 'active' || r.status === 'offered';
+    if (mbFilterRequest === 'confirmed') return r.status === 'confirmed';
+    if (mbFilterRequest === 'completed') return r.status === 'completed';
+    if (mbFilterRequest === 'cancelled') return r.status === 'cancelled';
+    return true;
+  });
+}
+function deriveMyTListStatus(mt) {
+  if (mt.status === 'cancelled') return 'cancelled';
+  var raw = mt.status || 'open';
+  var f = Array.isArray(mt.pax) ? mt.pax.length : 0;
+  var tot = Math.max(1, mt.total || 1);
+  if (f >= tot) return 'full';
+  if (f > 0) return 'active';
+  if (raw === 'full' || raw === 'active') return raw;
+  return 'open';
+}
+function renderDriverMyTrips() {
+  const el = document.getElementById('mylist');
+  if (!el) return;
+  var src = myT && myT.length ? myT : [];
+  var list = myTFilterStatus === 'all'
+    ? src.slice()
+    : src.filter(function(t) {
+      if (myTFilterStatus === 'cancelled') return t.status === 'cancelled';
+      return deriveMyTListStatus(t) === myTFilterStatus;
+    });
+  if (!list.length) {
+    el.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🗺</div><div style="color:var(--t2);font-size:14px">' +
+      (src.length ? 'Bu filtrə uyğun səfər yoxdur' : 'Aktiv səfər yoxdur') + '</div></div>';
+    return;
+  }
+  el.innerHTML = list.map(function(t) { return mtHTML(t); }).join('');
+}
+
 function renderMyBookings() {
   try {
   if (!myBookedTrips) myBookedTrips = [];
@@ -1638,16 +2250,20 @@ function renderMyBookings() {
   // ── РЕЗЕРВЫ ──
   if (tl) {
     tl.innerHTML = '';
+    var bookFiltered = filterBookingsForMB(myBookedTrips);
     if (!myBookedTrips.length) {
       tl.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🎫</div><div style="color:var(--t2);font-size:14px">Rezerv yoxdur</div></div>';
+    } else if (!bookFiltered.length) {
+      tl.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🔎</div><div style="color:var(--t2);font-size:14px">Bu filtrə uyğun rezerv yoxdur</div></div>';
     } else {
-      myBookedTrips.forEach(function(b) {
-        const t = b.trip;
+      bookFiltered.forEach(function(b) {
+        const t = getBookingTripDisplay(b);
         if (!t) return;
         const statusMap = {
           pending:   {text:'Gözləyir',    cls:'up'},
           confirmed: {text:'Təsdiqləndi', cls:'ok'},
           cancelled: {text:'Ləğv edildi', cls:'no'},
+          rejected:  {text:'Sürücü rədd etdi', cls:'no'},
           completed: {text:'Tamamlandı',  cls:'done'}
         };
         const s = statusMap[b.status] || {text:b.status, cls:'up'};
@@ -1660,7 +2276,7 @@ function renderMyBookings() {
             '<div style="font-size:14px;font-weight:600">' + t.from + ' → ' + t.to + '</div>' +
             '<div class="hibadge ' + s.cls + '">' + s.text + '</div>' +
           '</div>' +
-          '<div style="font-size:12px;color:var(--t2);margin-bottom:8px">📅 ' + t.date + ' · 🕐 ' + t.time + ' · 🪑 ' + b.seat + '-ci yer</div>' +
+          '<div style="font-size:12px;color:var(--t2);margin-bottom:8px">📅 ' + t.date + ' · 🕐 ' + t.time + ' · 🪑 ' + b.seat + '</div>' +
           '<div style="font-size:12px;color:var(--t2)">👤 ' + t.driverFull + ' · 🚗 ' + t.car + '</div>' +
           (b.status==='completed' && !b.driverRated ?
             '<button onclick="event.stopPropagation();openRating(\''+b.id+'\')" style="margin-top:8px;width:100%;background:var(--gbg);border:1px solid var(--green);border-radius:var(--ri);padding:8px;font-size:12px;font-weight:600;color:var(--green);cursor:pointer;font-family:Inter,sans-serif">⭐ Qiymət ver</button>' : '');
@@ -1672,10 +2288,16 @@ function renderMyBookings() {
   // ── ЗАПРОСЫ ──
   if (rl) {
     rl.innerHTML = '';
+    // #region agent log
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderMyBookings',message:'pass req sync state',data:{hypothesisId:'H5',myRequestsCount:myRequests.length,activeStillSuperseded:myRequests.filter(function(r){return passReqSupersededByConfirmedBooking(r);}).length},timestamp:Date.now()})}).catch(function(){});
+    // #endregion
+    var reqFiltered = filterRequestsForMB(myRequests);
     if (!myRequests.length) {
       rl.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🔍</div><div style="color:var(--t2);font-size:14px">Müraciət yoxdur</div></div>';
+    } else if (!reqFiltered.length) {
+      rl.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🔎</div><div style="color:var(--t2);font-size:14px">Bu filtrə uyğun müraciət yoxdur</div></div>';
     } else {
-      myRequests.forEach(function(r) {
+      reqFiltered.forEach(function(r) {
         const statusMap = {
           active:    {text:'Aktiv',         cls:'up'},
           offered:   {text:((r.offers||[]).length) + ' təklif',  cls:'ok'},
@@ -1683,7 +2305,10 @@ function renderMyBookings() {
           cancelled: {text:'Ləğv edildi',   cls:'no'},
           completed: {text:'Tamamlandı',    cls:'done'}
         };
-        const s = statusMap[r.status] || {text:r.status, cls:'up'};
+        var s = statusMap[r.status] || {text:r.status, cls:'up'};
+        if (r.status === 'active' && r.seatInvite && trips[r.seatInvite.tripId]) {
+          s = { text: '🪑 Yer təklifi', cls: 'ok' };
+        }
         const div = document.createElement('div');
         div.className = 'hitem';
         div.style.borderLeft = '3px solid var(--' + (r.status==='confirmed'||r.status==='offered'?'green':r.status==='active'?'blue':r.status==='completed'?'t2':'red') + ')';
@@ -1694,7 +2319,14 @@ function renderMyBookings() {
             '<div class="hibadge ' + s.cls + '">' + s.text + '</div>' +
           '</div>' +
           '<div style="font-size:12px;color:var(--t2);margin-bottom:6px">📅 ' + r.date + ' · 🕐 ' + r.time + ' · 👤 ' + r.seats + ' nəfər</div>' +
+          (r.buyoutAllSeats ? '<div style="font-size:12px;color:var(--green);margin-bottom:6px">💳 Bütün yerləri ödəyirəm</div>' : '') +
           (r.notes ? '<div style="font-size:12px;color:var(--t2)">📝 ' + r.notes + '</div>' : '') +
+          (function() {
+            if (r.status !== 'active' || !r.seatInvite || !trips[r.seatInvite.tripId]) return '';
+            var it = r.seatInvite.tripId;
+            var lbl = passReqInviteIsAutoBuyout(r, it) ? '💳 Bütün yerləri bron et' : '🪑 Yer seç (sürücü təklifi)';
+            return '<button onclick="event.stopPropagation();openSeatSelectFromPassReqInvite(' + it + ')" style="margin-top:8px;width:100%;background:var(--green);border:none;border-radius:var(--ri);padding:10px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;font-family:Inter,sans-serif">' + lbl + '</button>';
+          })() +
           '';
         if (r.status==='completed' && !r.driverRated) {
           const rateBtn = document.createElement('button');
@@ -1707,7 +2339,6 @@ function renderMyBookings() {
       });
     }
   }
-  toast('renderMB done');
   } catch(e) { toast('renderMB ERR:'+e.message); }
 }
 
@@ -1729,9 +2360,17 @@ function showConfirm(title, msg, onOk) {
 
 function cancelBooking(tripId) {
   showConfirm('Rezervi ləğv et', 'Bu rezervasiyanı ləğv etmək istədiyinizə əminsiniz?', function() {
-    const idx = myBookedTrips.findIndex(function(b){return b.tripId===tripId;});
+    const t = trips[tripId];
+    const idx = myBookedTrips.findIndex(function(b){ return Number(b.tripId) === Number(tripId); });
+    if (idx > -1 && t && Array.isArray(t.freeSeats) && Array.isArray(myBookedTrips[idx].seatNumbers)) {
+      myBookedTrips[idx].seatNumbers.forEach(function(s){
+        var seatNum = parseInt(s, 10);
+        if (seatNum >= 1 && seatNum <= getTripSeatLayoutMax(t) && t.freeSeats.indexOf(seatNum) === -1) t.freeSeats.push(seatNum);
+      });
+      normalizeTripFreeSeats(t);
+    }
     if (idx > -1) myBookedTrips.splice(idx, 1);
-    const pidx = pendingBookings.findIndex(function(b){return b.tripId===tripId;});
+    const pidx = pendingBookings.findIndex(function(b){ return Number(b.tripId) === Number(tripId); });
     if (pidx > -1) pendingBookings.splice(pidx, 1);
     delete activeBookings[tripId];
     renderMyBookings();
@@ -1748,6 +2387,7 @@ function cancelRequest(id) {
     const pidx = passReqs.findIndex(function(r){return r.id===id;});
     if (pidx > -1) passReqs.splice(pidx, 1);
     renderMyBookings();
+    saveState();
   });
 }
 
@@ -1755,7 +2395,7 @@ function editRequest(id) {
   const r=myRequests.find(function(req){return req.id===id;});
   if(!r) { toast('Müraciət tapılmadı'); return; }
   prFrom=r.from; prTo=r.to; prDate=r.date; prTime=r.time;
-  selectedPrefs=[...(r.prefs||[])];
+  selectedPrefs = (r.prefs || []).map(function(p) { return p === '🎒 Bagajım var' ? '🎒 Bagaj' : p; });
   const fl=document.getElementById('pr-from-lbl');
   const tl=document.getElementById('pr-to-lbl');
   if(fl){fl.textContent=r.from;fl.classList.remove('ph');}
@@ -1766,9 +2406,16 @@ function editRequest(id) {
   if(tml) tml.textContent=r.time;
   const notes=document.getElementById('pr-notes');
   if(notes) notes.value=r.note||'';
+  prBuyoutAllSeats = !!r.buyoutAllSeats;
+  const prBuyout = document.getElementById('pr-buyout-all');
+  if (prBuyout) prBuyout.checked = prBuyoutAllSeats;
   document.querySelectorAll('.pref-chip').forEach(function(c){
-    c.classList.toggle('on',(r.prefs||[]).includes(c.dataset.v));
+    var v = c.dataset.v;
+    var prefs = r.prefs || [];
+    var on = prefs.indexOf(v) !== -1 || (v === '🎒 Bagaj' && prefs.indexOf('🎒 Bagajım var') !== -1);
+    c.classList.toggle('on', on);
   });
+  applyPrPaxCountFromData(parseInt(r.seats, 10) || 1);
   // Remove old silently
   const idx=myRequests.findIndex(function(req){return req.id===id;});
   if(idx>-1) myRequests.splice(idx,1);
@@ -1779,7 +2426,7 @@ function editRequest(id) {
 }
 
 // ── GENDER ─────────────────────────────────────────────
-let regGender='m', regName='', regAge=0;
+let regGender='m', regFirstName='', regLastName='', regAge=0;
 function selGender(g) {
   regGender=g;
   const m=document.getElementById('gen-m');
@@ -1927,7 +2574,7 @@ function nowTime() {
 }
 
 // ═══════════════════════════════════════════════════════
-// poputi.az — Clean JS v2.1.6-debug
+// poputi.az — PWA prototipi (buraxılış: APP_RELEASE)
 // ═══════════════════════════════════════════════════════
 
 // ── STATE ──────────────────────────────────────────────
@@ -1943,10 +2590,21 @@ let sFrom = '', sTo = '', sDate = 'Bu gün', sPax = 1;
 
 // Create trip state
 let cFrom = '', cTo = '', cDate = '', cTime = '';
+/** After publishTrip(), attach seat invite to this pass request id (same localStorage profile). */
+var createInvitePassReqId = null;
+/** Müraciətdə «bütün yerlər» — sürücü boş yer seçimini dəyişə bilməz. */
+var createInvitePassReqBuyout = false;
+var createTripSeatsLocked = false;
+/** Sərnişin buyout + seatInvite: yer seçimdə yalnız bütün boş yerlər. */
+var seatSelectBuyoutInviteLock = false;
+let createTripSelectedCarPlate = '';
+let createTripFreeSeats = [1,2,3,4];
 
 // Passenger request state
 let prFrom = '', prTo = '', prDate = '', prTime = '';
 let selectedPrefs = [];
+let prBuyoutAllSeats = false;
+var prPaxCount = 1;
 
 // Results state
 let lastRes = [], aFilter = [];
@@ -1983,111 +2641,17 @@ const BRANDS = ['Toyota','Hyundai','Kia','BMW','Mercedes','Volkswagen','Honda',
 
 const RDIST = {5:89, 4:32, 3:14, 2:5, 1:3};
 
-// ── DATA ───────────────────────────────────────────────
-const // TODO: MVP — загружать trips с сервера (GET /api/trips?from=&to=&date=)
-trips = [
-  {id:0,from:'Bakı',to:'Gəncə',time:'14:30',date:'Bu gün',dur:'~5 saat',price:8,seats:3,
-    driver:'Rəşad M.',driverFull:'Rəşad Məmmədov',driverPhone:'+994 50 123 45 67',rating:'4.9',tc:143,exp:'2',
-    car:'Toyota Camry',color:'Gümüşü',plate:'10-AA-777',chip:'Rahat',
-    notes:'🚭 Siqaret yoxdur · 🎒 Bagaj var',arrive:'~19:30',
-    pax:['Leyla','Fərid'],paxPhones:['+994 55 234 56 78','+994 70 345 67 89'],tags:['🚭 Siqaret yox','🎒 Bagaj','🎵 Musiqi']},
-  {id:1,from:'Bakı',to:'Lənkəran',time:'08:00',date:'Sabah',dur:'~3.5 saat',price:10,seats:1,
-    driver:'Elnur K.',driverFull:'Elnur Kərimov',rating:'5.0',tc:67,exp:'1',
-    car:'Hyundai Sonata',color:'Qara',plate:'77-BB-321',chip:'Premium',
-    notes:'🚭 Siqaret yoxdur · 🎒 Kiçik bagaj',arrive:'~11:30',
-    pax:['Aynur'],tags:['🚭 Siqaret yox','💺 Premium']},
-  {id:2,from:'Bakı',to:'Şəmkir',time:'16:00',date:'Bu gün',dur:'~4 saat',price:6,seats:2,
-    driver:'Nicat H.',driverFull:'Nicat Həsənov',rating:'4.7',tc:89,exp:'3',
-    car:'Kia Cerato',color:'Ağ',plate:'20-CC-555',chip:'Rahat',
-    notes:'🎒 Bagaj var',arrive:'~20:00',pax:[],tags:['🎒 Bagaj']},
-  {id:3,from:'Gəncə',to:'Bakı',time:'09:00',date:'Sabah',dur:'~5 saat',price:8,seats:3,
-    driver:'Tural A.',driverFull:'Tural Abbasov',rating:'4.8',tc:210,exp:'4',
-    car:'Toyota Camry',color:'Boz',plate:'05-DD-100',chip:'Rahat',
-    notes:'🚭 Siqaret yoxdur',arrive:'~14:00',
-    pax:['Kamran'],tags:['🚭 Siqaret yox']},
-  {id:4,from:'Bakı',to:'Quba',time:'07:00',date:'Sabah',dur:'~2.5 saat',price:7,seats:4,
-    driver:'Sənan V.',driverFull:'Sənan Vəliyev',rating:'4.6',tc:55,exp:'1',
-    car:'Chevrolet Cruze',color:'Ağ',plate:'33-EE-888',chip:'Iqtisadi',
-    notes:'🎒 Bagaj var · 🎵 Musiqi',arrive:'~09:30',pax:[],tags:['🎒 Bagaj','🎵 Musiqi']},
-  {id:5,from:'Bakı',to:'Şirvan',time:'11:00',date:'Bu gün',dur:'~2 saat',price:5,seats:2,
-    driver:'Murad C.',driverFull:'Murad Cəfərov',rating:'4.5',tc:34,exp:'1',
-    car:'Hyundai Accent',color:'Qırmızı',plate:'90-FF-001',chip:'Iqtisadi',
-    notes:'🚭 Siqaret yoxdur',arrive:'~13:00',pax:['Sevinc'],tags:['🚭 Siqaret yox']},
-  {id:6,from:'Bakı',to:'Mingəçevir',time:'15:00',date:'Bu gün',dur:'~3 saat',price:7,seats:3,
-    driver:'Vüsal H.',driverFull:'Vüsal Həsənli',rating:'4.8',tc:78,exp:'2',
-    car:'VW Polo',color:'Gümüşü',plate:'77-GG-333',chip:'Rahat',
-    notes:'🎒 Bagaj var',arrive:'~18:00',pax:[],tags:['🎒 Bagaj','🚭 Siqaret yox']},
-  {id:7,from:'Bakı',to:'Ağstafa',time:'06:30',date:'Sabah',dur:'~4.5 saat',price:9,seats:2,
-    driver:'Cavid M.',driverFull:'Cavid Mustafayev',rating:'4.9',tc:112,exp:'3',
-    car:'Honda Civic',color:'Ağ',plate:'10-HH-555',chip:'Premium',
-    notes:'💺 Rahat oturacaq',arrive:'~11:00',pax:['Nərmin'],tags:['🚭 Siqaret yox','💺 Premium']},
-  {id:8,from:'Gəncə',to:'Bakı',time:'14:00',date:'Bu gün',dur:'~5 saat',price:8,seats:1,
-    driver:'Elnar İ.',driverFull:'Elnar İsmayılov',rating:'4.6',tc:45,exp:'2',
-    car:'Skoda Octavia',color:'Boz',plate:'22-II-888',chip:'Rahat',
-    notes:'🎒 Bagaj var',arrive:'~19:00',pax:['Qulam','Araz'],tags:['🎒 Bagaj']},
-  {id:9,from:'Bakı',to:'Naxçıvan',time:'05:00',date:'Sabah',dur:'~7 saat',price:15,seats:3,
-    driver:'Əli K.',driverFull:'Əli Kərimov',rating:'5.0',tc:200,exp:'5',
-    car:'Mercedes E-Class',color:'Qara',plate:'77-JJ-007',chip:'Premium',
-    notes:'💺 Biznes · ❄️ Kondisioner',arrive:'~12:00',pax:[],
-    tags:['💺 Premium','❄️ Kondisioner','🚭 Siqaret yox']},
-];
-
-// TODO: MVP — поездки водителя с сервера (GET /api/my-trips)
-let myT = [
-  {id:0,route:'Bakı → Gəncə',date:'Bu gün, 14:30',total:3,pax:['Leyla','Fərid'],status:'active'},
-  {id:1,route:'Bakı → Lənkəran',date:'Sabah, 08:00',total:1,pax:['Aynur'],status:'full'},
-  {id:2,route:'Gəncə → Bakı',date:'22 Mart, 09:00',total:3,pax:[],status:'open'},
-  {id:3,route:'Bakı → Mingəçevir',date:'23 Mart, 15:00',total:3,pax:['Vüsal'],status:'active'},
-];
-
-const // TODO: MVP — загружать passReqs с сервера (GET /api/requests)
-passReqs = [
-  {id:0,from:'Bakı',to:'Gəncə',date:'Bu gün',time:'14:00',name:'Leyla F.',initial:'L',
-    rating:'5.0',prefs:['🚭 Siqaret yox','🎵 Musiqi'],note:'',seats:1},
-  {id:1,from:'Bakı',to:'Lənkəran',date:'Sabah',time:'08:30',name:'Kamran H.',initial:'K',
-    rating:'4.8',prefs:['🎒 Bagaj'],note:'Böyük çamadanım var',seats:2},
-  {id:2,from:'Gəncə',to:'Bakı',date:'Bu gün',time:'15:00',name:'Aynur M.',initial:'A',
-    rating:'4.9',prefs:['🔇 Sakit','🚭 Siqaret yox'],note:'',seats:1},
-  {id:3,from:'Bakı',to:'Quba',date:'Sabah',time:'07:30',name:'Fərid N.',initial:'F',
-    rating:'5.0',prefs:['🎒 Bagaj','❄️ Kondisioner'],note:'2 nəfərik',seats:2},
-  {id:4,from:'Bakı',to:'Şirvan',date:'Bu gün',time:'11:00',name:'Sevinc A.',initial:'S',
-    rating:'4.7',prefs:['💬 Söhbət','🎵 Musiqi'],note:'',seats:1},
-];
-
-const // TODO: MVP — история поездок с сервера (GET /api/history)
-histT = [
-  {route:'Bakı → Gəncə',date:'18 Mart 2026',price:'8 AZN',status:'done',r:5,drv:'Rəşad M.'},
-  {route:'Bakı → Lənkəran',date:'15 Mart 2026',price:'10 AZN',status:'done',r:5,drv:'Elnur K.'},
-  {route:'Bakı → Şirvan',date:'10 Mart 2026',price:'5 AZN',status:'canc',r:0,drv:'Murad C.'},
-  {route:'Gəncə → Bakı',date:'5 Mart 2026',price:'8 AZN',status:'done',r:4,drv:'Tural A.'},
-  {route:'Bakı → Quba',date:'28 Fevr 2026',price:'7 AZN',status:'done',r:5,drv:'Sənan V.'},
-  {route:'Bakı → Ağstafa',date:'20 Fevr 2026',price:'9 AZN',status:'up',r:0,drv:'Cavid M.'},
-];
-
-const // TODO: MVP — отзывы с сервера (GET /api/reviews?userId=)
-REVIEWS = [
-  {n:'Leyla F.',i:'L',r:5,t:'Çox nəzakətli sürücü, vaxtında gəldi. Tövsiyə edirəm!',route:'Bakı → Gəncə',d:'18 Mart'},
-  {n:'Kamran H.',i:'K',r:5,t:'Sürücü çox professional, yolda güvənli sürdü.',route:'Bakı → Lənkəran',d:'15 Mart'},
-  {n:'Aynur M.',i:'A',r:4,t:'Yaxşı sürücü, bir az gecikdi amma üzr istədi.',route:'Bakı → Şirvan',d:'10 Mart'},
-  {n:'Fərid N.',i:'F',r:5,t:'Əla! Bagajıma kömək etdi, çox mehriban idi.',route:'Bakı → Quba',d:'5 Mart'},
-  {n:'Sevinc A.',i:'S',r:5,t:'Mükəmməl səfər! Rahat, təmiz, vaxtında.',route:'Gəncə → Bakı',d:'28 Fevral'},
-];
-
-// TODO: MVP — загружать историю чатов с сервера (GET /api/chats)
-const convs = [
-  {id:0,peerName:'Rəşad Məmmədov',pi:'R',role:'driver',rt:'Bakı → Gəncə',mt:'Bu gün, 14:30',unread:1,
-    msgs:[{out:false,text:'Salam! Məni 28 May metrosundan götürə bilərsiniz?',time:'13:15'},
-          {out:true,text:'Salam! Bəli, əlbəttə.',time:'13:18'},
-          {out:false,text:'Bagajım var, problem deyil ki?',time:'13:20'}]},
-  {id:1,peerName:'Aynur Hüseynova',pi:'A',role:'passenger',rt:'Bakı → Lənkəran',mt:'Sabah, 08:00',unread:1,
-    msgs:[{out:false,text:'Sürücü bəy, sabah neçədə yola düşürük?',time:'18:05'},
-          {out:false,text:'Dəqiq yer haradır?',time:'18:06'}]},
-  {id:2,peerName:'Nicat Həsənov',pi:'N',role:'driver',rt:'Bakı → Şəmkir',mt:'Bu gün, 16:00',unread:0,
-    msgs:[{out:true,text:'Salam, 1 yer qaldı?',time:'10:00'},
-          {out:false,text:'Bəli, var.',time:'10:02'},
-          {out:true,text:'Rezerv eləyirəm!',time:'10:03'},
-          {out:false,text:'Xoş gəldiniz!',time:'10:04'}]},
-];
+// ── DATA (пустой старт; поездки/заявки идут из localStorage и действий пользователя) ──
+let trips = [];
+let myT = [];
+var myTListKeySeq = 10000;
+var mbFilterBooking = 'all';
+var mbFilterRequest = 'all';
+var myTFilterStatus = 'all';
+let passReqs = [];
+let histT = [];
+let REVIEWS = [];
+let convs = [];
 
 const MAP_SCREENS = {
   splash:'s-splash',phone:'s-phone',sms:'s-sms',hascar:'s-hascar',regcar:'s-regcar',
@@ -2099,6 +2663,11 @@ const MAP_SCREENS = {
 };
 // ── NAVIGATION ─────────────────────────────────────────
 function go(n) {
+  if (n !== 'create' && n !== 'confirm') {
+    createInvitePassReqId = null;
+    createInvitePassReqBuyout = false;
+    createTripSeatsLocked = false;
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(MAP_SCREENS[n]);
   if (!el) {
@@ -2109,16 +2678,15 @@ function go(n) {
   if (n === 'history') renderHistory();
   if (n === 'myreviews') renderMyReviews();
   if (n === 'mybookings') renderMyBookings();
-  if (n === 'mytrips') {
-    const mtEl = document.getElementById('mylist');
-    if (mtEl) mtEl.innerHTML = myT && myT.length
-      ? myT.map(t => mtHTML(t)).join('')
-      : '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🗺</div><div style="color:var(--t2);font-size:14px">Aktiv səfər yoxdur</div></div>';
-  }
-  if (n === 'notifs') renderNotifs();
+  if (n === 'mytrips') renderDriverMyTrips();
+  if (n === 'notifs') { applyNotifToggleButtonsUI(); renderNotifs(); }
   if (n === 'car') renderCarList();
   if (n === 'profile') renderPMenu();
-  if (n === 'create') renderTripPrefs();
+  if (n === 'create') {
+    renderTripPrefs();
+    initCreateTripOptions();
+    applyCreateTripFromPassReqIfAny();
+  }
   if (n === 'home') {
     renderHome();
     if (!notifEnabled) requestNotifPermission();
@@ -2138,36 +2706,61 @@ function obNext() {
 // ── REGISTRATION ───────────────────────────────────────
 let regPhone = '', regSeatsCount = 4;
 
+function getSmsCodeBoxes() {
+  var w = document.getElementById('code-boxes');
+  return w ? w.querySelectorAll('.codebox') : document.querySelectorAll('#s-sms .codebox');
+}
+
+/** Paste full OTP (e.g. 1111) into four cells; avoids stuck screen when only first cell filled. */
+function onSmsCodePaste(e) {
+  var raw = (e.clipboardData || window.clipboardData).getData('text') || '';
+  var digits = raw.replace(/\D/g, '').slice(0, 4);
+  if (digits.length < 4) return;
+  e.preventDefault();
+  var boxes = getSmsCodeBoxes();
+  for (var i = 0; i < 4; i++) {
+    if (boxes[i]) boxes[i].value = digits.charAt(i) || '';
+  }
+  setTimeout(verifyCode, 150);
+}
+
 function fmtPhone(el) { el.value = el.value.replace(/[^0-9]/g, ''); }
 
 function sendSMS() {
-  const nameEl=document.getElementById('reg-fullname');
-  const ageEl=document.getElementById('reg-age');
-  const name=nameEl?nameEl.value.trim():'';
-  const dob=ageEl?ageEl.value:'';
-  const age=dob?Math.floor((new Date()-new Date(dob))/(365.25*24*3600*1000)):0;
-  if(nameEl&&(!name||name.split(' ').length<2)){toast('Ad və soyadı daxil edin');return;}
-  if(ageEl&&(!dob)){toast('Doğum tarixini daxil edin');return;}
-  if(age<18){toast('Yaşınız 18-dən az ola bilməz');return;}
+  const firstEl = document.getElementById('reg-firstname');
+  const lastEl = document.getElementById('reg-lastname');
+  const ageEl = document.getElementById('reg-age');
+  const first = firstEl ? firstEl.value.trim() : '';
+  const last = lastEl ? lastEl.value.trim() : '';
+  const dob = ageEl ? ageEl.value : '';
+  const age = dob ? Math.floor((new Date() - new Date(dob)) / (365.25 * 24 * 3600 * 1000)) : 0;
+  if (!first) { toast('Adı daxil edin'); return; }
+  if (!last) { toast('Soyadı daxil edin'); return; }
+  if (ageEl && !dob) { toast('Doğum tarixini daxil edin'); return; }
+  if (age < 18) { toast('Yaşınız 18-dən az ola bilməz'); return; }
   const p = document.getElementById('phone-inp').value.replace(/\s/g, '');
   if (p.length < 9) { toast('Nömrəni düzgün daxil edin'); return; }
-  regName=name; regAge=age; regPhone = p;
+  regFirstName = first;
+  regLastName = last;
+  regAge = age;
+  regPhone = p;
   document.getElementById('sms-hint').textContent = '+994 ' + p.slice(0,2) + ' ••• ••' + p.slice(-2) + ' nömrəsinə';
   // TODO: MVP — вызов API для отправки реального SMS
   go('sms');
-  setTimeout(() => { const b = document.querySelectorAll('.codebox')[0]; if(b) b.focus(); }, 300);
+  setTimeout(function() { var b = getSmsCodeBoxes()[0]; if (b) b.focus(); }, 300);
 }
 
 function codeInput(el, idx) {
   el.value = el.value.replace(/[^0-9]/g, '');
-  if (el.value && idx < 3) document.querySelectorAll('.codebox')[idx + 1].focus();
-  const code = [...document.querySelectorAll('.codebox')].map(b => b.value).join('');
+  var boxes = getSmsCodeBoxes();
+  if (el.value && idx < 3 && boxes[idx + 1]) boxes[idx + 1].focus();
+  const code = [...boxes].map(function(b) { return String(b.value || ''); }).join('');
   if (code.length === 4) setTimeout(verifyCode, 200);
 }
 
 function codeDel(el, e) {
   if (e.key === 'Backspace' && !el.value) {
-    const boxes = document.querySelectorAll('.codebox');
+    const boxes = getSmsCodeBoxes();
     const idx = [...boxes].indexOf(el);
     if (idx > 0) boxes[idx - 1].focus();
   }
@@ -2176,11 +2769,17 @@ function codeDel(el, e) {
 function resendSMS() { toast('Kod yenidən göndərildi'); }
 
 function verifyCode() {
-  const code = [...document.querySelectorAll('.codebox')].map(b => b.value).join('');
+  const code = [...getSmsCodeBoxes()].map(function(b) { return String(b.value || ''); }).join('');
   if (code.length < 4) { toast('Kodu daxil edin'); return; }
   // TODO: MVP — отправить код на сервер для верификации, не принимать любые 4 цифры
-  saveState();
-  go('hascar');
+  try {
+    saveState();
+    updateProfileDisplay();
+  } catch (err) {
+    console.error(err);
+  } finally {
+    go('hascar');
+  }
 }
 
 let carProfileSeats = 4;
@@ -2341,7 +2940,7 @@ function revHTML(r) {
 function tcHTML(t, back, book) {
   const D = role === 'driver';
   const carLine = !D ? `<div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--t2)"><span>🚗</span><span style="font-weight:500;color:var(--t1)">${t.car}</span><span>·</span><span>${t.color}</span></div>` : '';
-  const bookBtn = book && !D ? `<button class="tcbook" onclick="event.stopPropagation();openSeatSelect(${t.id})">🪑 Yer seç — ${t.price} AZN</button>` : '';
+  const bookBtn = book && !D && tripPassengerCanStillBook(t) ? `<button class="tcbook" onclick="event.stopPropagation();openSeatSelect(${t.id})">🪑 Yer seç — ${t.price} AZN</button>` : '';
   const tags = t.tags.map(g => `<span class="tag">${g}</span>`).join('');
   return `<div class="tc" onclick="openTrip(${t.id},'${back}')">
     <div class="tc-top">
@@ -2366,24 +2965,413 @@ function tcHTML(t, back, book) {
 }
 
 function mtHTML(t) {
+  var lk = typeof t.listKey === 'number' ? t.listKey : 0;
+  if (t.status === 'cancelled') {
+    var fc = Array.isArray(t.pax) ? t.pax.length : 0;
+    return '<div class="mtcard mtcard-cancelled" onclick="openMyTripFromCard(' + lk + ')">' +
+      '<div class="mttop"><div class="mtroute">' + t.route + '</div><div class="mtst cancelled">Ləğv edildi</div></div>' +
+      '<div style="font-size:11px;color:var(--t2)">🕐 ' + t.date + (fc ? ' · ' + fc + ' sərnişin (tarixçə)' : '') + '</div>' +
+      '</div>';
+  }
   const lb = {active:'Aktiv', full:'Dolu', open:'Açıq'};
+  const st = deriveMyTListStatus(t);
   const f = t.pax.length, e = t.total - f;
   const dots = t.pax.map(n => `<div class="pd2">${n[0]}</div>`).join('') +
     Array(e).fill('<div class="pd2 e">·</div>').join('');
-  return `<div class="mtcard" onclick="openMyTripFromCard(${t.id})">
-    <div class="mttop"><div class="mtroute">${t.route}</div><div class="mtst ${t.status}">${lb[t.status]}</div></div>
+  return `<div class="mtcard" onclick="openMyTripFromCard(${lk})">
+    <div class="mttop"><div class="mtroute">${t.route}</div><div class="mtst ${st}">${lb[st]}</div></div>
     <div style="font-size:11px;color:var(--t2);margin-bottom:8px">🕐 ${t.date} · ${f}/${t.total} yer</div>
     <div style="display:flex;align-items:center">${dots}<span style="font-size:11px;color:var(--t2);margin-left:12px">${f} sərnişin</span></div>
   </div>`;
 }
 
-function openMyTripFromCard(id) {
-  openTrip(id, 'mytrips');
+function openMyTripFromCard(ref) {
+  var cardTrip = myT.find(function(mt){ return typeof mt.listKey === 'number' && mt.listKey === ref; });
+  if (!cardTrip) {
+    cardTrip = myT.find(function(mt){ return mt.status !== 'cancelled' && (typeof mt.tripId==='number'?mt.tripId:mt.id)===ref; });
+  }
+  if (!cardTrip) return;
+  if (cardTrip.status === 'cancelled') {
+    toast('Bu elan siz tərəfindən ləğv edilib');
+    return;
+  }
+  var id = typeof cardTrip.tripId === 'number' ? cardTrip.tripId : cardTrip.id;
+  var targetIdx = id;
+  if (cardTrip && cardTrip.route && cardTrip.date) {
+    var parts = cardTrip.route.split('→').map(function(x){ return x.trim(); });
+    var from = parts[0] || '';
+    var to = parts[1] || '';
+    var matchedIdx = trips.findIndex(function(tr){
+      return tr.from === from && tr.to === to && (tr.date + ', ' + tr.time) === cardTrip.date;
+    });
+    if (matchedIdx === -1) {
+      matchedIdx = trips.findIndex(function(tr){ return tr.from === from && tr.to === to; });
+    }
+    if (matchedIdx > -1) {
+      targetIdx = matchedIdx;
+    } else if (from && to) {
+      // Build synthetic trip from myTrips card to keep detail header consistent with clicked card.
+      var dt = (cardTrip.date || '').split(',');
+      var dPart = (dt[0] || 'Bu gün').trim();
+      var tPart = (dt[1] || '00:00').trim();
+      trips.unshift({
+        id: trips.length,
+        from: from, to: to, time: tPart, date: dPart, dur: '—', price: 0, seats: cardTrip.total || 1, seatLayoutMax: cardTrip.total || 1,
+        driver: 'Siz', driverFull: getPublicDisplayNameForCurrentUser(), rating: '5.0', tc: 0, exp: '1',
+        car: '—', color: '—', plate: '—', chip: 'Rahat',
+        notes: '', arrive: '—', pax: Array.isArray(cardTrip.pax) ? cardTrip.pax.slice() : [], tags: []
+      });
+      trips.forEach(function(tr, i){ tr.id = i; });
+      targetIdx = trips.findIndex(function(tr){ return tr.from === from && tr.to === to && tr.date === dPart && tr.time === tPart; });
+      if (targetIdx < 0) targetIdx = 0;
+      cardTrip.tripId = targetIdx;
+    }
+  }
+  var target = trips[targetIdx];
+  openTrip(targetIdx, 'mytrips');
+}
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+function normRoutePart(s) {
+  return String(s || '').trim();
+}
+
+function timeToMinutes(hhmm) {
+  var p = normRoutePart(hhmm).split(':');
+  if (p.length < 2) return null;
+  var h = parseInt(p[0], 10);
+  var m = parseInt(p[1], 10);
+  if (isNaN(h) || isNaN(m)) return null;
+  return h * 60 + m;
+}
+
+/** Same calendar label + time within ±90 min (MVP). */
+function tripEntityMatchesPassRequest(t, r) {
+  if (!t || !r) return false;
+  if (normRoutePart(t.from) !== normRoutePart(r.from) || normRoutePart(t.to) !== normRoutePart(r.to)) return false;
+  if (normRoutePart(t.date) !== normRoutePart(r.date)) return false;
+  var a = timeToMinutes(t.time);
+  var b = timeToMinutes(r.time);
+  if (a == null || b == null) return normRoutePart(t.time) === normRoutePart(r.time);
+  return Math.abs(a - b) <= 90;
+}
+
+var PREF_WOMEN_ONLY = '👩 Yalnız qadınlar';
+
+function getProfileBookingGenderCode() {
+  return regGender === 'f' ? 'f' : 'm';
+}
+
+function canonicalPrefKey(pref) {
+  return pref === '🎒 Bagajım var' ? '🎒 Bagaj' : pref;
+}
+
+function isPrefStrictForMatching(pref) {
+  if (prefStrictness[pref] === false) return false;
+  var c = canonicalPrefKey(pref);
+  if (c !== pref && prefStrictness[c] === false) return false;
+  return true;
+}
+
+function getStrictPrefsForPassRequest(r) {
+  return (r.prefs || []).filter(function(p) { return isPrefStrictForMatching(p); });
+}
+
+function requestPrefToTripTag(pref) {
+  if (pref === '🎒 Bagajım var') return '🎒 Bagaj';
+  return pref;
+}
+
+function tripHasTagForPref(t, pref) {
+  var want = requestPrefToTripTag(pref);
+  var tags = Array.isArray(t.tags) ? t.tags : [];
+  return tags.indexOf(want) !== -1;
+}
+
+function countTripFreePassengerSeats(t) {
+  if (!t) return 0;
+  normalizeTripFreeSeats(t);
+  return Array.isArray(t.freeSeats) ? t.freeSeats.length : 0;
+}
+
+function tripHasMaleIncludingPending(tripIdx) {
+  var t = trips[tripIdx];
+  if (t && Array.isArray(t.paxGenders)) {
+    for (var i = 0; i < t.paxGenders.length; i++) {
+      if (t.paxGenders[i] === 'm') return true;
+    }
+  }
+  return pendingBookings.some(function(b) {
+    if (Number(b.tripId) !== Number(tripIdx)) return false;
+    return b.passengerGender === 'm';
+  });
+}
+
+/** Bütün sərnişin oturacaqları boş, təsdiq gözləyən rezerv yoxdur. */
+function tripAllBookableSeatsStillFree(t, tripIdx) {
+  if (!t) return false;
+  var max = getTripSeatLayoutMax(t);
+  normalizeTripFreeSeats(t);
+  if (!Array.isArray(t.freeSeats) || t.freeSeats.length !== max) return false;
+  if (t.pax && t.pax.length) return false;
+  return !pendingBookings.some(function(b) { return Number(b.tripId) === Number(tripIdx); });
+}
+
+function getPassRequestNeededSeats(r) {
+  if (!r) return 1;
+  return Math.max(1, Math.min(APP_PASS_REQ_PAX_MAX, parseInt(r.seats, 10) || 1));
+}
+
+/** Profildə qeyd olunan oturacaq sayı (sərnişin müraciəti ilə müqayisə üçün, 1–50). */
+function getCarRegisteredSeatCount(car) {
+  if (!car) return 4;
+  var n = parseInt(car.seats, 10);
+  if (isNaN(n) || n < 1) return 4;
+  return Math.min(50, n);
+}
+
+function getCreateLayoutMaxFromCar(car) {
+  return Math.max(1, Math.min(APP_MAX_PASSENGER_SEAT_LAYOUT, getCarRegisteredSeatCount(car)));
+}
+
+/** Sürücü profilində (defolt şərtlər) müraciətin ciddi üstünlükləri var? */
+function driverProfileMatchesPassReqStrictPrefs(r) {
+  if (!r) return true;
+  var stricts = getStrictPrefsForPassRequest(r);
+  if (!stricts.length) return true;
+  if (!Array.isArray(driverPrefs)) return false;
+  for (var i = 0; i < stricts.length; i++) {
+    var tag = requestPrefToTripTag(stricts[i]);
+    if (driverPrefs.indexOf(tag) === -1) return false;
+  }
+  return true;
+}
+
+/** Sürücünün heç olmasa bir avtomobili bu müraciətdəki sərnişin sayını qəbul edə bilər. */
+function driverHasAnyCarForPassReq(r) {
+  var need = getPassRequestNeededSeats(r);
+  if (!userCars || !userCars.length) {
+    return getCarRegisteredSeatCount({ seats: 4 }) >= need;
+  }
+  return userCars.some(function(c) {
+    return getCarRegisteredSeatCount(c) >= need;
+  });
+}
+
+function tripMatchesPassRequestForDriver(t, tripIdx, r) {
+  if (!t || !r) return false;
+  if (!tripEntityMatchesPassRequest(t, r)) return false;
+  var need = getPassRequestNeededSeats(r);
+  var freeCnt = countTripFreePassengerSeats(t);
+  if (r.buyoutAllSeats) {
+    if (!tripAllBookableSeatsStillFree(t, tripIdx)) return false;
+  } else {
+    if (freeCnt < need) return false;
+  }
+  var stricts = getStrictPrefsForPassRequest(r);
+  for (var i = 0; i < stricts.length; i++) {
+    var p = stricts[i];
+    if (p === PREF_WOMEN_ONLY) {
+      if (tripHasMaleIncludingPending(tripIdx)) return false;
+      if (!tripHasTagForPref(t, p)) return false;
+      continue;
+    }
+    if (!tripHasTagForPref(t, p)) return false;
+  }
+  return true;
+}
+
+/** Resolve trips[] index for an active driver myT card (no synthetic trip creation). */
+function getTripIndexForDriverMyT(mt) {
+  if (!mt || mt.status === 'cancelled') return -1;
+  var id = typeof mt.tripId === 'number' ? mt.tripId : mt.id;
+  if (id >= 0 && trips[id]) {
+    var parts = String(mt.route || '').split('→').map(function(x) { return x.trim(); });
+    var from = parts[0] || '';
+    var to = parts[1] || '';
+    var tr = trips[id];
+    if (tr.from === from && tr.to === to) return id;
+  }
+  if (mt.route && mt.date) {
+    var p2 = mt.route.split('→').map(function(x) { return x.trim(); });
+    var f = p2[0] || '';
+    var t2 = p2[1] || '';
+    var idx = trips.findIndex(function(tr) {
+      return tr.from === f && tr.to === t2 && (tr.date + ', ' + tr.time) === mt.date;
+    });
+    if (idx === -1) idx = trips.findIndex(function(tr) { return tr.from === f && tr.to === t2; });
+    return idx;
+  }
+  return -1;
+}
+
+function passReqVisibleForDriverAnyTrip(r) {
+  if (!driverHasAnyCarForPassReq(r)) return false;
+  var myTActive = myT.filter(function(mt) { return mt.status !== 'cancelled'; });
+  if (!myTActive.length) return true;
+  return myTActive.some(function(mt) {
+    var ti = getTripIndexForDriverMyT(mt);
+    if (ti < 0) return false;
+    return tripMatchesPassRequestForDriver(trips[ti], ti, r);
+  });
+}
+
+function findMyTMatchesForPassReq(r) {
+  var out = [];
+  var myTActive = myT.filter(function(t) { return t.status !== 'cancelled'; });
+  myTActive.forEach(function(mt) {
+    var ti = getTripIndexForDriverMyT(mt);
+    if (ti < 0) return;
+    var t = trips[ti];
+    if (tripMatchesPassRequestForDriver(t, ti, r)) out.push({ mt: mt, tripIdx: ti, trip: t });
+  });
+  return out;
+}
+
+function attachSeatInviteToPassReqById(reqId, tripIdx) {
+  var t = trips[tripIdx];
+  if (!t) return;
+  var inv = { tripId: Number(tripIdx), driverFull: t.driverFull || t.driver || '', at: Date.now() };
+  passReqs.forEach(function(x) { if (String(x.id) === String(reqId)) x.seatInvite = inv; });
+  myRequests.forEach(function(x) { if (String(x.id) === String(reqId)) x.seatInvite = inv; });
+  addNotification('🪑 Sərnişinə yer seçmə təklifi: ' + t.from + ' → ' + t.to, 'booking');
+  notifSeatInviteForPassenger(t.from + ' → ' + t.to, t.driverFull || t.driver || '');
+  saveState();
+}
+
+function sendDriverSeatInviteToPassenger(reqId, tripIdx) {
+  attachSeatInviteToPassReqById(reqId, tripIdx);
+  closeDriverPassReqOfferModal();
+  toast('✅ Təklif göndərildi — sərnişin «Səfərlərim → Müraciətlərim»də yer seçə bilər');
+  renderHome();
+}
+
+function closeDriverPassReqOfferModal() {
+  var m = document.getElementById('dpo-modal');
+  if (m) m.style.display = 'none';
+}
+
+function openCreateTripForPassReq(r) {
+  closeDriverPassReqOfferModal();
+  if (!driverHasAnyCarForPassReq(r)) {
+    toast('Bu müraciət üçün profilinizdə ən azı ' + getPassRequestNeededSeats(r) + ' oturacaqlı avtomobil lazımdır.');
+    return;
+  }
+  cFrom = r.from;
+  cTo = r.to;
+  cDate = r.date;
+  cTime = r.time;
+  var b1 = document.getElementById('cfl');
+  if (b1) {
+    b1.textContent = r.from;
+    b1.classList.remove('ph');
+  }
+  var b2 = document.getElementById('ctl');
+  if (b2) {
+    b2.textContent = r.to;
+    b2.classList.remove('ph');
+  }
+  var cdl = document.getElementById('cdl');
+  if (cdl) cdl.textContent = r.date;
+  var ctml = document.getElementById('ctml');
+  if (ctml) ctml.textContent = r.time;
+  createInvitePassReqId = r.id;
+  createInvitePassReqBuyout = !!r.buyoutAllSeats;
+  createTripSeatsLocked = false;
+  go('create');
+}
+
+function openDriverPassReqOfferModal(passReqId) {
+  if (role !== 'driver') return;
+  var r = passReqs.find(function(x) { return String(x.id) === String(passReqId); });
+  if (!r) {
+    toast('Müraciət tapılmadı');
+    return;
+  }
+  if (!driverHasAnyCarForPassReq(r)) {
+    toast('Bu müraciət üçün avtomobil tutumunuz kifayət etmir (' + getPassRequestNeededSeats(r) + ' nəfər lazımdır).');
+    return;
+  }
+  var m = document.getElementById('dpo-modal');
+  var box = document.getElementById('dpo-content');
+  if (!m || !box) return;
+  var matches = findMyTMatchesForPassReq(r);
+  var html =
+    '<div style="font-size:13px;color:var(--t2);margin-bottom:12px">' +
+    '<b style="color:var(--t1)">' + escHtml(r.name) + '</b><br/>' +
+    escHtml(r.from) + ' → ' + escHtml(r.to) + '<br/>📅 ' + escHtml(r.date) + ' · 🕐 ' + escHtml(r.time) +
+    '</div>';
+  if (matches.length) {
+    html += '<div style="font-size:12px;font-weight:600;color:var(--t1);margin-bottom:8px">Uyğun aktiv elan' + (matches.length > 1 ? 'lar' : '') + ':</div>';
+    matches.forEach(function(mch, i) {
+      var tr = mch.trip;
+      html +=
+        '<div style="background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:10px;border:1px solid var(--bd)">' +
+        '<div style="font-size:14px;font-weight:600">' + escHtml(tr.from) + ' → ' + escHtml(tr.to) + '</div>' +
+        '<div style="font-size:12px;color:var(--t2)">🕐 ' + escHtml(tr.date) + ', ' + escHtml(tr.time) + ' · ' + escHtml(String(tr.price)) + ' AZN</div>' +
+        '<button type="button" class="gbtn g dpo-send-inv" data-req="' + String(r.id) + '" data-trip="' + mch.tripIdx + '" style="width:100%;margin-top:10px;margin-bottom:0">Bu səfərdə yer təklif et</button>' +
+        '</div>';
+    });
+  } else {
+    html +=
+      '<div style="background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:12px;font-size:13px;color:var(--t2)">' +
+      'Bu marşrut və vaxta uyğun aktiv elanınız yoxdur. Əvvəlcə elan yaradın — dərc edəndən sonra sərnişinə avtomatik yer seçmə təklifi göndəriləcək.' +
+      '</div>';
+  }
+  html +=
+    '<button type="button" class="gbtn b" id="dpo-create-trip" style="width:100%;margin-top:4px">+ Müraciətə uyğun səfər yarat</button>' +
+    '<button type="button" class="gbtn b" id="dpo-chat-only" style="width:100%;margin-top:8px;background:var(--sf);color:var(--t1);border:1px solid var(--bd)">💬 Yalnız mesaj</button>';
+  box.innerHTML = html;
+  box.querySelectorAll('.dpo-send-inv').forEach(function(btn) {
+    btn.onclick = function() {
+      sendDriverSeatInviteToPassenger(btn.getAttribute('data-req'), parseInt(btn.getAttribute('data-trip'), 10));
+    };
+  });
+  var cbtn = document.getElementById('dpo-create-trip');
+  if (cbtn) cbtn.onclick = function() { openCreateTripForPassReq(r); };
+  var chatBtn = document.getElementById('dpo-chat-only');
+  if (chatBtn) {
+    chatBtn.onclick = function() {
+      closeDriverPassReqOfferModal();
+      openChatWith(r.name, r.from + ' → ' + r.to, r.date + ', ' + r.time, 'passenger');
+    };
+  }
+  m.style.display = 'flex';
+}
+
+function autoReserveAllFreeSeatsForPassInvite(tripIdx) {
+  var t = trips[tripIdx];
+  if (!t) return;
+  normalizeTripFreeSeats(t);
+  if (!Array.isArray(t.freeSeats) || !t.freeSeats.length) {
+    toast('Boş yer yoxdur');
+    return;
+  }
+  selSeats = t.freeSeats.slice();
+  seatTripId = tripIdx;
+  doReserve(tripIdx);
+}
+
+function openSeatSelectFromPassReqInvite(tripId) {
+  var tid = Number(tripId);
+  var tr = trips[tid];
+  var pr = myRequests.find(function(x) { return x.seatInvite && Number(x.seatInvite.tripId) === tid; });
+  if (pr && passReqInviteIsAutoBuyout(pr, tid)) {
+    autoReserveAllFreeSeatsForPassInvite(tid);
+    return;
+  }
+  showMyBookings();
+  switchMBTab('reqs');
+  openSeatSelect(tid, 'mybookings');
 }
 
 function preqHTML(r) {
   const seats = r.seats || 1;
   const tags = r.prefs.map(p => `<span class="tag">${p}</span>`).join('');
+  const buyoutTag = r.buyoutAllSeats ? '<span class="tag" style="background:var(--gbg);color:var(--green);border-color:var(--green)">💳 Bütün yerləri ödəyirəm</span>' : '';
   const note = r.note ? `<div style="font-size:12px;color:var(--t2);margin-top:6px">💬 ${r.note}</div>` : '';
   return `<div class="tc" style="border-left:3px solid var(--blue);margin:0 16px 8px">
     <div class="tc-top">
@@ -2397,11 +3385,11 @@ function preqHTML(r) {
       </div>
       <div style="background:var(--bbg);color:var(--bp);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;white-space:nowrap;flex-shrink:0">Sərnişin</div>
     </div>
-    <div class="tc-tags" style="margin-top:8px">${tags}</div>
+    <div class="tc-tags" style="margin-top:8px">${tags}${buyoutTag}</div>
     ${note}
     <button class="tcbook" style="background:var(--blue);margin-top:10px"
-      onclick="event.stopPropagation();openChatWith('${r.name}','${r.from} → ${r.to}','${r.date}, ${r.time}','passenger')">
-      💬 Yer təklif et
+      onclick="event.stopPropagation();openDriverPassReqOfferModal(${r.id})">
+      🪑 Yer təklif et
     </button>
   </div>`;
 }
@@ -2413,15 +3401,18 @@ function renderHome() {
     const container = document.getElementById('homelist');
     if (container) {
       const D = true;
-      const myHtml = myT.map(t => mtHTML(t)).join('');
-      const ownNames = ['Ayxan İ.','Ayxan İlimov']; // TODO: MVP — currentUser.name/fullName
-      const others = passReqs.filter(r => !ownNames.includes(r.name));
-      const matched = myT.length ? others.filter(r => myT.some(t => t.route.includes(r.from) && t.route.includes(r.to))) : others;
+      var myTActive = myT.filter(function(t){ return t.status !== 'cancelled'; });
+      const myHtml = myTActive.map(t => mtHTML(t)).join('');
+      const others = getPassReqsForDriverFeed();
+      const matched = myTActive.length ? others.filter(function(r) { return passReqVisibleForDriverAnyTrip(r); }) : others;
       const show = matched.length ? matched : others;
       const preqSection = show.length
         ? '<div class="sec"><div class="sec-t" style="color:var(--blue)">🔍 Sərnişin Axtarır ('+show.length+')</div></div>' + show.map(r => preqHTML(r)).join('')
         : '';
-      container.innerHTML = renderPendingBookings() + myHtml + preqSection;
+      const driverBody = renderPendingBookings() + myHtml + preqSection;
+      container.innerHTML = driverBody.trim()
+        ? driverBody
+        : '<div style="text-align:center;padding:40px 20px;color:var(--t2);font-size:14px;line-height:1.5">Hələ aktiv elan və ya sərnişin müraciəti yoxdur.<br/><span style="font-size:13px">«Yarat» ilə səfər elanı əlavə edin — və ya sərnişinlər müraciət göndərəndə burada görünəcək.</span></div>';
     }
     document.getElementById('hfilters').style.display = 'none';
     document.getElementById('home-widget').innerHTML = '';
@@ -2443,8 +3434,12 @@ function renderHome() {
     hfilters.style.display = 'none';
     widget.innerHTML = renderTodayWidget(todayTrip);
     // Show other trips below widget
+    var feedTrips = trips.filter(tripPassengerCanStillBook).slice(0, 5);
+    // #region agent log
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHome:activeTripFeed',message:'passenger feed under widget',data:{hypothesisId:'H2',tripIds:feedTrips.map(function(x){return {id:x.id,free:countTripFreePassengerSeats(x)};})},timestamp:Date.now()})}).catch(function(){});
+    // #endregion
     container.innerHTML = '<div style="padding:12px 16px 4px"><div style="font-size:13px;font-weight:600;color:var(--t1)">Digər mövcud səfərlər</div></div>' +
-      trips.slice(0,5).map(function(t){return tcHTML(t,'home',true);}).join('');
+      feedTrips.map(function(t){return tcHTML(t,'home',true);}).join('');
   } else {
     // Show search form + trips
     // hp always visible
@@ -2491,6 +3486,13 @@ function getTodayTrip() {
 function renderTodayWidget(active) {
   const t = active.trip;
   const b = active.booking;
+  var mb = active.id != null ? getMyBookingRecordForTripId(active.id) : null;
+  var priceSrc = mb || b;
+  var totalAzn = passengerBookingTotalPrice(t, priceSrc);
+  var seatCnt = countPassengerBookingSeats(priceSrc);
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderTodayWidget',message:'widget total vs unit',data:{hypothesisId:'H1',tripId:active.id,seatCount:seatCnt,unitPrice:t&&t.price,totalAzn:totalAzn,hasMb:!!mb},timestamp:Date.now()})}).catch(function(){});
+  // #endregion
   const isPending = b.status === 'pending';
   const statusColor = isPending ? '#F59E0B' : '#10B981';
   const statusText = isPending ? 'Təsdiq gözlənilir' : 'Təsdiqləndi ✓';
@@ -2506,7 +3508,7 @@ function renderTodayWidget(active) {
       '<div class="avsm p">'+t.driver[0]+'</div>' +
       '<div><div style="font-size:13px;font-weight:600">'+t.driverFull+'</div>' +
       '<div style="font-size:11px;color:rgba(255,255,255,.7)">⭐ '+t.rating+' · '+t.car+'</div></div>' +
-      '<div style="margin-left:auto;font-size:16px;font-weight:700">'+t.price+' AZN</div>' +
+      '<div style="margin-left:auto;font-size:16px;font-weight:700">'+totalAzn+' AZN</div>' +
     '</div>' +
     '<div class="act-widget-btns">' +
       '<button class="act-widget-btn msg" onclick="openChatById('+(ci>=0?ci:0)+')">💬 Mesaj</button>' +
@@ -2553,8 +3555,16 @@ function renderHomeTrips(filter) {
   else if (filter==='tomorrow') list = list.filter(function(t){return t.date==='Sabah';});
   else if (filter==='cheap') list = list.slice().sort(function(a,b){return a.price-b.price;});
   else if (filter==='rating') list = list.slice().sort(function(a,b){return parseFloat(b.rating)-parseFloat(a.rating);});
+  list = list.filter(tripPassengerCanStillBook);
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHomeTrips',message:'home list after capacity filter',data:{hypothesisId:'H3',filter:filter,count:list.length,preview:list.slice(0,8).map(function(x){return {id:x.id,free:countTripFreePassengerSeats(x)};})},timestamp:Date.now()})}).catch(function(){});
+  // #endregion
+  if (!list.length) {
+    container.innerHTML = '<div style="text-align:center;padding:36px 20px;color:var(--t2);font-size:14px;line-height:1.5">Hələ aktiv səfər elanı yoxdur.<br/><span style="font-size:13px">Uyğun elanlar burada görünəcək — əvvəlcə marşrut və tarix seçib axtarın. Özünüzə uyğun səfər tapılmasa, alt menyudan «+» ilə sərnişin müraciəti yerləşdirin.</span></div>';
+    renderQR();
+    return;
+  }
   container.innerHTML = list.slice(0,8).map(function(t){return tcHTML(t,'home',true);}).join('');
-  // Re-render QR chips
   renderQR();
 }
 
@@ -2602,12 +3612,17 @@ function renderPMenu() {
     div.innerHTML = `<div class="mii">${m.i}</div><div class="mil"${m.red?' style="color:var(--red)"':''}>${m.l}</div>${m.b?`<div class="mibadge">${m.b}</div>`:''}<div class="mia">›</div>`;
     el.appendChild(div);
   });
+  updateProfileDisplay();
 }
 
 function renderInbox() {
   updateBadge();
   const el = document.getElementById('inboxlist');
   if (!el) return;
+  if (!convs.length) {
+    el.innerHTML = '<div style="text-align:center;padding:48px 24px;color:var(--t2);font-size:14px">Hələ mesaj yoxdur.<br/><span style="font-size:13px">Səfər və ya rezervasiya zamanı söhbət burada görünəcək.</span></div>';
+    return;
+  }
   el.innerHTML = convs.map(function(c) {
     const last = c.msgs[c.msgs.length-1];
     const prev = last ? (last.out?'Siz: ':'') + last.text : '';
@@ -2643,6 +3658,10 @@ function renderMsgs(c) {
 function renderHistory() {
   const el = document.getElementById('histlist');
   if (!el) return;
+  if (!histT.length) {
+    el.innerHTML = '<div style="text-align:center;padding:48px 24px;color:var(--t2);font-size:14px">Səfər tarixçəsi boşdur.</div>';
+    return;
+  }
   const lb = {done:'Tamamlandı', canc:'Ləğv edildi', up:'Gözlənilir'};
   el.innerHTML = histT.map(t => `
     <div class="hitem">
@@ -2665,7 +3684,7 @@ function renderMyReviews() {
     else if (id==='mystars') el.innerHTML = stars(parseFloat(rv));
     else if (id==='myrevcount') el.textContent = rc;
     else if (id==='mybars') el.innerHTML = barsHTML(RDIST);
-    else el.innerHTML = REVIEWS.map(r => revHTML(r)).join('');
+    else el.innerHTML = REVIEWS.length ? REVIEWS.map(r => revHTML(r)).join('') : '<div style="text-align:center;padding:32px 20px;color:var(--t2);font-size:14px">Hələ rəy yoxdur</div>';
   });
 }
 
@@ -2779,7 +3798,13 @@ function openTrip(id, back) {
   document.getElementById('tdrt').textContent = `${t.from} → ${t.to}`;
   document.getElementById('tddt').textContent = `${t.date} · ${t.time}`;
   document.getElementById('tdpr').textContent = `${t.price} AZN`;
-  document.getElementById('tdseat').textContent = `🪑 ${t.seats} yer`;
+  const seatNameMap = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
+  normalizeTripFreeSeats(t);
+  if (Array.isArray(t.freeSeats) && t.freeSeats.length) {
+    document.getElementById('tdseat').textContent = `🪑 Boş: ${t.freeSeats.map(function(s){ return seatNameMap[s] || s; }).join(', ')}`;
+  } else {
+    document.getElementById('tdseat').textContent = D ? `🪑 ${t.seats} yer` : '🪑 Boş yer qalmayıb';
+  }
   document.getElementById('tddur').textContent = `⏱ ${t.dur}`;
   document.getElementById('tdav').textContent = t.driver[0];
   document.getElementById('tdav').className = 'avlg ' + (D?'d':'p');
@@ -2802,6 +3827,7 @@ function openTrip(id, back) {
 
   if (D) {
     pxSec.style.display = 'block';
+    let selectedDriverPax = null;
     const paxList = document.getElementById('tdpaxlist');
     paxList.innerHTML = '';
     if (t.pax.length) {
@@ -2809,43 +3835,84 @@ function openTrip(id, back) {
         const div = document.createElement('div');
         div.style.cssText = 'background:var(--bg);border:1px solid var(--bd);border-radius:var(--rc);padding:11px 14px;margin-bottom:8px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;cursor:pointer';
         div.innerHTML = `<div class="avsm d">${p[0]}</div>${p}<span style="margin-left:auto">💬</span>`;
-        div.onclick = () => openChatWith(p, `${t.from} → ${t.to}`, t.date, 'passenger');
+        div.onclick = () => {
+          selectedDriverPax = p;
+          document.querySelectorAll('#tdpaxlist > div').forEach(function(el){ el.style.borderColor = 'var(--bd)'; });
+          div.style.borderColor = 'var(--blue)';
+          if (zbtnRef) {
+            zbtnRef.disabled = false;
+            zbtnRef.style.opacity = '1';
+            zbtnRef.style.cursor = 'pointer';
+          }
+        };
         paxList.appendChild(div);
       });
     } else {
       paxList.innerHTML = '<div style="font-size:13px;color:var(--t2);padding:6px 0">Hələ sərnişin yoxdur</div>';
     }
     acts.innerHTML = '';
-    const zbtn = document.createElement('button'); zbtn.className='act sec'; zbtn.textContent='📞 Zəng'; zbtn.onclick=()=>toast('📞 Zəng...'); acts.appendChild(zbtn);
-    const pendingIdx = pendingBookings.findIndex(function(b){ return b.tripId===id; });
+    acts.style.flexWrap = 'wrap';
+    let zbtnRef = null;
+    const zbtn = document.createElement('button');
+    zbtn.className='act sec';
+    zbtn.textContent='📞 Zəng';
+    const callEnabledInitially = t.pax.length === 1;
+    if (callEnabledInitially) selectedDriverPax = t.pax[0];
+    zbtn.disabled = !callEnabledInitially;
+    zbtn.style.opacity = callEnabledInitially ? '1' : '.5';
+    zbtn.style.cursor = callEnabledInitially ? 'pointer' : 'not-allowed';
+    zbtn.onclick=()=>{
+      if (!selectedDriverPax) {
+        toast('Əvvəl sərnişin seçin');
+        return;
+      }
+      toast('📞 ' + selectedDriverPax + ' üçün zəng...');
+    };
+    acts.appendChild(zbtn);
+    zbtnRef = zbtn;
+    const pendingIdx = pendingBookings.findIndex(function(b){ return Number(b.tripId) === Number(id); });
     if (pendingIdx > -1) {
       const abtn = document.createElement('button');
       abtn.className = 'act pri';
       abtn.textContent = '✓ Qəbul et';
       abtn.onclick = function() {
-        driverConfirm(pendingIdx, 'trip-card');
+        var pi = pendingBookings.findIndex(function(b) { return Number(b.tripId) === Number(id); });
+        if (pi < 0) { toast('Rezervasiya tapılmadı'); return; }
+        driverConfirm(pi, 'trip-card');
         go(back);
       };
       acts.appendChild(abtn);
-    }
-    const lbtn = document.createElement('button');
-    lbtn.className='act dan';
-    lbtn.textContent = pendingIdx > -1 ? '✕ Rədd et' : '✕ Ləğv et';
-    lbtn.onclick=()=>{
-      if (pendingIdx > -1) {
-        driverReject(pendingIdx, 'trip-card');
+      const rddBtn = document.createElement('button');
+      rddBtn.className = 'act dan';
+      rddBtn.textContent = '✕ Rədd et';
+      rddBtn.onclick = function() {
+        var pi = pendingBookings.findIndex(function(b) { return Number(b.tripId) === Number(id); });
+        if (pi < 0) { toast('Gözləyən rezervasiya yoxdur'); return; }
+        driverReject(pi, 'trip-card');
         go(back);
-      } else {
-        toast('Ləğv edildi');
-      }
-    };
-    acts.appendChild(lbtn);
+      };
+      acts.appendChild(rddBtn);
+      const delBtn = document.createElement('button');
+      delBtn.className = 'act dan';
+      delBtn.textContent = '✕ Elanı sil';
+      delBtn.style.fontSize = '12px';
+      delBtn.onclick = function() { cancelDriverTrip(id, back); };
+      acts.appendChild(delBtn);
+    } else {
+      const lbtn = document.createElement('button');
+      lbtn.className = 'act dan';
+      lbtn.textContent = '✕ Ləğv et';
+      lbtn.onclick = function() { cancelDriverTrip(id, back); };
+      acts.appendChild(lbtn);
+    }
   } else {
     pxSec.style.display = 'none';
     acts.innerHTML = '';
-    const ci = convs.findIndex(c => c.peerName === t.driverFull);
-    const rbtn = document.createElement('button'); rbtn.className='act pri'; rbtn.textContent=`🪑 Yer seç — ${t.price} AZN`; rbtn.onclick=()=>openSeatSelect(id, back); acts.appendChild(rbtn);
-    const cbtn = document.createElement('button'); cbtn.className='act sec'; cbtn.textContent='💬'; cbtn.onclick=()=>openChatById(ci>=0?ci:0); acts.appendChild(cbtn);
+    acts.style.flexWrap = '';
+    if (tripPassengerCanStillBook(t)) {
+      const rbtn = document.createElement('button'); rbtn.className='act pri'; rbtn.textContent=`🪑 Yer seç — ${t.price} AZN`; rbtn.onclick=()=>openSeatSelect(id, back); acts.appendChild(rbtn);
+    }
+    const cbtn = document.createElement('button'); cbtn.className='act sec'; cbtn.textContent='💬'; cbtn.onclick=function(){ openChatWithDriverPeer(t.driverFull, t.from+' → '+t.to, t.date+', '+t.time); }; acts.appendChild(cbtn);
     const pbtn = document.createElement('button'); pbtn.className='act sec'; pbtn.textContent='📞'; pbtn.onclick=()=>toast('📞 Zəng...'); acts.appendChild(pbtn);
   }
   go('trip');
@@ -2903,63 +3970,267 @@ function openDriverProfile() {
 
 // ── SEAT SELECTION ──────────────────────────────────────
 let currentSeatBack = 'home';
+var seatSelectExtendedMode = false;
+/** Böyük avtomobil: sxem yox, yalnız «neçə yer». */
+var seatSelectQtyMode = false;
+var seatGroupQtyDesired = 1;
+
+function isAbstractVehicleSeatLayout(maxSeats) {
+  return maxSeats > APP_NAMED_SEAT_UI_MAX;
+}
+
+function passengerSeatLabel(n) {
+  var x = parseInt(n, 10);
+  if (isNaN(x) || x < 1) return '—';
+  var seatNames = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
+  return seatNames[x] || ('Yer ' + x);
+}
+
+function getBookingSeatNums(existing) {
+  if (!existing) return [];
+  if (Array.isArray(existing.seatNumbers) && existing.seatNumbers.length) {
+    return existing.seatNumbers.map(function(n){ return parseInt(n, 10); }).filter(function(n){ return !isNaN(n) && n >= 1 && n <= APP_MAX_PASSENGER_SEAT_LAYOUT; });
+  }
+  if (typeof existing.seat === 'number') return [existing.seat];
+  if (typeof existing.seat === 'string') {
+    const nameToNum = {'Ön sağ':1,'Arxa sol':2,'Arxa orta':3,'Arxa sağ':4};
+    const out = [];
+    existing.seat.split(', ').forEach(function(name) {
+      var tr = name.trim();
+      var num = nameToNum[tr];
+      if (!num) {
+        var m = /^Yer\s+(\d+)$/.exec(tr);
+        if (m) num = parseInt(m[1], 10);
+      }
+      if (num >= 1 && num <= APP_MAX_PASSENGER_SEAT_LAYOUT) out.push(num);
+    });
+    return out;
+  }
+  return [];
+}
+
+/** Pending booking from localStorage is stale if trip freeSeats layout no longer matches (e.g. driver republished only seat 3, old booking had seat 1). */
+function shouldInvalidateStaleBooking(t, existing) {
+  if (!existing || existing.status !== 'pending') return false;
+  var nums = getBookingSeatNums(existing);
+  if (!nums.length) return false;
+  normalizeTripFreeSeats(t);
+  var fs = t.freeSeats || [];
+  var maxSeats = Math.max(1, getTripSeatLayoutMax(t));
+  if (nums.some(function(n){ return fs.indexOf(n) !== -1; })) return false;
+  if (nums.every(function(n){ return fs.indexOf(n) === -1; })) {
+    if (nums.length + fs.length !== maxSeats) return true;
+  }
+  return false;
+}
+
+function renderSeatQtyPanel(freeMax) {
+  var panel = document.getElementById('seat-qty-panel');
+  if (!panel) return;
+  if (freeMax < 1) {
+    panel.innerHTML = '<p style="font-size:13px;color:var(--t2);text-align:center;margin:0">Boş yer qalmayıb.</p>';
+    return;
+  }
+  seatGroupQtyDesired = Math.max(1, Math.min(freeMax, seatGroupQtyDesired));
+  var locked = seatSelectBuyoutInviteLock;
+  panel.innerHTML = '<p style="font-size:12px;color:var(--t2);margin:0 0 14px;line-height:1.45;text-align:center">Çoxoturacaqlı nəqliyyatda dəqiq salon sxemi yoxdur. Neçə yer bron etmək istəyirsiniz — oturacaqları sürücü ilə danışaraq təyin etmək olar.</p>' +
+    '<div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:6px">' +
+    '<button type="button" id="seat-qty-minus" class="gbtn" style="min-width:50px;padding:12px"' + (locked ? ' disabled' : '') + '>−</button>' +
+    '<span id="seat-qty-display" style="font-size:24px;font-weight:700;min-width:36px;text-align:center">' + seatGroupQtyDesired + '</span>' +
+    '<button type="button" id="seat-qty-plus" class="gbtn" style="min-width:50px;padding:12px"' + (locked ? ' disabled' : '') + '>+</button>' +
+    '</div>' +
+    '<p style="font-size:11px;color:var(--t2);text-align:center;margin:0">Boş yerlər cəmi: ' + freeMax + '</p>';
+  var minus = document.getElementById('seat-qty-minus');
+  var plus = document.getElementById('seat-qty-plus');
+  if (minus && !locked) minus.onclick = function() { adjustSeatGroupQty(-1); };
+  if (plus && !locked) plus.onclick = function() { adjustSeatGroupQty(1); };
+}
+
+function adjustSeatGroupQty(delta) {
+  if (seatSelectBuyoutInviteLock || !seatSelectQtyMode) return;
+  var t = trips[seatTripId];
+  if (!t) return;
+  normalizeTripFreeSeats(t);
+  var freeMax = (t.freeSeats || []).length;
+  if (freeMax < 1) return;
+  seatGroupQtyDesired = Math.max(1, Math.min(freeMax, seatGroupQtyDesired + delta));
+  var disp = document.getElementById('seat-qty-display');
+  if (disp) disp.textContent = String(seatGroupQtyDesired);
+  var sinfo = document.getElementById('seat-selected-info');
+  var sbtn = document.getElementById('seat-confirm-btn');
+  if (sinfo) sinfo.textContent = 'Bron: ' + seatGroupQtyDesired + ' yer (qrup). Boş cəmi: ' + freeMax + '.';
+  if (sbtn) { sbtn.style.opacity = '1'; sbtn.style.background = 'var(--green)'; }
+}
+
+function confirmSeatGroupQty() {
+  var t = trips[seatTripId];
+  if (!t) return;
+  normalizeTripFreeSeats(t);
+  var freeSorted = (t.freeSeats || []).slice().sort(function(a, b) { return a - b; });
+  var k = seatSelectBuyoutInviteLock ? freeSorted.length : seatGroupQtyDesired;
+  if (k < 1 || k > freeSorted.length) {
+    toast('Boş yer yoxdur və ya sayı yoxlayın');
+    return;
+  }
+  selSeats = freeSorted.slice(0, k);
+  doReserve(seatTripId);
+}
+
 function openSeatSelect(tripId, back) {
+  seatSelectBuyoutInviteLock = false;
   currentSeatBack = back || 'home';
   seatTripId = tripId;
   selSeats = [];
   const t = trips[tripId];
-  document.getElementById('seat-back').onclick = function() { openTrip(tripId, currentSeatBack||'home'); };
-  document.getElementById('seat-trip-info').textContent = t.from + ' → ' + t.to + ' · ' + t.date + ', ' + t.time;
-  // Reset all seats
-  [1,2,3,4].forEach(function(i) {
-    const el = document.getElementById('seat-' + i);
-    if (!el) return;
-    el.className = 'seat-slot';
-    el.style.pointerEvents = 'auto';
-    el.onclick = function(){ selSeat(i); };
-  });
-  // Mark seats beyond trip capacity as unavailable (TODO:MVP — use real seat data)
-  const maxSeats = t.seats || 4;
-  [1,2,3,4].forEach(function(i){ if (i > maxSeats) markTaken(i); });
-  // Mark taken seats by passenger count (positional, demo only)
-  const taken = t.pax.length;
-  for (var si = 1; si <= taken && si <= maxSeats; si++) { markTaken(si); }
-  // Restore previously selected seat if already booked
-  const existing = myBookedTrips.find(function(b){return b.tripId===tripId;});
-  if (existing && existing.seat) {
-    const numToName = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
-    // seat can be integer (1,2,3,4) or string ('Ön sağ, Arxa sol')
-    if (typeof existing.seat === 'number') {
-      selSeats.push(existing.seat);
-      const el = document.getElementById('seat-' + existing.seat);
-      if (el) el.className = 'seat-slot sel';
-    } else {
-      const nameToNum = {'Ön sağ':1,'Arxa sol':2,'Arxa orta':3,'Arxa sağ':4};
-      existing.seat.split(', ').forEach(function(name) {
-        const num = nameToNum[name];
-        if (num) {
-          selSeats.push(num);
-          const el = document.getElementById('seat-' + num);
-          if (el) el.className = 'seat-slot sel';
-        }
-      });
+  if (!t) { toast('Səfər tapılmadı'); return; }
+  if (role === 'passenger') {
+    var prBuySeat = myRequests.find(function(x) {
+      return x.buyoutAllSeats && x.seatInvite && Number(x.seatInvite.tripId) === Number(tripId);
+    });
+    if (prBuySeat && tripAllBookableSeatsStillFree(t, tripId)) {
+      autoReserveAllFreeSeatsForPassInvite(Number(tripId));
+      return;
+    }
+    if (prBuySeat) {
+      seatSelectBuyoutInviteLock = true;
     }
   }
-  const sinfo = document.getElementById('seat-selected-info');
-  const sbtn = document.getElementById('seat-confirm-btn');
-  const seatNames = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
-  if (selSeats.length > 0) {
-    if (sinfo) sinfo.textContent = 'Seçildi: ' + selSeats.map(function(s){return seatNames[s];}).join(', ');
-    if (sbtn) { sbtn.style.opacity='1'; sbtn.style.background='var(--green)'; }
+  document.getElementById('seat-back').onclick = function() { openTrip(tripId, currentSeatBack||'home'); };
+  document.getElementById('seat-trip-info').textContent = t.from + ' → ' + t.to + ' · ' + t.date + ', ' + t.time;
+  var maxSeats = Math.max(1, getTripSeatLayoutMax(t));
+  seatSelectExtendedMode = isAbstractVehicleSeatLayout(maxSeats);
+  seatSelectQtyMode = seatSelectExtendedMode;
+  var classic = document.getElementById('seat-classic-layout');
+  var extBlock = document.getElementById('seat-extended-block');
+  var extGrid = document.getElementById('seat-extended-grid');
+  var qtyPanel = document.getElementById('seat-qty-panel');
+  var seatHint = document.getElementById('seat-extended-hint');
+  var legRow = document.getElementById('seat-legend-row');
+  if (seatSelectQtyMode) {
+    if (classic) classic.style.display = 'none';
+    if (extBlock) extBlock.style.display = 'block';
+    if (extGrid) { extGrid.innerHTML = ''; extGrid.style.display = 'none'; }
+    if (qtyPanel) qtyPanel.style.display = 'block';
+    if (seatHint) seatHint.style.display = 'none';
+    if (legRow) legRow.style.display = 'none';
+  } else {
+    if (qtyPanel) qtyPanel.style.display = 'none';
+    if (classic) classic.style.display = 'block';
+    if (extBlock) extBlock.style.display = 'none';
+    if (legRow) legRow.style.display = 'flex';
+    if (extGrid) extGrid.style.display = 'flex';
+    [1, 2, 3, 4].forEach(function(i) {
+      var el0 = document.getElementById('seat-' + i);
+      if (!el0) return;
+      el0.className = 'seat-slot';
+      el0.style.pointerEvents = 'auto';
+      el0.onclick = function() { selSeat(i); };
+    });
+  }
+  normalizeTripFreeSeats(t);
+  var existing = myBookedTrips.find(function(b){ return Number(b.tripId) === Number(tripId); });
+  var numsFromBooking = [];
+  if (existing && shouldInvalidateStaleBooking(t, existing)) {
+    var staleIdx = myBookedTrips.findIndex(function(b){ return Number(b.tripId) === Number(tripId); });
+    if (staleIdx > -1) myBookedTrips.splice(staleIdx, 1);
+    existing = null;
+    saveState();
+  } else if (existing) {
+    numsFromBooking = existing.status === 'rejected' ? [] : getBookingSeatNums(existing);
+  }
+  var freeSorted = (t.freeSeats || []).slice().sort(function(a, b) { return a - b; });
+  var freeCnt = freeSorted.length;
+  seatGroupQtyDesired = 1;
+  if (freeCnt > 0) {
+    if (existing && existing.status !== 'rejected' && numsFromBooking.length) {
+      seatGroupQtyDesired = Math.min(freeCnt, numsFromBooking.length);
+    }
+    if (seatSelectBuyoutInviteLock) seatGroupQtyDesired = freeCnt;
+  }
+  var capClassic = seatSelectExtendedMode ? 0 : 4;
+  var i;
+  for (i = 1; i <= capClassic; i++) {
+    if (i > maxSeats) markTaken(i);
+  }
+  if (Array.isArray(t.freeSeats)) {
+    for (i = 1; i <= maxSeats; i++) {
+      if (t.freeSeats.indexOf(i) === -1) {
+        if (existing && existing.status === 'pending' && numsFromBooking.indexOf(i) !== -1) continue;
+        markTaken(i);
+      }
+    }
+  } else {
+    var taken = t.pax.length;
+    for (var si = 1; si <= taken && si <= maxSeats; si++) { markTaken(si); }
+  }
+  if (seatSelectBuyoutInviteLock && Array.isArray(t.freeSeats) && t.freeSeats.length) {
+    normalizeTripFreeSeats(t);
+    selSeats = t.freeSeats.slice().sort(function(a, b) { return a - b; });
+    if (!seatSelectQtyMode) {
+      for (var num = 1; num <= maxSeats; num++) {
+        var elB = getSeatPickSlotEl(num);
+        if (!elB || elB.className.indexOf('taken') !== -1 || elB.className.indexOf('occupied') !== -1) continue;
+        if (selSeats.indexOf(num) !== -1) {
+          elB.className = seatSelectExtendedMode ? 'seat-opt sel' : 'seat-slot sel';
+          (function(nn) { elB.onclick = function() { selSeat(nn); }; })(num);
+        }
+      }
+    }
+    var sHint = document.getElementById('seat-trip-info');
+    if (sHint) sHint.textContent = t.from + ' → ' + t.to + ' · ' + t.date + ', ' + t.time + ' · 💳 Bütün boş yerlər';
+  } else if (existing && numsFromBooking.length && !seatSelectQtyMode) {
+    numsFromBooking.forEach(function(num) {
+      var elP = getSeatPickSlotEl(num);
+      if (elP && elP.className.indexOf('taken') === -1 && elP.className.indexOf('occupied') === -1) {
+        selSeats.push(num);
+        elP.className = seatSelectExtendedMode ? 'seat-opt sel' : 'seat-slot sel';
+        (function(nn) { elP.onclick = function() { selSeat(nn); }; })(num);
+      }
+    });
+  }
+  var sinfo = document.getElementById('seat-selected-info');
+  var sbtn = document.getElementById('seat-confirm-btn');
+  if (seatSelectQtyMode) {
+    renderSeatQtyPanel(freeCnt);
+    if (sinfo) {
+      sinfo.textContent = freeCnt
+        ? (seatSelectBuyoutInviteLock ? ('Bütün boş yerlər: ' + freeCnt + ' (qrup)') : ('Bron: ' + seatGroupQtyDesired + ' yer (qrup). Boş cəmi: ' + freeCnt + '.'))
+        : 'Boş yer yoxdur';
+    }
+    if (sbtn) {
+      if (freeCnt) { sbtn.style.opacity = '1'; sbtn.style.background = 'var(--green)'; }
+      else { sbtn.style.opacity = '.5'; sbtn.style.background = ''; }
+    }
+  } else if (selSeats.length > 0) {
+    if (sinfo) sinfo.textContent = 'Seçildi: ' + selSeats.map(passengerSeatLabel).join(', ');
+    if (sbtn) { sbtn.style.opacity = '1'; sbtn.style.background = 'var(--green)'; }
   } else {
     if (sinfo) sinfo.textContent = 'Yer seçilməyib';
-    if (sbtn) { sbtn.style.opacity='.5'; sbtn.style.background=''; }
+    if (sbtn) { sbtn.style.opacity = '.5'; sbtn.style.background = ''; }
   }
   go('seatseat');
 }
 
+function getSeatPickSlotEl(i) {
+  if (seatSelectQtyMode) return null;
+  if (seatSelectExtendedMode) {
+    return document.querySelector('#seat-extended-grid [data-sn="' + i + '"]');
+  }
+  return document.getElementById('seat-' + i);
+}
+
 function markTaken(i) {
-  const el = document.getElementById('seat-' + i);
+  if (seatSelectQtyMode) return;
+  if (seatSelectExtendedMode) {
+    var b = document.querySelector('#seat-extended-grid [data-sn="' + i + '"]');
+    if (b) {
+      b.className = 'seat-opt taken';
+      b.disabled = true;
+      b.onclick = null;
+    }
+    return;
+  }
+  var el = document.getElementById('seat-' + i);
   if (el) {
     el.className = 'seat-slot taken';
     el.onclick = null;
@@ -2967,29 +4238,66 @@ function markTaken(i) {
 }
 
 function selSeat(i) {
-  const el = document.getElementById('seat-' + i);
-  if (!el || el.className.includes('taken') || el.className.includes('occupied')) return;
-  const idx = selSeats.indexOf(i);
-  if (idx > -1) {
-    selSeats.splice(idx, 1);
-    el.className = 'seat-slot';
-  } else {
-    selSeats.push(i);
-    el.className = 'seat-slot sel';
+  if (seatSelectQtyMode) return;
+  if (seatSelectBuyoutInviteLock) {
+    var tL = trips[seatTripId];
+    if (!tL) return;
+    normalizeTripFreeSeats(tL);
+    selSeats = tL.freeSeats.slice();
+    var maxL = Math.max(1, getTripSeatLayoutMax(tL));
+    for (var si = 1; si <= maxL; si++) {
+      var el2 = getSeatPickSlotEl(si);
+      if (!el2 || el2.className.indexOf('taken') !== -1 || el2.className.indexOf('occupied') !== -1) continue;
+      if (seatSelectExtendedMode) {
+        el2.className = selSeats.indexOf(si) !== -1 ? 'seat-opt sel' : 'seat-opt';
+      } else {
+        el2.className = selSeats.indexOf(si) !== -1 ? 'seat-slot sel' : 'seat-slot';
+      }
+      (function(nn) { el2.onclick = function() { selSeat(nn); }; })(si);
+    }
+    var sinfoL = document.getElementById('seat-selected-info');
+    var sbtnL = document.getElementById('seat-confirm-btn');
+    if (sinfoL) sinfoL.textContent = 'Seçildi: ' + selSeats.map(passengerSeatLabel).join(', ');
+    if (sbtnL) { sbtnL.style.opacity = '1'; sbtnL.style.background = 'var(--green)'; }
+    toast('Bu müraciətdə bütün boş yerlər seçilməlidir');
+    return;
   }
-  const names = {1:'Ön sağ', 2:'Arxa sol', 3:'Arxa orta', 4:'Arxa sağ'};
-  const sinfo = document.getElementById('seat-selected-info');
-  const sbtn = document.getElementById('seat-confirm-btn');
+  var el = getSeatPickSlotEl(i);
+  if (!el || el.className.indexOf('taken') !== -1 || el.className.indexOf('occupied') !== -1) return;
+  var idx = selSeats.indexOf(i);
+  if (seatSelectExtendedMode) {
+    if (idx > -1) {
+      selSeats.splice(idx, 1);
+      el.className = 'seat-opt';
+    } else {
+      selSeats.push(i);
+      el.className = 'seat-opt sel';
+    }
+  } else {
+    if (idx > -1) {
+      selSeats.splice(idx, 1);
+      el.className = 'seat-slot';
+    } else {
+      selSeats.push(i);
+      el.className = 'seat-slot sel';
+    }
+  }
+  var sinfo = document.getElementById('seat-selected-info');
+  var sbtn = document.getElementById('seat-confirm-btn');
   if (selSeats.length === 0) {
     if (sinfo) sinfo.textContent = 'Yer seçilməyib';
     if (sbtn) { sbtn.style.opacity = '.5'; sbtn.style.background = 'var(--green)'; }
   } else {
-    if (sinfo) sinfo.textContent = 'Seçildi: ' + selSeats.map(function(s){return names[s];}).join(', ');
+    if (sinfo) sinfo.textContent = 'Seçildi: ' + selSeats.map(passengerSeatLabel).join(', ');
     if (sbtn) { sbtn.style.opacity = '1'; sbtn.style.background = 'var(--green)'; }
   }
 }
 
 function confirmSeat() {
+  if (seatSelectQtyMode) {
+    confirmSeatGroupQty();
+    return;
+  }
   if (selSeats.length === 0) return;
   doReserve(seatTripId);
 }
@@ -2999,31 +4307,69 @@ function doReserve(id) {
   const t = trips[id];
   bookTrip(id, 'passenger');
   // Track booking
-  const existIdx = myBookedTrips.findIndex(function(b){return b.tripId===id;});
-  const seatNamesR = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
-  const seatLabel = selSeats.map(function(s){return seatNamesR[s];}).join(', ')||'—';
-  const bookingRecord = {tripId:id, status:'pending', date:t.date, time:t.time, seat:seatLabel, trip:t, driverRated:false};
+  const existIdx = myBookedTrips.findIndex(function(b){ return Number(b.tripId) === Number(id); });
+  const existingBooking = existIdx > -1 ? myBookedTrips[existIdx] : null;
+  if (existingBooking && Array.isArray(existingBooking.seatNumbers) && Array.isArray(t.freeSeats)) {
+    existingBooking.seatNumbers.forEach(function(s){
+      var seatNum = parseInt(s, 10);
+      if (seatNum >= 1 && seatNum <= getTripSeatLayoutMax(t) && t.freeSeats.indexOf(seatNum) === -1) t.freeSeats.push(seatNum);
+    });
+    normalizeTripFreeSeats(t);
+  }
+  var tripMaxSeats = Math.max(1, getTripSeatLayoutMax(t));
+  const seatLabel = isAbstractVehicleSeatLayout(tripMaxSeats)
+    ? (selSeats.length + ' yer (qrup)')
+    : (selSeats.map(passengerSeatLabel).join(', ') || '—');
+  var bookingId = existingBooking && existingBooking.id ? existingBooking.id : ('bk_' + id + '_' + Date.now());
+  const bookingRecord = {id: bookingId, tripId:id, status:'pending', date:t.date, time:t.time, seat:seatLabel, seatNumbers:selSeats.slice(), trip:t, driverRated:false};
   if (existIdx>-1) { myBookedTrips[existIdx]=bookingRecord; }
   else { myBookedTrips.unshift(bookingRecord); }
-  // Add to driver pending
-  if (!pendingBookings.find(function(b){return b.tripId===id;})) {
-    pendingBookings.// TODO: MVP — заменить на currentUser.name / currentUser.initial из профиля
-  push({tripId:id,passengerName:'Ayxan İ.',passengerInitial:'A',seat:seatLabel});
+  if (Array.isArray(t.freeSeats)) {
+    t.freeSeats = t.freeSeats.filter(function(s){ return selSeats.indexOf(s) === -1; });
+    normalizeTripFreeSeats(t);
   }
-  addNotification('Yeni rezervasiya: '+t.from+' → '+t.to+' — Ayxan İ.','booking');
-  notifBookingConfirmed(t.from + ' → ' + t.to, t.driverFull);
+  // Add to driver pending
+  const pendingIdx = pendingBookings.findIndex(function(b){ return Number(b.tripId) === Number(id); });
+  var pGender = getProfileBookingGenderCode();
+  if (pendingIdx > -1) {
+    pendingBookings[pendingIdx].seat = seatLabel;
+    pendingBookings[pendingIdx].seatNumbers = selSeats.slice();
+    pendingBookings[pendingIdx].passengerName = getPublicDisplayNameForCurrentUser();
+    pendingBookings[pendingIdx].passengerInitial = getSurnameInitialForCurrentUser();
+    pendingBookings[pendingIdx].passengerGender = pGender;
+  } else {
+    pendingBookings.push({
+      tripId: id,
+      passengerName: getPublicDisplayNameForCurrentUser(),
+      passengerInitial: getSurnameInitialForCurrentUser(),
+      passengerGender: pGender,
+      seat: seatLabel,
+      seatNumbers: selSeats.slice()
+    });
+  }
+  passReqs.forEach(function(req) {
+    if (req.seatInvite && Number(req.seatInvite.tripId) === Number(id)) delete req.seatInvite;
+  });
+  myRequests.forEach(function(req) {
+    if (req.seatInvite && Number(req.seatInvite.tripId) === Number(id)) delete req.seatInvite;
+  });
+  addNotification('Yeni rezervasiya: '+t.from+' → '+t.to+' — gözləyir','booking');
+  notifBookingPending(t.from + ' → ' + t.to, t.driverFull);
+  notifDriverNewBookingRequest(t.from + ' → ' + t.to, getPublicDisplayNameForCurrentUser());
   const cmr2 = document.getElementById('cf-myreqs-btn'); if(cmr2) { cmr2.style.display='block'; cmr2.textContent='🎫 Rezervlərimə bax'; cmr2.onclick=function(){showMyBookings();switchMBTab('trips');}; }
   document.getElementById('cfic').textContent = '🎉';
-  document.getElementById('cft').textContent = 'Rezervasiya Təsdiqləndi!';
-  document.getElementById('cfs').textContent = 'Sürücü tezliklə sizinlə əlaqə saxlayacaq.';
+  document.getElementById('cft').textContent = 'Rezervasiya göndərildi';
+  document.getElementById('cfs').textContent = 'Sürücü təsdiqləməsini gözləyirik.';
   document.getElementById('cfrt').textContent = `${t.from} → ${t.to}`;
   document.getElementById('cftm').textContent = `${t.date}, ${t.time}`;
   document.getElementById('cfll').textContent = 'Sürücü';
   document.getElementById('cfdr').textContent = t.driverFull;
-  document.getElementById('cfpr').textContent = `${t.price} AZN`;
+  document.getElementById('cfpr').textContent = passengerBookingTotalPrice(t, bookingRecord) + ' AZN' + (countPassengerBookingSeats(bookingRecord) > 1 ? ' (' + countPassengerBookingSeats(bookingRecord) + '×' + t.price + ')' : '');
   const cfchat = document.getElementById('cfchat');
   cfchat.style.display = 'flex';
-  cfchat.onclick = () => { const ci = convs.findIndex(c => c.peerName === t.driverFull); openChatById(ci >= 0 ? ci : 0); };
+  cfchat.onclick = function() {
+    openChatWithDriverPeer(t.driverFull, t.from + ' → ' + t.to, t.date + ', ' + t.time);
+  };
   const cb = document.getElementById('cf-complete-btn');
   if (cb) {
     const completer = getTripCompleter(id);
@@ -3032,16 +4378,6 @@ function doReserve(id) {
   }
   go('confirm');
   saveState();
-}
-
-function tripCompleted(driverName) {
-  document.getElementById('rsub').textContent = (driverName||'Sürücü') + ' ilə səfərinizi qiymətləndirin';
-  document.getElementById('rovl').style.display = 'flex';
-}
-
-function driverRatePassenger(name) {
-  document.getElementById('rsub').textContent = name + ' sərnişinini qiymətləndirin';
-  document.getElementById('rovl').style.display = 'flex';
 }
 
 function rateStar(n) {
@@ -3065,36 +4401,79 @@ function submitRating() {
 
 // ── PUBLISH ────────────────────────────────────────────
 function publishTrip() {
-  if (!cFrom || !cTo) { toast('Marşrutu seçin'); return; }
-  if (!cDate) { toast('Tarix seçin'); return; }
-  if (!cTime) { toast('Vaxt seçin'); return; }
-  const price = parseInt(document.getElementById('cpr').value);
-  const seats = parseInt(document.getElementById('sc').textContent);
-  const notes = document.getElementById('cnotes').value.trim();
-  const tripPrefs = [];
-  document.querySelectorAll('#trip-prefs-list .pref-tag.on').forEach(function(el){ tripPrefs.push(el.dataset.tag); });
-  trips.unshift({id:trips.length,from:cFrom,to:cTo,time:cTime,date:cDate,dur:'—',price,seats,
-    // TODO: MVP — driver/driverFull/rating/car/plate из currentUser профиля
-    driver:'Ayxan İ.',driverFull:'Ayxan İlimov',rating:'5.0',tc:12,exp:'1',
-    car:'Toyota Camry',color:'Gümüşü',plate:'10-AA-777',chip:'Rahat',
+  if (!cFrom || !cTo) {
+    toast('Marşrutu seçin'); return;
+  }
+  if (!cDate) {
+    toast('Tarix seçin'); return;
+  }
+  if (!cTime) {
+    toast('Vaxt seçin'); return;
+  }
+  try {
+    refreshDriverPrefsFromCreateTripTags();
+    const price = parseInt(document.getElementById('cpr').value);
+    const notes = document.getElementById('cnotes').value.trim();
+    const tripPrefs = [];
+    document.querySelectorAll('#trip-prefs-list .pref-tag.on').forEach(function(el){ tripPrefs.push(el.dataset.tag); });
+    const selectedCar = getCreateSelectedCar();
+    if (createInvitePassReqId != null) {
+      var prPub = passReqs.find(function(x) { return String(x.id) === String(createInvitePassReqId); });
+      if (!prPub) prPub = myRequests.find(function(x) { return String(x.id) === String(createInvitePassReqId); });
+      if (prPub && getCarRegisteredSeatCount(selectedCar) < getPassRequestNeededSeats(prPub)) {
+        toast('Seçilmiş avtomobildə bu müraciət üçün kifayət qədər oturacaq yoxdur (' + getPassRequestNeededSeats(prPub) + ' nəfər).');
+        return;
+      }
+    }
+    const maxPassengerSeats = getCreateLayoutMaxFromCar(selectedCar);
+    const freeSeats = createTripFreeSeats.filter(function(s){ return s >= 1 && s <= maxPassengerSeats; });
+    if (createInvitePassReqId != null && createInvitePassReqBuyout && freeSeats.length !== maxPassengerSeats) {
+      toast('Bu müraciətdə bütün boş yerlər işarələnməlidir');
+      return;
+    }
+    if (!freeSeats.length) {
+    toast('Ən azı 1 boş yer seçin'); return;
+    }
+    const finalSeats = freeSeats.length;
+    var pubDriver = getPublicDisplayNameForCurrentUser();
+    trips.unshift({id:trips.length,from:cFrom,to:cTo,time:cTime,date:cDate,dur:'—',price,seats:finalSeats,seatLayoutMax:maxPassengerSeats,
+    driver:pubDriver,driverFull:pubDriver,rating:'5.0',tc:12,exp:'1',
+    car:(selectedCar.brand + ' ' + selectedCar.model),color:selectedCar.color||'Gümüşü',plate:selectedCar.plate||'10-AA-777',chip:'Rahat',
+    freeSeats:freeSeats.slice(),
     notes:notes||(tripPrefs.length?tripPrefs.join(' · '):''),arrive:'—',pax:[],tags:tripPrefs.length?tripPrefs:['🎒 Bagaj']});
-  trips.forEach((t,i) => t.id = i);
-  myT.unshift({id:myT.length,route:`${cFrom} → ${cTo}`,date:`${cDate}, ${cTime}`,total:seats,pax:[],status:'open'});
-  renderHome();
-  document.getElementById('cfic').textContent = '🚗';
-  document.getElementById('cft').textContent = 'Səfər Yaradıldı!';
-  document.getElementById('cfs').textContent = 'Elan yerləşdirildi.';
-  document.getElementById('cfrt').textContent = `${cFrom} → ${cTo}`;
-  document.getElementById('cftm').textContent = `${cDate}, ${cTime}`;
-  document.getElementById('cfll').textContent = 'Qiymət';
-  document.getElementById('cfdr').textContent = `${price} AZN`;
-  document.getElementById('cfpr').textContent = `${seats} yer`;
-  document.getElementById('cfchat').style.display = 'none';
-  const cb = document.getElementById('cf-complete-btn'); if(cb) cb.style.display='none';
-  const cmr = document.getElementById('cf-myreqs-btn'); if(cmr) { cmr.style.display='block'; cmr.textContent='🗺 Səfərlərimə bax'; cmr.onclick=function(){showMyTrips();}; }
-  cFrom=''; cTo=''; cDate=''; cTime='';
-  go('confirm');
-  saveState();
+    trips.forEach((t,i) => t.id = i);
+    migrateTripPaxGenders(trips[0]);
+    myT.unshift({id:myT.length,tripId:0,route:`${cFrom} → ${cTo}`,date:`${cDate}, ${cTime}`,total:maxPassengerSeats,pax:[],status:'open',listKey:myTListKeySeq++});
+    myT.forEach(function(mt){
+      if (typeof mt.tripId !== 'number' && typeof mt.id === 'number') mt.tripId = mt.id;
+    });
+    renderHome();
+    document.getElementById('cfic').textContent = '🚗';
+    document.getElementById('cft').textContent = 'Səfər Yaradıldı!';
+    document.getElementById('cfs').textContent = 'Elan yerləşdirildi.';
+    document.getElementById('cfrt').textContent = `${cFrom} → ${cTo}`;
+    document.getElementById('cftm').textContent = `${cDate}, ${cTime}`;
+    document.getElementById('cfll').textContent = 'Qiymət';
+    document.getElementById('cfdr').textContent = `${price} AZN`;
+    document.getElementById('cfpr').textContent = `${finalSeats} yer`;
+    document.getElementById('cfchat').style.display = 'none';
+    const cb = document.getElementById('cf-complete-btn'); if(cb) cb.style.display='none';
+    const cmr = document.getElementById('cf-myreqs-btn'); if(cmr) { cmr.style.display='block'; cmr.textContent='🗺 Səfərlərimə bax'; cmr.onclick=function(){showMyTrips();}; }
+    if (createInvitePassReqId != null) {
+      var ridInv = createInvitePassReqId;
+      createInvitePassReqId = null;
+      createInvitePassReqBuyout = false;
+      createTripSeatsLocked = false;
+      attachSeatInviteToPassReqById(ridInv, 0);
+      document.getElementById('cfs').textContent = 'Elan dərc olundu. Sərnişin «Səfərlərim → Müraciətlərim»də yer seçə bilər.';
+    }
+    cFrom=''; cTo=''; cDate=''; cTime='';
+    go('confirm');
+    saveState();
+    renderDriverMyTrips();
+  } catch (e) {
+    toast('Xəta baş verdi: ' + (e && e.message ? e.message : 'naməlum'));
+  }
 }
 
 function publishPassReq() {
@@ -3108,10 +4487,10 @@ function publishPassReq() {
   if (!prTime) { toast('Vaxt seçin'); return; }
   const prefs = [...selectedPrefs];
   const note = document.getElementById('pr-notes').value.trim();
+  const buyoutAllSeats = !!prBuyoutAllSeats;
   const newReq = {id:Date.now(),from,to,date:prDate,time:prTime,
-    // TODO: MVP — name/initial/rating из currentUser
-    name:'Ayxan İ.',initial:'A',rating:'5.0',prefs,notes:note,seats:sPax||1,
-    status:'active',offers:[],driverRated:false};
+    name:getPublicDisplayNameForCurrentUser(),initial:getSurnameInitialForCurrentUser(),rating:'5.0',prefs,notes:note,seats:clampPrPaxCount(prPaxCount),
+    buyoutAllSeats:buyoutAllSeats,status:'active',offers:[],driverRated:false};
   passReqs.unshift(newReq);
   myRequests.unshift(newReq);
   document.getElementById('cfic').textContent = '🔍';
@@ -3121,27 +4500,27 @@ function publishPassReq() {
   document.getElementById('cftm').textContent = `${prDate}, ${prTime}`;
   document.getElementById('cfll').textContent = 'Üstünlüklər';
   document.getElementById('cfdr').textContent = prefs.join(' · ') || '—';
-  document.getElementById('cfpr').textContent = 'Pulsuz';
+  document.getElementById('cfpr').textContent = prPaxCount + ' nəfər' + (buyoutAllSeats ? ' · bütün yerlər' : '');
   document.getElementById('cfchat').style.display = 'none';
   const cb = document.getElementById('cf-complete-btn'); if(cb) cb.style.display='none';
   const cmr = document.getElementById('cf-myreqs-btn'); if(cmr) { cmr.style.display='block'; cmr.textContent='📋 Müraciətlərimə bax'; cmr.onclick=function(){showMyBookings();switchMBTab('reqs');}; }
   // Reset
-  prFrom=''; prTo=''; prDate=''; prTime=''; selectedPrefs=[];
+  prFrom=''; prTo=''; prDate=''; prTime=''; selectedPrefs=[]; prBuyoutAllSeats=false;
+  prPaxCount = 1;
+  selPrPaxQuick(1);
   fromEl.textContent='Haradan?'; fromEl.classList.add('ph');
   toEl.textContent='Hara?'; toEl.classList.add('ph');
   document.getElementById('pr-date-lbl').textContent='Tarix seçin';
   document.getElementById('pr-time-lbl').textContent='Vaxt seçin';
   document.getElementById('pr-notes').value='';
+  const prBuyout = document.getElementById('pr-buyout-all'); if (prBuyout) prBuyout.checked = false;
   document.querySelectorAll('.pref-chip').forEach(c => c.classList.remove('on'));
   go('confirm');
   saveState();
 }
 
 function showMyTrips() {
-  const el = document.getElementById('mylist');
-  if (el) el.innerHTML = myT && myT.length
-    ? myT.map(t => mtHTML(t)).join('')
-    : '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🗺</div><div style="color:var(--t2);font-size:14px">Aktiv səfər yoxdur</div></div>';
+  renderDriverMyTrips();
   go('mytrips');
 }
 
@@ -3200,6 +4579,14 @@ function avatarHTML(initial, name, size) {
   var color = getAvatarColor(name||initial||'?');
   var fs = Math.round(size*0.4);
   return '<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+color+';display:flex;align-items:center;justify-content:center;font-size:'+fs+'px;color:#fff;font-weight:700;flex-shrink:0">'+initial+'</div>';
+}
+
+/** If no conv exists yet, openChatById(0) was a no-op (convs empty). Creates conv via openChatWith. */
+function openChatWithDriverPeer(driverName, routeStr, timeStr) {
+  if (!driverName) return;
+  const ci = convs.findIndex(function(c) { return c.peerName === driverName; });
+  if (ci >= 0) openChatById(ci);
+  else openChatWith(driverName, routeStr, timeStr, 'driver', false);
 }
 
 function openChatWith(name, rt, mt, r2, fromDriverRequest) {
@@ -3679,8 +5066,13 @@ function updateCar() {
 function togBtn(el) {
   const wasOn = el.className.includes('on');
   el.className = 'tog ' + (wasOn ? 'off' : 'on');
+  var nk = el.getAttribute('data-notif');
+  if (nk && Object.prototype.hasOwnProperty.call(notifPrefs, nk)) {
+    notifPrefs[nk] = el.className.includes('on');
+    saveNotifPrefs();
+  }
   if (!wasOn && el.dataset && el.dataset.type === 'push') {
-    requestNotifPermission();
+    requestNotifPermission({ userInitiated: true });
   }
 }
 
@@ -3699,16 +5091,131 @@ function togPref(el) {
   else { selectedPrefs = selectedPrefs.filter(x => x !== v); }
 }
 
+function togglePrBuyoutAll(isOn) {
+  prBuyoutAllSeats = !!isOn;
+}
+
+var PR_PAX_PRESETS = [1, 2, 3, 4, 5, 6, 8, 10];
+
+function clampPrPaxCount(n) {
+  var x = parseInt(n, 10);
+  if (isNaN(x)) x = 1;
+  return Math.max(1, Math.min(APP_PASS_REQ_PAX_MAX, x));
+}
+
+function syncPrPaxUI() {
+  var customEl = document.getElementById('pr-pax-custom');
+  var manualOpen = !!(customEl && customEl.style.display === 'block');
+  PR_PAX_PRESETS.forEach(function(p) {
+    var el = document.getElementById('pr-pax-' + p);
+    if (el) el.className = 'seat-opt' + (!manualOpen && prPaxCount === p ? ' on' : '');
+  });
+  var pen = document.getElementById('pr-pax-edit');
+  if (pen) pen.className = 'seat-opt' + (manualOpen || PR_PAX_PRESETS.indexOf(prPaxCount) === -1 ? ' on' : '');
+}
+
+function selPrPaxQuick(n) {
+  prPaxCount = clampPrPaxCount(n);
+  var customEl = document.getElementById('pr-pax-custom');
+  if (customEl) {
+    customEl.style.display = 'none';
+    customEl.value = '';
+  }
+  syncPrPaxUI();
+}
+
+function selPrPaxManual() {
+  var customEl = document.getElementById('pr-pax-custom');
+  PR_PAX_PRESETS.forEach(function(p) {
+    var el = document.getElementById('pr-pax-' + p);
+    if (el) el.className = 'seat-opt';
+  });
+  var pen = document.getElementById('pr-pax-edit');
+  if (pen) pen.className = 'seat-opt on';
+  if (customEl) {
+    customEl.style.display = 'block';
+    customEl.setAttribute('max', String(APP_PASS_REQ_PAX_MAX));
+    customEl.value = prPaxCount;
+    customEl.focus();
+  }
+}
+
+function onPrPaxCustomInput(el) {
+  if (!el) return;
+  prPaxCount = clampPrPaxCount(el.value);
+  el.value = prPaxCount;
+  PR_PAX_PRESETS.forEach(function(p) {
+    var b = document.getElementById('pr-pax-' + p);
+    if (b) b.className = 'seat-opt';
+  });
+  var pen = document.getElementById('pr-pax-edit');
+  if (pen) pen.className = 'seat-opt on';
+}
+
+function applyPrPaxCountFromData(n) {
+  prPaxCount = clampPrPaxCount(n);
+  if (PR_PAX_PRESETS.indexOf(prPaxCount) !== -1) {
+    selPrPaxQuick(prPaxCount);
+  } else {
+    selPrPaxManual();
+    var ce = document.getElementById('pr-pax-custom');
+    if (ce) ce.value = prPaxCount;
+  }
+}
+
+function togPrefStrictRow(btn) {
+  var on = btn.classList.contains('on');
+  btn.className = 'tog pref-strict-tog ' + (on ? 'off' : 'on');
+}
+
+function renderPrefStrictnessUI() {
+  var wrap = document.getElementById('pref-strictness-wrap');
+  var list = document.getElementById('pref-strictness-list');
+  if (!wrap || !list) return;
+  if (role === 'driver') {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+  var tags = ['🚭 Siqaret yox', '🔇 Sakit', '🎵 Musiqi', '🎒 Bagaj', '💬 Söhbət', '❄️ Kondisioner', '🛋 Premium', '👩 Yalnız qadınlar'];
+  list.innerHTML = '';
+  tags.forEach(function(tag) {
+    var row = document.createElement('div');
+    row.className = 'togrow';
+    row.style.marginBottom = '8px';
+    var left = document.createElement('div');
+    var t1 = document.createElement('div');
+    t1.className = 'togl';
+    t1.style.fontSize = '13px';
+    t1.textContent = tag;
+    var t2 = document.createElement('div');
+    t2.className = 'togs';
+    t2.textContent = 'Ciddi uyğunluq (sürücü filtri)';
+    left.appendChild(t1);
+    left.appendChild(t2);
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    var strictOn = prefStrictness[tag] !== false;
+    btn.className = 'tog pref-strict-tog ' + (strictOn ? 'on' : 'off');
+    btn.setAttribute('data-tag', tag);
+    btn.onclick = function() { togPrefStrictRow(btn); };
+    row.appendChild(left);
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+}
+
+function passReqInviteIsAutoBuyout(r, tripIdx) {
+  var tr = trips[tripIdx];
+  return !!(r && r.buyoutAllSeats && tr && tripAllBookableSeatsStillFree(tr, tripIdx));
+}
+
 // ── SEAT REG ───────────────────────────────────────────
 function selSeatsReg2(n) {
   [4,5,7].forEach(x => { const el=document.getElementById('so'+x); if(el) el.className='seat-opt'+(x===n?' on':''); });
 }
 
 // ── UTILS ──────────────────────────────────────────────
-function cs(d) {
-  const el = document.getElementById('sc');
-  el.textContent = Math.min(6, Math.max(1, parseInt(el.textContent) + d));
-}
 
 function toast(msg) {
   const t = document.getElementById('tst');
@@ -3723,53 +5230,21 @@ function tick() {
 }
 
 // ── INIT ───────────────────────────────────────────────
+// Declared before loadState — updateProfileDisplay → updateAvatarDisplay reads userAvatarUrl
+let userAvatarUrl = null;
 loadState();
+(function() {
+  var mx = document.getElementById('pr-pax-max-lbl');
+  if (mx) mx.textContent = String(APP_PASS_REQ_PAX_MAX);
+  var ce = document.getElementById('pr-pax-custom');
+  if (ce) ce.setAttribute('max', String(APP_PASS_REQ_PAX_MAX));
+})();
+selPrPaxQuick(prPaxCount);
+syncNotifEnabledFromBrowser();
+applyAppReleaseLabels();
+applyNotifToggleButtonsUI();
 setInterval(tick, 1000); tick();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-const hasSavedTripData = myBookedTrips.length > 0 || myRequests.length > 0 || Object.keys(activeBookings || {}).length > 0;
-if (!hasSavedTripData) {
-  // TODO: REPLACE WITH REAL DATA
-  activeBookings[0] = {status:'confirmed', initiator:'passenger', completedBy:null};
-  myBookedTrips = [
-    {
-      id:'book1', tripId:0, status:'confirmed', seat:2, driverRated:false,
-      trip:trips[0]
-    },
-    {
-      id:'book2', tripId:1, status:'pending', seat:1, driverRated:false,
-      trip:trips[1]
-    },
-    {
-      id:'book3', tripId:2, status:'completed', seat:3, driverRated:false,
-      trip:trips[2]
-    }
-  ];
-  myRequests = [
-    {
-      id:'req1', from:'Bakı', to:'Şəmkir', date:'Sabah', time:'09:00', seats:1,
-      notes:'Baqajım var', prefs:['🎒 Bagaj'],
-      status:'confirmed',
-      offers:[{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6}],
-      acceptedOffer:{driverName:'Nicat Həsənov', driverPhone:'+994 55 987 65 43', rating:'4.7', car:'Hyundai Elantra', color:'Ağ', plate:'77-BB-444', price:6},
-      driverRated:false
-    },
-    {
-      id:'req2', from:'Bakı', to:'Lənkəran', date:'3 Aprel', time:'08:00', seats:1,
-      notes:'', prefs:[],
-      status:'active', offers:[], acceptedOffer:null, driverRated:false
-    },
-    {
-      id:'req3', from:'Bakı', to:'Quba', date:'Bu gün', time:'10:00', seats:1,
-      notes:'', prefs:[],
-      status:'offered',
-      offers:[
-        {driverName:'Kamran Əliyev', driverPhone:'+994 50 111 22 33', rating:'4.8', car:'Kia Cerato', color:'Qara', plate:'33-CC-111', price:9},
-        {driverName:'Tural Hüseynov', driverPhone:'+994 77 444 55 66', rating:'4.5', car:'Nissan Sentra', color:'Gümüşü', plate:'55-DD-222', price:8}
-      ],
-      acceptedOffer:null, driverRated:false
-    }
-  ];
-}
 renderHome();
 renderQR();
 renderPMenu();
@@ -3810,7 +5285,9 @@ function showSOS(ctx) {
           '\nTelefon: ' + (t.driverPhone || 'məlum deyil') +
           '\nAvtomobil: ' + t.car + ' · ' + t.color +
           '\nDövlət nişanı: ' + t.plate +
-          (t.pax.length > 1 ? '\nDigər sərnişinlər: ' + t.pax.filter(function(p){return p!=='Ayxan';}).join(', ') : '');
+          (t.pax.length > 1 ? '\nDigər sərnişinlər: ' + t.pax.filter(function(p){
+            return p !== getPublicDisplayNameForCurrentUser() && p !== getProfileFullName();
+          }).join(', ') : '');
       } else {
         // Driver
         const paxInfo = t.pax.map(function(p, i) {
@@ -3836,7 +5313,8 @@ function sosCall(num) {
   closeSOS();
   window.location.href = 'tel:' + num;
 }
-// TODO: MVP — POST /api/sos { lat, lng, tripId, userId } + уведомить экстренные контакты
+// TODO: MVP — POST /api/sos { lat, lng, tripId, userId } + экстренные контакты
+/** Prototip: SOS modalında yalnız zəng düymələri + bu paylaşım (sos-share-panel HTML yoxdur). */
 function shareLocation() {
   const m = document.getElementById('sos-modal');
   const tripInfo = m ? (m.dataset.tripInfo || '') : '';
@@ -3847,26 +5325,13 @@ function shareLocation() {
     tripInfo;
   const url = sosLocUrl || 'https://poputi.az';
   if (navigator.share) {
-    navigator.share({title:'🆘 SOS - Təcili yardım', text:text, url:url});
+    navigator.share({title:'🆘 SOS - Təcili yardım', text:text, url:url}).catch(function() {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(function(){ toast('📋 Məlumat kopyalandı'); })
+      .catch(function(){ toast('📋 Panoya kopyalama alınmadı'); });
   } else {
-    navigator.clipboard && navigator.clipboard.writeText(text)
-      .then(function(){ toast('📋 Məlumat kopyalandı'); });
-  }
-}
-
-function showSOSShareOptions(text, locUrl) {
-  // Show inline share buttons in a toast-like panel
-  const panel = document.getElementById('sos-share-panel');
-  if (!panel) return;
-  panel.style.display = 'flex';
-  const encoded = encodeURIComponent(text);
-  document.getElementById('sos-tg-btn').href = 'https://t.me/share/url?url=' + encodeURIComponent(locUrl||'https://poputi.az') + '&text=' + encoded;
-  document.getElementById('sos-wa-btn').href = 'https://wa.me/?text=' + encoded;
-  document.getElementById('sos-sms-btn').href = 'sms:?body=' + encoded;
-  if (locUrl) {
-    toast('✅ Yer tapıldı - paylaşın');
-  } else {
-    toast('📋 Məlumat hazırdır - paylaşın');
+    toast('Bu brauzerdə paylaşma/pano dəstəklənmir');
   }
 }
 
@@ -3912,57 +5377,114 @@ function shareTrip() {
 
 // ── NOTIFICATIONS ──────────────────────────────────────
 
-function requestNotifPermission() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'granted') {
-    notifEnabled = true;
-    return;
-  }
-  if (Notification.permission !== 'denied') {
-    const alreadyPrompted = lsLoad('notifPrompted', false);
-    if (alreadyPrompted) {
-      return;
-    }
-    lsSave('notifPrompted', true);
-    Notification.requestPermission().then(function(p) {
-      notifEnabled = p === 'granted';
-      if (notifEnabled) toast('🔔 Bildirişlər aktiv edildi');
-    });
-  }
+function syncNotifEnabledFromBrowser() {
+  if (!('Notification' in window)) { notifEnabled = false; return; }
+  notifEnabled = Notification.permission === 'granted';
 }
 
-function sendNotif(title, body, icon) {
-  if (!notifEnabled || Notification.permission !== 'granted') {
+/** @param {{ userInitiated?: boolean }} [opts] — userInitiated: true = from settings toggle; skips notifPrompted gate so default can be re-requested */
+function requestNotifPermission(opts) {
+  const userInitiated = !!(opts && opts.userInitiated);
+  if (!('Notification' in window)) return;
+  syncNotifEnabledFromBrowser();
+  if (Notification.permission === 'granted') return;
+  if (Notification.permission === 'denied') {
+    if (userInitiated) toast('🔕 Brauzer bildirişləri bloklayıb — sayt üçün icazə verin (brauzer parametrləri)');
+    return;
+  }
+  if (!userInitiated) {
+    const alreadyPrompted = lsLoad('notifPrompted', false);
+    if (alreadyPrompted) return;
+    lsSave('notifPrompted', true);
+  }
+  if (_notifPermRequesting) return;
+  _notifPermRequesting = true;
+  Notification.requestPermission().then(function(p) {
+    _notifPermRequesting = false;
+    syncNotifEnabledFromBrowser();
+    if (notifEnabled) toast('🔔 Bildirişlər aktiv edildi');
+    else if (userInitiated && p === 'default') toast('Bildirişlər üçün brauzerdə «İcazə ver» seçin');
+  }).catch(function() {
+    _notifPermRequesting = false;
+  });
+}
+
+function sendNotif(title, body, icon, category) {
+  if (category && !isNotifCategoryEnabled(category)) return;
+  syncNotifEnabledFromBrowser();
+  if (!('Notification' in window)) {
     toast(title + ': ' + body);
     return;
   }
-  try {
-    new Notification(title, {
+  if (Notification.permission === 'granted') {
+    notifEnabled = true;
+    var payload = {
       body: body,
       icon: icon || 'icon-192.png',
       badge: 'icon-192.png',
+      tag: 'poputi-' + String(title).replace(/\s/g, '').slice(0, 24),
       vibrate: [200, 100, 200]
-    });
-  } catch(e) {
-    toast(title + ': ' + body);
+    };
+    function showViaConstructor() {
+      new Notification(title, payload);
+    }
+    try {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(function(reg) {
+          return reg.showNotification(title, payload);
+        }).catch(function() {
+          try {
+            showViaConstructor();
+          } catch (e2) {
+            toast(title + ': ' + body);
+          }
+        });
+        return;
+      }
+      showViaConstructor();
+      return;
+    } catch (e) {
+      toast(title + ': ' + body);
+      return;
+    }
   }
+  toast(title + ': ' + body);
 }
 
 function notifNewMessage(peerName, text) {
-  sendNotif('💬 Yeni mesaj', peerName + ': ' + text, 'icon-192.png');
+  sendNotif('💬 Yeni mesaj', peerName + ': ' + text, 'icon-192.png', 'message');
 }
 
 function notifBookingConfirmed(route, driverName) {
-  sendNotif('✅ Rezervasiya təsdiqləndi', route + ' — ' + driverName, 'icon-192.png');
+  sendNotif('✅ Rezervasiya təsdiqləndi', route + ' — ' + driverName, 'icon-192.png', 'booking');
 }
 
 function notifTripReminder(route, time) {
-  sendNotif('🚗 Səfər xatırlatması', route + ' — ' + time + ' başlayır', 'icon-192.png');
+  sendNotif('🚗 Səfər xatırlatması', route + ' — ' + time + ' başlayır', 'icon-192.png', 'trip');
+}
+
+function notifBookingPending(route, driverName) {
+  sendNotif('⏳ Rezervasiya göndərildi', route + ' — ' + driverName + ' tərəfindən təsdiq gözləyir', 'icon-192.png', 'booking');
+}
+
+function notifBookingRejected(route, driverName) {
+  sendNotif('❌ Rezervasiya rədd edildi', (driverName ? driverName + ' · ' : '') + route, 'icon-192.png', 'booking');
+}
+
+function notifSeatInviteForPassenger(route, driverName) {
+  sendNotif('🪑 Yer təklifi', route + ' — ' + (driverName || 'Sürücü') + ' yer təklif edir', 'icon-192.png', 'booking');
+}
+
+function notifDriverNewBookingRequest(route, passengerName) {
+  sendNotif('🔔 Yeni rezervasiya', route + ' — ' + (passengerName || 'Sərnişin') + ' gözləyir', 'icon-192.png', 'booking');
+}
+
+/** Sürücü bütün elanı sildikdə — push yoxdursa sendNotif toast göstərir. */
+function notifTripCancelledByDriver(route, driverName) {
+  sendNotif('❌ Səfər ləğv edildi', (driverName ? driverName + ' · ' : '') + route, 'icon-192.png', 'booking');
 }
 
 // ── AVATAR ─────────────────────────────────────────────
-let userAvatarUrl = null;
-
 function changeAvatar() {
   const input = document.getElementById('avatar-input');
   if (input) input.click();
@@ -3991,7 +5513,10 @@ function updateAvatarDisplay() {
     pav.textContent = '';
   } else {
     pav.style.backgroundImage = '';
-    pav.textContent = 'A';
+    var fn = getProfileFirstName();
+    var ch = fn.charAt(0);
+    try { ch = ch.toLocaleUpperCase('az-AZ'); } catch (e) { ch = ch.toUpperCase(); }
+    pav.textContent = ch || '?';
   }
 }
 
@@ -4146,6 +5671,7 @@ function openPrefs() {
   })();
   const titleEl = document.getElementById('prefs-title');
   if (titleEl) titleEl.textContent = role === 'driver' ? 'Sürücü üstünlüklərim' : 'Sərnişin üstünlüklərim';
+  renderPrefStrictnessUI();
   go('prefs');
 }
 
@@ -4162,6 +5688,12 @@ function savePrefs() {
     driverPrefs = selected;
   } else {
     userPrefs = selected;
+    document.querySelectorAll('#pref-strictness-list button.pref-strict-tog').forEach(function(btn) {
+      var tag = btn.getAttribute('data-tag');
+      if (!tag) return;
+      prefStrictness[tag] = btn.classList.contains('on');
+    });
+    lsSave('prefStrictness', prefStrictness);
   }
   toast('✅ Üstünlüklər yadda saxlandı');
   setTimeout(function(){ go('profile'); }, 800);
@@ -4232,6 +5764,14 @@ function switchRole(newRole) {
   saveState();
 }
 
+function refreshDriverPrefsFromCreateTripTags() {
+  var out = [];
+  document.querySelectorAll('#trip-prefs-list .pref-tag.on').forEach(function(el) {
+    if (el.dataset.tag) out.push(el.dataset.tag);
+  });
+  driverPrefs = out;
+}
+
 function renderTripPrefs() {
   const container = document.getElementById('trip-prefs-list');
   if (!container) return;
@@ -4242,9 +5782,207 @@ function renderTripPrefs() {
     btn.className = 'pref-tag' + (isOn ? ' on' : '');
     btn.dataset.tag = tag;
     btn.textContent = tag;
-    btn.onclick = function() { btn.classList.toggle('on'); };
+    btn.onclick = function() {
+      btn.classList.toggle('on');
+      refreshDriverPrefsFromCreateTripTags();
+      saveState();
+    };
     container.appendChild(btn);
   });
+}
+
+/** Müraciətdən «Səfər yarat» — üstünlükləri teqlara köçür, buyout-da bütün yerləri kilidlə. */
+function applyCreateTripFromPassReqIfAny() {
+  if (createInvitePassReqId == null) return;
+  var r = passReqs.find(function(x) { return String(x.id) === String(createInvitePassReqId); });
+  if (!r) r = myRequests.find(function(x) { return String(x.id) === String(createInvitePassReqId); });
+  if (!r) return;
+  var sel0 = getCreateSelectedCar();
+  if (getCarRegisteredSeatCount(sel0) < getPassRequestNeededSeats(r)) return;
+  if (Array.isArray(r.prefs) && r.prefs.length) {
+    var want = r.prefs.map(requestPrefToTripTag);
+    document.querySelectorAll('#trip-prefs-list .pref-tag').forEach(function(btn) {
+      if (want.indexOf(btn.dataset.tag) !== -1) btn.classList.add('on');
+    });
+  }
+  if (createInvitePassReqBuyout) {
+    createTripSeatsLocked = true;
+    var selected = getCreateSelectedCar();
+    var maxPassengerSeats = getCreateLayoutMaxFromCar(selected);
+    createTripFreeSeats = [];
+    for (var i = 1; i <= maxPassengerSeats; i++) createTripFreeSeats.push(i);
+    syncCreateSeatAvailability(maxPassengerSeats);
+  }
+  refreshDriverPrefsFromCreateTripTags();
+  saveState();
+}
+
+function getCreateSelectedCar() {
+  if (userCars && userCars.length) {
+    const byPlate = userCars.find(function(c){ return c.plate === createTripSelectedCarPlate; });
+    return byPlate || userCars[0];
+  }
+  return {brand:'Toyota', model:'Camry', color:'Gümüşü', plate:'10-AA-777', seats:4};
+}
+
+/** Sərnişin oturacaq indekslərinin yuxarı həddi (elan / maşın tutumu). */
+function getTripSeatLayoutMax(t) {
+  if (!t) return 4;
+  var sl = parseInt(t.seatLayoutMax, 10);
+  if (!isNaN(sl) && sl >= 1) return Math.min(APP_MAX_PASSENGER_SEAT_LAYOUT, sl);
+  var fs = Array.isArray(t.freeSeats) ? t.freeSeats : [];
+  var maxFromFs = 0;
+  fs.forEach(function(s) {
+    var n = parseInt(s, 10);
+    if (!isNaN(n) && n > maxFromFs) maxFromFs = n;
+  });
+  if (maxFromFs >= 1) return Math.min(APP_MAX_PASSENGER_SEAT_LAYOUT, Math.max(maxFromFs, 1));
+  var sc = parseInt(t.seats, 10);
+  if (!isNaN(sc) && sc >= 1) return Math.min(APP_MAX_PASSENGER_SEAT_LAYOUT, sc);
+  return 4;
+}
+
+function normalizeTripFreeSeats(t) {
+  if (!t) return [];
+  var maxSeats = Math.max(1, Math.min(APP_MAX_PASSENGER_SEAT_LAYOUT, getTripSeatLayoutMax(t)));
+  var src = Array.isArray(t.freeSeats) ? t.freeSeats : [];
+  var uniq = [];
+  src.forEach(function(s){
+    var n = parseInt(s, 10);
+    if (n >= 1 && n <= maxSeats && uniq.indexOf(n) === -1) uniq.push(n);
+  });
+  uniq.sort();
+  t.freeSeats = uniq;
+  return uniq;
+}
+
+function syncCreateSeatAvailability(maxSeats) {
+  maxSeats = Math.max(1, Math.min(APP_MAX_PASSENGER_SEAT_LAYOUT, parseInt(maxSeats || 4)));
+  const seatWrap = document.getElementById('create-seat-availability');
+  if (!seatWrap) return;
+  if (createTripSeatsLocked) {
+    createTripFreeSeats = [];
+    for (var z = 1; z <= maxSeats; z++) createTripFreeSeats.push(z);
+  } else if (!Array.isArray(createTripFreeSeats) || !createTripFreeSeats.length) {
+    createTripFreeSeats = [];
+    for (var i = 1; i <= maxSeats; i++) createTripFreeSeats.push(i);
+  } else {
+    createTripFreeSeats = createTripFreeSeats.filter(function(s){ return s >= 1 && s <= maxSeats; });
+    if (!createTripFreeSeats.length) {
+      for (var j = 1; j <= maxSeats; j++) createTripFreeSeats.push(j);
+    }
+  }
+  if (isAbstractVehicleSeatLayout(maxSeats)) {
+    var k = createTripSeatsLocked ? maxSeats : Math.max(1, Math.min(maxSeats, createTripFreeSeats.length));
+    createTripFreeSeats = [];
+    for (var ab = 1; ab <= k; ab++) createTripFreeSeats.push(ab);
+  }
+  seatWrap.innerHTML = '';
+  if (isAbstractVehicleSeatLayout(maxSeats)) {
+    var curK = createTripFreeSeats.length;
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'width:100%;text-align:center;padding:6px 0';
+    wrap.innerHTML = '<p style="font-size:12px;color:var(--t2);margin:0 0 12px;line-height:1.4">Çoxoturacaqlı nəqliyyat: salon sxemi yoxdur. Elanda neçə boş yer göstərmək istəyirsiniz.</p>' +
+      '<div style="display:flex;align-items:center;justify-content:center;gap:14px">' +
+      '<button type="button" class="gbtn" id="create-qty-minus" style="min-width:44px;padding:10px"' + (createTripSeatsLocked ? ' disabled' : '') + '>−</button>' +
+      '<span id="create-qty-display" style="font-size:20px;font-weight:700">' + curK + '</span>' +
+      '<button type="button" class="gbtn" id="create-qty-plus" style="min-width:44px;padding:10px"' + (createTripSeatsLocked ? ' disabled' : '') + '>+</button>' +
+      '</div>' +
+      '<p style="font-size:11px;color:var(--t2);margin-top:8px">Avtomobil: max ' + maxSeats + ' yer</p>';
+    seatWrap.appendChild(wrap);
+    function applyCreateAbstractQty(n) {
+      if (createTripSeatsLocked) return;
+      n = Math.max(1, Math.min(maxSeats, n));
+      createTripFreeSeats = [];
+      for (var qq = 1; qq <= n; qq++) createTripFreeSeats.push(qq);
+      var d = document.getElementById('create-qty-display');
+      if (d) d.textContent = String(n);
+    }
+    var cminus = document.getElementById('create-qty-minus');
+    var cplus = document.getElementById('create-qty-plus');
+    if (cminus && !createTripSeatsLocked) cminus.onclick = function() { applyCreateAbstractQty(createTripFreeSeats.length - 1); };
+    if (cplus && !createTripSeatsLocked) cplus.onclick = function() { applyCreateAbstractQty(createTripFreeSeats.length + 1); };
+    return;
+  }
+  var seatNames = {1:'Ön sağ',2:'Arxa sol',3:'Arxa orta',4:'Arxa sağ'};
+  for (var seat = 1; seat <= maxSeats; seat++) {
+    var btn = document.createElement('button');
+    var isOn = createTripFreeSeats.indexOf(seat) > -1;
+    btn.type = 'button';
+    btn.className = 'seat-opt' + (isOn ? ' on' : '');
+    btn.style.minWidth = seat <= 4 ? '96px' : '52px';
+    btn.style.padding = seat <= 4 ? '' : '8px 6px';
+    btn.style.fontSize = seat <= 4 ? '' : '13px';
+    btn.textContent = seatNames[seat] || ('#' + seat);
+    if (createTripSeatsLocked) {
+      btn.style.cursor = 'default';
+    } else {
+      (function(seatNo){
+        btn.onclick = function(){ toggleCreateFreeSeat(seatNo); };
+      })(seat);
+    }
+    seatWrap.appendChild(btn);
+  }
+}
+
+function initCreateTripOptions() {
+  const select = document.getElementById('create-car-select');
+  if (!select) return;
+  var needMinSeats = 0;
+  if (createInvitePassReqId != null) {
+    var prCr = passReqs.find(function(x) { return String(x.id) === String(createInvitePassReqId); });
+    if (!prCr) prCr = myRequests.find(function(x) { return String(x.id) === String(createInvitePassReqId); });
+    if (prCr) needMinSeats = getPassRequestNeededSeats(prCr);
+  }
+  var baseCars = (userCars && userCars.length) ? userCars.slice() : [{brand:'Toyota',model:'Camry',color:'Gümüşü',plate:'10-AA-777',seats:4}];
+  var cars = needMinSeats > 0
+    ? baseCars.filter(function(c) { return getCarRegisteredSeatCount(c) >= needMinSeats; })
+    : baseCars.slice();
+  if (!cars.length) {
+    select.innerHTML = '<option value="">' + (needMinSeats > 0 ? '⚠ ' + needMinSeats + '+ yer — uyğun avtomobil yoxdur' : '—') + '</option>';
+    select.disabled = true;
+    createTripSelectedCarPlate = '';
+    return;
+  }
+  select.disabled = false;
+  if (!createTripSelectedCarPlate || !cars.some(function(c){ return c.plate === createTripSelectedCarPlate; })) {
+    createTripSelectedCarPlate = cars[0].plate;
+  }
+  select.innerHTML = cars.map(function(c){
+    var regSeats = getCarRegisteredSeatCount(c);
+    return '<option value="' + String(c.plate).replace(/"/g, '') + '">' + c.brand + ' ' + c.model + ' · ' + c.plate + ' · ' + regSeats + ' yer</option>';
+  }).join('');
+  select.value = createTripSelectedCarPlate;
+  const selected = getCreateSelectedCar();
+  const maxPassengerSeats = getCreateLayoutMaxFromCar(selected);
+  createTripFreeSeats = [];
+  for (var i = 1; i <= maxPassengerSeats; i++) createTripFreeSeats.push(i);
+  syncCreateSeatAvailability(maxPassengerSeats);
+}
+
+function onCreateCarChange(plate) {
+  createTripSelectedCarPlate = plate;
+  const selected = getCreateSelectedCar();
+  const maxPassengerSeats = getCreateLayoutMaxFromCar(selected);
+  if (createTripSeatsLocked) {
+    createTripFreeSeats = [];
+    for (var i = 1; i <= maxPassengerSeats; i++) createTripFreeSeats.push(i);
+  } else {
+    createTripFreeSeats = [];
+    for (var j = 1; j <= maxPassengerSeats; j++) createTripFreeSeats.push(j);
+  }
+  syncCreateSeatAvailability(maxPassengerSeats);
+}
+
+function toggleCreateFreeSeat(seatNo) {
+  if (createTripSeatsLocked) return;
+  const idx = createTripFreeSeats.indexOf(seatNo);
+  if (idx > -1) createTripFreeSeats.splice(idx, 1);
+  else createTripFreeSeats.push(seatNo);
+  createTripFreeSeats.sort();
+  const selected = getCreateSelectedCar();
+  const maxPassengerSeats = getCreateLayoutMaxFromCar(selected);
+  syncCreateSeatAvailability(maxPassengerSeats);
 }
 
 
@@ -4253,6 +5991,12 @@ function acceptOffer(reqId, offer) {
   if (!r) return;
   r.status = 'confirmed';
   r.acceptedOffer = offer;
+  passReqs.forEach(function(x) {
+    if (x.id === reqId) {
+      x.status = 'confirmed';
+      x.acceptedOffer = offer;
+    }
+  });
   closeReqDetail();
   renderMyBookings();
   renderHome();
@@ -4265,16 +6009,26 @@ let currentRatingId = null;
 let selectedStars = 5;
 
 function openBookingDetail(b) {
-  const t = b.trip;
+  const tid = b.tripId !== undefined && b.tripId !== null ? Number(b.tripId) : -1;
+  var t = b.trip;
+  if (!t && tid >= 0 && trips[tid]) t = trips[tid];
+  if (!t) t = getBookingTripDisplay(b);
   const m = document.getElementById('booking-detail-modal');
   if (!m) return;
+  if (!t || (!t.from && !t.to)) { toast('Səfər məlumatı tapılmadı'); return; }
   const statusMap = {
     pending:   {text:'Gözləyir',    color:'var(--blue)'},
     confirmed: {text:'Təsdiqləndi', color:'var(--green)'},
     cancelled: {text:'Ləğv edildi', color:'var(--red)'},
+    rejected:  {text:'Sürücü rədd etdi', color:'var(--red)'},
     completed: {text:'Tamamlandı',  color:'var(--t2)'}
   };
   const s = statusMap[b.status] || {text:b.status, color:'var(--t2)'};
+  var drvAv = String(t.driver || t.driverFull || '?').charAt(0);
+  var tripStillLive = tid >= 0 && trips[tid];
+  var totalP = passengerBookingTotalPrice(t, b);
+  var nSeats = countPassengerBookingSeats(b);
+  var payLine = (t.price !== undefined && t.price !== '') ? (nSeats > 1 ? totalP + ' AZN (' + nSeats + ' × ' + t.price + ')' : totalP + ' AZN') : '—';
   document.getElementById('booking-detail-content').innerHTML =
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
       '<div style="font-size:18px;font-weight:700">' + t.from + ' → ' + t.to + '</div>' +
@@ -4282,21 +6036,28 @@ function openBookingDetail(b) {
     '</div>' +
     '<div style="background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:12px">' +
       '<div style="font-size:12px;color:var(--t2);margin-bottom:4px">📅 ' + t.date + ' · 🕐 ' + t.time + ' · ⏱ ' + (t.dur||'') + '</div>' +
-      '<div style="font-size:13px;font-weight:600;color:var(--green)">' + t.price + ' AZN · ' + b.seat + '-ci yer</div>' +
+      '<div style="font-size:13px;font-weight:600;color:var(--green)">' + payLine + ' · 🪑 ' + b.seat + '</div>' +
     '</div>' +
     '<div style="display:flex;align-items:center;gap:10px;background:var(--sf);border-radius:var(--rc);padding:12px;margin-bottom:12px">' +
-      '<div class="avsm p">' + t.driver[0] + '</div>' +
-      '<div><div style="font-size:14px;font-weight:600">' + t.driverFull + '</div>' +
-      '<div style="font-size:12px;color:var(--t2)">⭐ ' + t.rating + ' · ' + t.car + ' · ' + t.plate + '</div></div>' +
+      '<div class="avsm p">' + drvAv + '</div>' +
+      '<div><div style="font-size:14px;font-weight:600">' + (t.driverFull || t.driver || '') + '</div>' +
+      '<div style="font-size:12px;color:var(--t2)">⭐ ' + (t.rating||'—') + ' · ' + (t.car||'') + ' · ' + (t.plate||'') + '</div></div>' +
     '</div>';
   const btns = document.getElementById('booking-detail-btns');
   btns.innerHTML = '';
-  if (b.status === 'pending') {
+  if (b.status === 'pending' && tripStillLive) {
     const seatBtn = document.createElement('button');
     seatBtn.className = 'gbtn b'; seatBtn.style.cssText = 'width:100%;margin:0';
     seatBtn.textContent = '💺 Yeri dəyiş';
-    seatBtn.onclick = function() { closeBookingDetail(); openTrip(b.tripId, 'mybookings'); };
+    seatBtn.onclick = function() { closeBookingDetail(); openTrip(tid, 'mybookings'); };
     btns.appendChild(seatBtn);
+  }
+  if (b.status === 'rejected' && tripStillLive) {
+    const againBtn = document.createElement('button');
+    againBtn.className = 'gbtn g'; againBtn.style.cssText = 'width:100%;margin:0';
+    againBtn.textContent = '🪑 Yenidən yer seç';
+    againBtn.onclick = function() { closeBookingDetail(); openTrip(tid, 'mybookings'); };
+    btns.appendChild(againBtn);
   }
   if (b.status === 'confirmed') {
     const msgBtn = document.createElement('button');
@@ -4304,8 +6065,7 @@ function openBookingDetail(b) {
     msgBtn.textContent = '💬 Sürücüyə yaz';
     msgBtn.onclick = function() {
       closeBookingDetail();
-      const ci = convs.findIndex(function(c){return c.peerName===t.driverFull;});
-      openChatById(ci>=0?ci:0);
+      openChatWithDriverPeer(t.driverFull, t.from+' → '+t.to, t.date+', '+t.time);
     };
     btns.appendChild(msgBtn);
   }
@@ -4316,17 +6076,13 @@ function openBookingDetail(b) {
     rateBtn.onclick = function() { closeBookingDetail(); openRating(b.id, t.driverFull); };
     btns.appendChild(rateBtn);
   }
-  if (b.status !== 'completed' && b.status !== 'cancelled') {
+  if (b.status !== 'completed' && b.status !== 'cancelled' && b.status !== 'rejected') {
     const cancelBtn = document.createElement('button');
     cancelBtn.style.cssText = 'width:100%;background:transparent;border:1px solid var(--red);border-radius:var(--rb);padding:12px;font-size:14px;color:var(--red);cursor:pointer;font-family:Inter,sans-serif;margin-top:4px';
     cancelBtn.textContent = '× Rezervi ləğv et';
     cancelBtn.onclick = function() {
-      const idx = myBookedTrips.findIndex(function(x){return x.id===b.id;});
-      if (idx>-1) myBookedTrips[idx].status = 'cancelled';
-      delete activeBookings[b.tripId];
       closeBookingDetail();
-      renderMyBookings();
-      renderHome();
+      cancelBooking(tid);
     };
     btns.appendChild(cancelBtn);
   }
@@ -4376,7 +6132,7 @@ function toggleReason(btn) {
 }
 
 function submitRating() {
-  // TODO: REPLACE WITH REAL DATA - send to backend
+  // MVP: POST /api/ratings — bookingId, ulduz, səbəblər, şərh; indi yalnız local state.
   const booking = myBookedTrips.find(function(b){return b.id===currentRatingId;});
   if (booking) booking.driverRated = true;
   const req = myRequests.find(function(r){return 'req_'+r.id===currentRatingId;});
@@ -4393,7 +6149,22 @@ function openRequestDetail(r) {
   let content =
     '<div style="font-size:18px;font-weight:700;margin-bottom:4px">' + r.from + ' → ' + r.to + '</div>' +
     '<div style="font-size:13px;color:var(--t2);margin-bottom:16px">📅 ' + r.date + ' · 🕐 ' + r.time + '</div>';
-  if (r.status === 'active') {
+  if (r.buyoutAllSeats) {
+    content += '<div style="background:var(--gbg);border:1px solid var(--green);border-radius:var(--rc);padding:10px 12px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--green)">💳 Bütün boş yerləri bron edirəm (ödəniş bütün yerlər üçün)</div>';
+  }
+  if (r.status === 'active' && r.seatInvite && trips[r.seatInvite.tripId]) {
+    var td = trips[r.seatInvite.tripId];
+    var tidInv = r.seatInvite.tripId;
+    var invBtnLabel = passReqInviteIsAutoBuyout(r, tidInv) ? '💳 Bütün yerləri bron et (avtomatik)' : '🪑 Yer seç';
+    content +=
+      '<div style="background:var(--bbg);border:1px solid var(--blue);border-radius:var(--rc);padding:12px;margin-bottom:12px">' +
+        '<div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px">🪑 Sürücü yer təklif edir</div>' +
+        '<div style="font-size:13px;color:var(--t1)">' + escHtml(td.driverFull) + ' · ' + escHtml(String(td.price)) + ' AZN</div>' +
+        '<div style="font-size:11px;color:var(--t2);margin-top:4px">' + escHtml(td.from) + ' → ' + escHtml(td.to) + ' · ' + escHtml(td.date) + ', ' + escHtml(td.time) + '</div>' +
+        '<button type="button" class="gbtn g req-seat-inv-btn" style="width:100%;margin-top:10px;margin-bottom:0">' + invBtnLabel + '</button>' +
+      '</div>';
+  }
+  if (r.status === 'active' && !(r.seatInvite && trips[r.seatInvite.tripId])) {
     content += '<div style="background:var(--sf);border-radius:var(--rc);padding:16px;text-align:center;color:var(--t2);font-size:13px">🔍 Sürücü axtarılır...</div>';
   } else if (r.status === 'offered') {
     content += '<div style="font-size:13px;font-weight:600;margin-bottom:8px">🚗 ' + r.offers.length + ' təklif var:</div>';
@@ -4433,6 +6204,14 @@ function openRequestDetail(r) {
   }
   if (r.notes) content += '<div style="font-size:13px;color:var(--t2);margin-top:12px">📝 ' + r.notes + '</div>';
   document.getElementById('req-detail-content').innerHTML = content;
+  var seatInvBtn = document.querySelector('#req-detail-content .req-seat-inv-btn');
+  if (seatInvBtn && r.seatInvite && trips[r.seatInvite.tripId]) {
+    seatInvBtn.onclick = function() {
+      var tid = r.seatInvite.tripId;
+      closeReqDetail();
+      openSeatSelectFromPassReqInvite(tid);
+    };
+  }
   // Bind accept buttons
   document.querySelectorAll('.accept-offer-btn').forEach(function(btn) {
     btn.onclick = function() {
@@ -4452,8 +6231,7 @@ function openRequestDetail(r) {
     msgBtn.textContent = '💬 Mesaj';
     msgBtn.onclick = function() {
       closeReqDetail();
-      const ci = convs.findIndex(function(c){return c.peerName===o.driverName;});
-      openChatById(ci>=0?ci:0);
+      openChatWithDriverPeer(o.driverName, r.from+' → '+r.to, r.date+', '+r.time);
     };
     btns.appendChild(msgBtn);
   }
@@ -4496,14 +6274,20 @@ function switchMBTab(tab) {
   const reqs = document.getElementById('mybookings-reqs');
   const tabTrips = document.getElementById('mb-tab-trips');
   const tabReqs = document.getElementById('mb-tab-reqs');
+  const fb = document.getElementById('mb-filter-bookings-wrap');
+  const fr = document.getElementById('mb-filter-reqs-wrap');
   if (tab === 'trips') {
     if (trips) trips.style.display = 'block';
     if (reqs) reqs.style.display = 'none';
+    if (fb) fb.style.display = 'flex';
+    if (fr) fr.style.display = 'none';
     if (tabTrips) { tabTrips.style.borderBottomColor='var(--blue)'; tabTrips.style.color='var(--blue)'; tabTrips.style.fontWeight='600'; }
     if (tabReqs) { tabReqs.style.borderBottomColor='transparent'; tabReqs.style.color='var(--t2)'; tabReqs.style.fontWeight='500'; }
   } else {
     if (trips) trips.style.display = 'none';
     if (reqs) reqs.style.display = 'block';
+    if (fb) fb.style.display = 'none';
+    if (fr) fr.style.display = 'flex';
     if (tabTrips) { tabTrips.style.borderBottomColor='transparent'; tabTrips.style.color='var(--t2)'; tabTrips.style.fontWeight='500'; }
     if (tabReqs) { tabReqs.style.borderBottomColor='var(--blue)'; tabReqs.style.color='var(--blue)'; tabReqs.style.fontWeight='600'; }
   }
