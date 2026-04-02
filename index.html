@@ -559,16 +559,17 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
       <button class="cbtn" onclick="openSheet('reg-year')"><span id="reg-year-lbl" class="ph">İl seçin</span><span>›</span></button>
       <div class="fl">Dövlət nişanı</div>
       <input class="fi" id="reg-plate" placeholder="00-XX-000" maxlength="9" oninput="maskPlate(this)" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace;font-size:16px"/>
-      <div class="fl">Oturacaq sayı</div>
+      <div class="fl">Oturacaq sayı (1–8)</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <button class="seat-opt" id="so1" onclick="selSeatsReg(1)">1</button>
+        <button class="seat-opt" id="so2" onclick="selSeatsReg(2)">2</button>
         <button class="seat-opt" id="so3" onclick="selSeatsReg(3)">3</button>
         <button class="seat-opt on" id="so4" onclick="selSeatsReg(4)">4</button>
         <button class="seat-opt" id="so5" onclick="selSeatsReg(5)">5</button>
+        <button class="seat-opt" id="so6" onclick="selSeatsReg(6)">6</button>
         <button class="seat-opt" id="so7" onclick="selSeatsReg(7)">7</button>
         <button class="seat-opt" id="so8" onclick="selSeatsReg(8)">8</button>
-        <button class="seat-opt" onclick="selSeatsReg(0)">✏️</button>
       </div>
-      <input class="fi" id="so-custom" type="number" placeholder="Oturacaq sayını daxil edin" min="2" max="50" style="display:none;margin-bottom:12px" oninput="selSeatsRegCustom(this.value)"/>
     </div>
     <div style="height:4px"></div>
   </div>
@@ -1087,16 +1088,17 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
         <button class="cbtn" onclick="openSheet('car-year')"><span id="caryearlbl" class="ph">İl seçin</span><span>›</span></button>
         <div class="fl">Dövlət Nişanı</div>
         <input class="fi" id="carplate" maxlength="9" placeholder="00-XX-000" oninput="maskPlate(this)" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace;font-size:16px"/>
-        <div class="fl">Oturacaq sayı</div>
+        <div class="fl">Oturacaq sayı (1–8)</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+          <button class="seat-opt" id="cso1" onclick="selSeatsProfile(1)">1</button>
+          <button class="seat-opt" id="cso2" onclick="selSeatsProfile(2)">2</button>
           <button class="seat-opt" id="cso3" onclick="selSeatsProfile(3)">3</button>
           <button class="seat-opt on" id="cso4" onclick="selSeatsProfile(4)">4</button>
           <button class="seat-opt" id="cso5" onclick="selSeatsProfile(5)">5</button>
+          <button class="seat-opt" id="cso6" onclick="selSeatsProfile(6)">6</button>
           <button class="seat-opt" id="cso7" onclick="selSeatsProfile(7)">7</button>
           <button class="seat-opt" id="cso8" onclick="selSeatsProfile(8)">8</button>
-          <button class="seat-opt" onclick="selSeatsProfile(0)">✏️</button>
         </div>
-        <input class="fi" id="cso-custom" type="number" placeholder="Oturacaq sayını daxil edin" min="2" max="50" style="display:none" oninput="carProfileSeats=parseInt(this.value)||0"/>
       </div>
     </div>
   </div>
@@ -2463,41 +2465,91 @@ function renderModelList(items, ctx) {
 }
 
 function selRegBrand(brand) {
+  const prevBrandLbl = document.getElementById('reg-brand-lbl');
+  const prevBrand = prevBrandLbl ? String(prevBrandLbl.textContent || '').trim() : '';
+  const prevModelLbl = document.getElementById('reg-model-lbl');
+  const prevModel = prevModelLbl ? String(prevModelLbl.textContent || '').trim() : '';
+  const prevModelFilled = !!(prevModelLbl && !prevModelLbl.classList.contains('ph') && prevModel);
+  const brandChanged = prevBrand !== brand;
+  const shouldOpenModel = brandChanged || !prevModelFilled;
+  const regColorLbl0 = document.getElementById('reg-color-lbl');
+  const regYearLbl0 = document.getElementById('reg-year-lbl');
+  const regPlateEl0 = document.getElementById('reg-plate');
+  const regPlateBefore = regPlateEl0 ? String(regPlateEl0.value || '').trim() : '';
+  const regColorFilledBefore = !!(regColorLbl0 && !regColorLbl0.classList.contains('ph') && String(regColorLbl0.textContent || '').trim());
+  const regYearFilledBefore = !!(regYearLbl0 && !regYearLbl0.classList.contains('ph') && String(regYearLbl0.textContent || '').trim());
   const lbl = document.getElementById('reg-brand-lbl');
   if (lbl) { lbl.textContent = brand; lbl.classList.remove('ph'); }
-  // Reset model
-  const mlbl = document.getElementById('reg-model-lbl');
-  if (mlbl) { mlbl.textContent = 'Model seçin'; mlbl.classList.add('ph'); }
+  if (brandChanged) {
+    // Reset downstream fields when brand changes.
+    const mlbl = document.getElementById('reg-model-lbl');
+    if (mlbl) { mlbl.textContent = 'Model seçin'; mlbl.classList.add('ph'); }
+    const clbl = document.getElementById('reg-color-lbl');
+    if (clbl) { clbl.textContent = 'Rəng seçin'; clbl.classList.add('ph'); }
+    const ylbl = document.getElementById('reg-year-lbl');
+    if (ylbl) { ylbl.textContent = 'İl seçin'; ylbl.classList.add('ph'); }
+    const plateEl = document.getElementById('reg-plate');
+    if (plateEl) plateEl.value = '';
+    regColorTouched = false;
+    regYearTouched = false;
+  }
   closeSheet();
-  // Auto-open model sheet
-  setTimeout(function(){ openSheet('reg-model'); }, 300);
+  if (shouldOpenModel) setTimeout(function(){ openSheet('reg-model'); }, 300);
 }
 function selRegModel(model) {
   const lbl = document.getElementById('reg-model-lbl');
   if (lbl) { lbl.textContent = model; lbl.classList.remove('ph'); }
+  const regColorLbl = document.getElementById('reg-color-lbl');
+  const regColorFilled = !!(regColorLbl && !regColorLbl.classList.contains('ph') && String(regColorLbl.textContent || '').trim());
+  const shouldAutoOpenRegColor = !regColorTouched && !regColorFilled;
   closeSheet();
-  // Auto-open color after model for convenience
-  setTimeout(function(){ openSheet('car-color'); }, 250);
+  if (shouldAutoOpenRegColor) setTimeout(function(){ openSheet('car-color'); }, 250);
 }
 
 function selCarBrand(brand) {
+  const prevBrandInput = document.getElementById('carbrand');
+  const prevBrand = prevBrandInput ? String(prevBrandInput.value || '').trim() : '';
+  const prevModelInput = document.getElementById('carmodel');
+  const prevModel = prevModelInput ? String(prevModelInput.value || '').trim() : '';
+  const prevModelLbl = document.getElementById('carmodellbl');
+  const prevModelFilled = !!(prevModel || (prevModelLbl && !prevModelLbl.classList.contains('ph') && String(prevModelLbl.textContent || '').trim()));
+  const brandChanged = prevBrand !== brand;
+  const shouldOpenModel = brandChanged || !prevModelFilled;
+  const carColorLbl0 = document.getElementById('carcollbl');
+  const carYearLbl0 = document.getElementById('caryearlbl');
+  const carPlateEl0 = document.getElementById('carplate');
+  const carPlateBefore = carPlateEl0 ? String(carPlateEl0.value || '').trim() : '';
+  const carColorFilledBefore = !!(carColorLbl0 && !carColorLbl0.classList.contains('ph') && String(carColorLbl0.textContent || '').trim());
+  const carYearFilledBefore = !!(carYearLbl0 && !carYearLbl0.classList.contains('ph') && String(carYearLbl0.textContent || '').trim());
   document.getElementById('carbrand').value = brand;
   const lbl = document.getElementById('carbrandlbl');
   if (lbl) { lbl.textContent = brand; lbl.classList.remove('ph'); }
-  // Reset model
-  document.getElementById('carmodel').value = '';
-  const mlbl = document.getElementById('carmodellbl');
-  if (mlbl) { mlbl.textContent = 'Model seçin'; mlbl.classList.add('ph'); }
+  if (brandChanged) {
+    // Reset downstream fields when brand changes.
+    document.getElementById('carmodel').value = '';
+    const mlbl = document.getElementById('carmodellbl');
+    if (mlbl) { mlbl.textContent = 'Model seçin'; mlbl.classList.add('ph'); }
+    const clbl = document.getElementById('carcollbl');
+    if (clbl) { clbl.textContent = 'Rəng seçin'; clbl.classList.add('ph'); }
+    const ylbl = document.getElementById('caryearlbl');
+    if (ylbl) { ylbl.textContent = 'İl seçin'; ylbl.classList.add('ph'); }
+    const plateEl = document.getElementById('carplate');
+    if (plateEl) plateEl.value = '';
+    carColorTouched = false;
+    carYearTouched = false;
+  }
   closeSheet();
-  setTimeout(function() { openSheet('car-model-prof'); }, 300);
+  if (shouldOpenModel) setTimeout(function() { openSheet('car-model-prof'); }, 300);
 }
 function selCarModel(model) {
   document.getElementById('carmodel').value = model;
   const lbl = document.getElementById('carmodellbl');
   if (lbl) { lbl.textContent = model; lbl.classList.remove('ph'); }
+  const carColorLbl = document.getElementById('carcollbl');
+  const carColorFilled = !!(carColorLbl && !carColorLbl.classList.contains('ph') && String(carColorLbl.textContent || '').trim());
+  const shouldAutoOpenCarColor = !carColorTouched && !carColorFilled;
   closeSheet();
-  // Auto-open color after model for convenience
-  setTimeout(function(){ openSheet('car-color'); }, 250);
+  if (shouldAutoOpenCarColor) setTimeout(function(){ openSheet('car-color'); }, 250);
 }
 
 function renderCarList() {
@@ -2541,14 +2593,14 @@ function showAddCar() {
   if(colorLbl){colorLbl.textContent='Rəng seçin';colorLbl.classList.add('ph');}
   const yearLbl=document.getElementById('caryearlbl');
   if(yearLbl){yearLbl.textContent='İl seçin';yearLbl.classList.add('ph');}
+  carColorTouched = false;
+  carYearTouched = false;
   // Reset seats to 4
   carProfileSeats = 4;
-  [3,4,5,7,8].forEach(function(x){
+  [1,2,3,4,5,6,7,8].forEach(function(x){
     const el=document.getElementById('cso'+x);
     if(el) el.className='seat-opt'+(x===4?' on':'');
   });
-  const custom=document.getElementById('cso-custom');
-  if(custom) custom.style.display='none';
 }
 
 function showCarList() {
@@ -2591,6 +2643,8 @@ let curTripId = 0;
 
 // Search state
 let sFrom = '', sTo = '', sDate = 'Bu gün', sPax = 1;
+let sDateTouched = false, sPaxTouched = false;
+let carColorTouched = false, carYearTouched = false, regColorTouched = false, regYearTouched = false;
 
 // Create trip state
 let cFrom = '', cTo = '', cDate = '', cTime = '';
@@ -2789,39 +2843,21 @@ function verifyCode() {
 let carProfileSeats = 4;
 
 function selSeatsReg(n) {
-  const customEl = document.getElementById('so-custom');
-  if (n === 0) {
-    [3,4,5,7,8].forEach(function(x){
-      const el=document.getElementById('so'+x);
-      if(el) el.className='seat-opt';
-    });
-    if (customEl) { customEl.style.display='block'; customEl.focus(); }
-    return;
-  }
+  n = Math.max(1, Math.min(8, parseInt(n, 10) || 4));
   regSeatsCount = n;
-  [3,4,5,7,8].forEach(function(x) {
+  [1,2,3,4,5,6,7,8].forEach(function(x) {
     const el = document.getElementById('so'+x);
     if (el) el.className = 'seat-opt' + (x===n ? ' on' : '');
   });
-  if (customEl) customEl.style.display = 'none';
 }
 
 function selSeatsProfile(n) {
-  const customEl = document.getElementById('cso-custom');
-  if (n === 0) {
-    [3,4,5,7,8].forEach(function(x){
-      const el=document.getElementById('cso'+x);
-      if(el) el.className='seat-opt';
-    });
-    if (customEl) { customEl.style.display='block'; customEl.focus(); }
-    return;
-  }
+  n = Math.max(1, Math.min(8, parseInt(n, 10) || 4));
   carProfileSeats = n;
-  [3,4,5,7,8].forEach(function(x) {
+  [1,2,3,4,5,6,7,8].forEach(function(x) {
     const el = document.getElementById('cso'+x);
     if (el) el.className = 'seat-opt' + (x===n ? ' on' : '');
   });
-  if (customEl) customEl.style.display = 'none';
 }
 
 function setNoCar() { hasCar = false; updateRoleSwitcher(); go('onboard'); saveState(); }
@@ -2840,7 +2876,8 @@ function saveRegCar() {
   if (!model) { toast('Model seçin'); return; }
   if (!plate) { toast('Dövlət nişanını daxil edin'); return; }
   if (plate && userCars.find(function(c){return c.plate===plate;})) { toast('Bu nişan artıq mövcuddur'); return; }
-  userCars.push({brand:brand, model:model, color:color, year:year, plate:plate, seats:regSeatsCount||4});
+  var safeRegSeats = Math.max(1, Math.min(8, parseInt(regSeatsCount, 10) || 4));
+  userCars.push({brand:brand, model:model, color:color, year:year, plate:plate, seats:safeRegSeats});
   setRole('driver');
   hasCar = true;
   updateRoleSwitcher();
@@ -2862,7 +2899,8 @@ function saveCarFromProfile() {
   if (!model) { toast('Model seçin'); return; }
   if (!plate) { toast('Dövlət nişanını daxil edin'); return; }
   if (userCars.find(function(c){return c.plate===plate;})) { toast('Bu nişan artıq mövcuddur'); return; }
-  userCars.push({brand:brand, model:model, color:color, year:year, plate:plate, seats:carProfileSeats||4});
+  var safeProfileSeats = Math.max(1, Math.min(8, parseInt(carProfileSeats, 10) || 4));
+  userCars.push({brand:brand, model:model, color:color, year:year, plate:plate, seats:safeProfileSeats});
   hasCar = true;
   updateRoleSwitcher();
   renderCarList();
@@ -3135,12 +3173,12 @@ function getPassRequestNeededSeats(r) {
   return Math.max(1, Math.min(APP_PASS_REQ_PAX_MAX, parseInt(r.seats, 10) || 1));
 }
 
-/** Profildə qeyd olunan oturacaq sayı (sərnişin müraciəti ilə müqayisə üçün, 1–50). */
+/** Profildə qeyd olunan oturacaq sayı (sərnişin müraciəti ilə müqayisə üçün, 1–8). */
 function getCarRegisteredSeatCount(car) {
   if (!car) return 4;
   var n = parseInt(car.seats, 10);
   if (isNaN(n) || n < 1) return 4;
-  return Math.min(50, n);
+  return Math.min(8, n);
 }
 
 function getCreateLayoutMaxFromCar(car) {
@@ -4726,8 +4764,8 @@ function openSheet(ctx) {
     years.forEach(function(y) {
       const d = document.createElement('div'); d.className = 'sitem'; d.textContent = y;
       d.onclick = ctx === 'reg-year'
-        ? function(){document.getElementById('reg-year-lbl').textContent=y;document.getElementById('reg-year-lbl').classList.remove('ph');closeSheet();}
-        : function(){const lbl=document.getElementById('caryearlbl');if(lbl){lbl.textContent=y;lbl.classList.remove('ph');}closeSheet();};
+        ? function(){regYearTouched = true;document.getElementById('reg-year-lbl').textContent=y;document.getElementById('reg-year-lbl').classList.remove('ph');closeSheet();}
+        : function(){carYearTouched = true;const lbl=document.getElementById('caryearlbl');if(lbl){lbl.textContent=y;lbl.classList.remove('ph');}closeSheet();};
       slist.appendChild(d);
     });
 
@@ -4738,13 +4776,20 @@ function openSheet(ctx) {
       d.onclick = function() {
         const lbl1 = document.getElementById('reg-color-lbl');
         const lbl2 = document.getElementById('carcollbl');
+        const isReg = !!(document.getElementById('s-regcar') && document.getElementById('s-regcar').classList.contains('active'));
+        if (isReg) regColorTouched = true; else carColorTouched = true;
         if (lbl1) { lbl1.textContent=c; lbl1.classList.remove('ph'); }
         if (lbl2) { lbl2.textContent=c; lbl2.classList.remove('ph'); }
+        const regYearLbl = document.getElementById('reg-year-lbl');
+        const carYearLbl = document.getElementById('caryearlbl');
+        const regYearFilled = !!(regYearLbl && !regYearLbl.classList.contains('ph') && String(regYearLbl.textContent || '').trim());
+        const carYearFilled = !!(carYearLbl && !carYearLbl.classList.contains('ph') && String(carYearLbl.textContent || '').trim());
+        const shouldAutoOpenRegYear = !regYearTouched && !regYearFilled;
+        const shouldAutoOpenCarYear = !carYearTouched && !carYearFilled;
         closeSheet();
         // Auto-open year after color for both flows.
         setTimeout(function(){
-          const isReg = !!(document.getElementById('s-regcar') && document.getElementById('s-regcar').classList.contains('active'));
-          openSheet(isReg ? 'reg-year' : 'car-year');
+          if (isReg ? shouldAutoOpenRegYear : shouldAutoOpenCarYear) openSheet(isReg ? 'reg-year' : 'car-year');
         }, 200);
       };
       slist.appendChild(d);
@@ -4849,7 +4894,8 @@ function selCity(city) {
   }
   // Auto flow for main search: after selecting destination ("to") open date and then pax.
   if (shCtx === 'to') {
-    setTimeout(function(){ openSheet('date'); }, 150);
+    const shouldAutoOpenDate = !sDateTouched;
+    if (shouldAutoOpenDate) setTimeout(function(){ openSheet('date'); }, 150);
   }
 }
 
@@ -4912,11 +4958,13 @@ function selDate(l) {
   else if (shCtx==='pr-date') { prDate=l; document.getElementById('pr-date-lbl').textContent=l; }
   else {
     sDate=l;
+    sDateTouched = true;
     var svd = document.getElementById('svd'); if (svd) svd.textContent = l;
     var clr = document.getElementById('svd-clear'); if (clr) clr.style.display = '';
     // Auto flow for main search: after picking date, open pax.
     if (shCtx === 'date') {
-      setTimeout(function(){ openSheet('pax'); }, 150);
+      const shouldAutoOpenPax = !sPaxTouched;
+      if (shouldAutoOpenPax) setTimeout(function(){ openSheet('pax'); }, 150);
     }
   }
   closeSheet();
@@ -4956,6 +5004,7 @@ function selPaxCustom() {
 
 function selPax(n) {
   sPax = n;
+  sPaxTouched = true;
   document.getElementById('svp').textContent = n===1?'1 sərnişin':n+' sərnişin';
   var clr2 = document.getElementById('svp-clear'); if (clr2) clr2.style.display = '';
   closeSheet();
@@ -5290,11 +5339,6 @@ function passReqInviteIsAutoBuyout(r, tripIdx) {
   return !!(r && r.buyoutAllSeats && tr && tripAllBookableSeatsStillFree(tr, tripIdx));
 }
 
-// ── SEAT REG ───────────────────────────────────────────
-function selSeatsReg2(n) {
-  [4,5,7].forEach(x => { const el=document.getElementById('so'+x); if(el) el.className='seat-opt'+(x===n?' on':''); });
-}
-
 // ── UTILS ──────────────────────────────────────────────
 
 function shouldAutoFillDemoData() {
@@ -5379,7 +5423,7 @@ function fillDemoData(force) {
         color: 'Boz',
         year: '2024',
         plate: '10-AA-777',
-        seats: 12
+        seats: 8
       }
     ];
   }
@@ -5994,6 +6038,7 @@ function clearField(field) {
   }
   if (field === 'date') {
     sDate = '';
+    sDateTouched = false;
     var svd = document.getElementById('svd');
     if (svd) svd.textContent = 'Tarix seçin';
     var clr = document.getElementById('svd-clear');
@@ -6002,6 +6047,7 @@ function clearField(field) {
   }
   if (field === 'pax') {
     sPax = 0;
+    sPaxTouched = false;
     var svp = document.getElementById('svp');
     if (svp) svp.textContent = 'Neçə nəfər';
     var clr2 = document.getElementById('svp-clear');
@@ -6016,6 +6062,8 @@ function resetHomeSearchFieldsToDefaults() {
   sTo = '';
   sDate = 'Bu gün';
   sPax = 1;
+  sDateTouched = false;
+  sPaxTouched = false;
 
   var svfph = document.getElementById('svfph');
   if (svfph) { svfph.textContent = 'Haradan'; svfph.classList.add('ph'); svfph.style.display = ''; }
@@ -6366,8 +6414,9 @@ function initCreateTripOptions() {
   select.value = createTripSelectedCarPlate;
   const selected = getCreateSelectedCar();
   const maxPassengerSeats = getCreateLayoutMaxFromCar(selected);
+  var defaultSeatCount = Math.min(4, maxPassengerSeats);
   createTripFreeSeats = [];
-  for (var i = 1; i <= maxPassengerSeats; i++) createTripFreeSeats.push(i);
+  for (var i = 1; i <= defaultSeatCount; i++) createTripFreeSeats.push(i);
   syncCreateSeatAvailability(maxPassengerSeats);
 }
 
@@ -6379,8 +6428,9 @@ function onCreateCarChange(plate) {
     createTripFreeSeats = [];
     for (var i = 1; i <= maxPassengerSeats; i++) createTripFreeSeats.push(i);
   } else {
+    var dc = Math.min(4, maxPassengerSeats);
     createTripFreeSeats = [];
-    for (var j = 1; j <= maxPassengerSeats; j++) createTripFreeSeats.push(j);
+    for (var j = 1; j <= dc; j++) createTripFreeSeats.push(j);
   }
   syncCreateSeatAvailability(maxPassengerSeats);
 }
