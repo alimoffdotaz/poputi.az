@@ -2884,8 +2884,10 @@ function setRole(r) {
   document.getElementById('rs-p').className = 'rsb' + (D ? '' : ' on');
   document.getElementById('rs-d').className = 'rsb' + (D ? ' on d' : '');
   document.getElementById('home-hdr').className = 'hdr ' + (D ? 'gr' : 'bl');
-  document.getElementById('hp').style.display = D ? 'none' : 'block';
-  document.getElementById('hd').style.display = D ? 'block' : 'none';
+  // Driver: hide old green "dpanel", show search panel like passenger
+  // For UX: keep the passenger-like search for both roles; hide green driver dpanel.
+  document.getElementById('hp').style.display = 'block';
+  document.getElementById('hd').style.display = 'none';
   document.getElementById('homelt').textContent = D ? 'Aktiv Səfərlərim' : 'Yaxın səfərlər';
   // qrs handled by renderHome
   document.getElementById('phdr').className = 'phdr' + (D ? ' d' : '');
@@ -2908,6 +2910,12 @@ function setRole(r) {
   renderPMenu();
   renderHome();
   saveState();
+
+  // #region agent log
+  try {
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:setRole',message:'setRole top blocks toggled',data:{hypothesisId:'H14',role:r,hpDisplay:document.getElementById('hp')?document.getElementById('hp').style.display:'',hdDisplay:document.getElementById('hd')?document.getElementById('hd').style.display:''},timestamp:Date.now()})}).catch(function(){});
+  } catch (e) {}
+  // #endregion
 }
 
 // ── RENDER HELPERS ──────────────────────────────────────
@@ -3397,7 +3405,7 @@ function preqHTML(r) {
 // ── RENDER SCREENS ─────────────────────────────────────
 function renderHome() {
   if (role === 'driver') {
-    // Driver home unchanged
+    // Driver home: debug why "first green block" appears
     const container = document.getElementById('homelist');
     if (container) {
       const D = true;
@@ -3410,9 +3418,22 @@ function renderHome() {
         ? '<div class="sec"><div class="sec-t" style="color:var(--blue)">🔍 Sərnişin Axtarır ('+show.length+')</div></div>' + show.map(r => preqHTML(r)).join('')
         : '';
       const driverBody = renderPendingBookings() + myHtml + preqSection;
+      var hw = document.getElementById('home-widget');
+      var hwLenBefore = hw ? String(hw.innerHTML || '').trim().length : 0;
+      var hpEl = document.getElementById('hp');
+      var hdEl = document.getElementById('hd');
+      // #region agent log
+      fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHome:driverDebug:pre',message:'driver home pre-render',data:{hypothesisId:'H11',homeWidgetLen:hwLenBefore,hpDisplay:hpEl?hpEl.style.display:'',hdDisplay:hdEl?hdEl.style.display:'',pendingBookings:pendingBookings.length,myTActive:myTActive.length,passReqsShown:show.length},timestamp:Date.now()})}).catch(function(){});
+      // #endregion
       container.innerHTML = driverBody.trim()
         ? driverBody
         : '<div style="text-align:center;padding:40px 20px;color:var(--t2);font-size:14px;line-height:1.5">Hələ aktiv elan və ya sərnişin müraciəti yoxdur.<br/><span style="font-size:13px">«Yarat» ilə səfər elanı əlavə edin — və ya sərnişinlər müraciət göndərəndə burada görünəcək.</span></div>';
+
+      var firstMt = container.querySelector('.mtcard');
+      var firstMtStatusEl = firstMt ? firstMt.querySelector('.mtst') : null;
+      // #region agent log
+      fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHome:driverDebug:post',message:'driver home DOM after render',data:{hypothesisId:'H10',firstMtExists:!!firstMt,firstMtStatusClasses:firstMtStatusEl?String(firstMtStatusEl.className):null,mtCardsCount:container.querySelectorAll('.mtcard').length,homeWidgetNowLen:hw ? String(hw.innerHTML || '').trim().length : 0},timestamp:Date.now()})}).catch(function(){});
+      // #endregion
     }
     document.getElementById('hfilters').style.display = 'none';
     document.getElementById('home-widget').innerHTML = '';
@@ -3698,9 +3719,43 @@ function qRoute(f, t) {
   doSearch();
 }
 
+function renderDriverReqRes(list) {
+  const el = document.getElementById('reslist');
+  if (!el) return;
+  el.innerHTML = list.length
+    ? list.map(function(r){ return preqHTML(r); }).join('')
+    : '<div style="text-align:center;padding:48px 24px;font-size:13px;color:var(--t2);line-height:1.5">Heç bir sərnişin müraciəti tapılmadı</div>';
+}
+
+function doDriverSearchPassReqs() {
+  if (!sFrom && !sTo) { toast('Marşrut seçin'); return; }
+  // Driver search uses strict/capacity filtering; the "tag filter bar" is passenger-only.
+  const fbar = document.getElementById('fbar');
+  if (fbar) { fbar.style.display = 'none'; fbar.innerHTML = ''; }
+
+  var base = getPassReqsForDriverFeed(); // active/offered + capacity + strict already applied
+  var list = base.slice();
+  if (sFrom) list = list.filter(function(r){ return String(r.from||'').includes(sFrom); });
+  if (sTo) list = list.filter(function(r){ return String(r.to||'').includes(sTo); });
+  if (sDate) list = list.filter(function(r){ return String(r.date||'') === String(sDate); });
+  if (sPax) list = list.filter(function(r){ return getPassRequestNeededSeats(r) >= sPax; });
+
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:doDriverSearchPassReqs',message:'driver search pass reqs',data:{hypothesisId:'H13',baseCount:base.length,afterFromTo:list.length,from:sFrom,to:sTo,date:sDate,pax:sPax},timestamp:Date.now()})}).catch(function(){});
+  // #endregion
+
+  document.getElementById('resq').textContent = (sFrom||'İstənilən') + ' → ' + (sTo||'İstənilən');
+  document.getElementById('ress').textContent = list.length + ' müraciət · ' + sDate + ' · ' + sPax + ' nəfər';
+  renderDriverReqRes(list);
+  go('results');
+}
+
 function doSearch() {
+  if (role === 'driver') { doDriverSearchPassReqs(); return; }
   if (!sFrom && !sTo) { toast('Marşrut seçin'); return; }
   applyUserPrefsToFilter(); // sets aFilter from userPrefs
+  const fbar = document.getElementById('fbar');
+  if (fbar) fbar.style.display = 'flex';
   let list = trips;
   if (sFrom) list = list.filter(function(t){return t.from.includes(sFrom);});
   if (sTo) list = list.filter(function(t){return t.to.includes(sTo);});
@@ -5754,13 +5809,16 @@ function switchRole(newRole) {
   const hd = document.getElementById('hd');
   const homelt = document.getElementById('homelt');
   const qrs = document.getElementById('qrs');
-  if (hp) hp.style.display = D ? 'none' : 'block';
-  if (hd) hd.style.display = D ? 'block' : 'none';
+  if (hp) hp.style.display = 'block';
+  if (hd) hd.style.display = 'none';
   if (homelt) homelt.textContent = D ? 'Aktiv Səfərlərim' : 'Yaxın səfərlər';
   if (qrs) qrs.style.display = D ? 'none' : 'block';
   renderPMenu();
   renderHome();
   toast(D ? '🚗 Sürücü rejiminə keçdiniz' : '👤 Sərnişin rejiminə keçdiniz');
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:switchRole',message:'toggle home top blocks',data:{hypothesisId:'H12',role:role,hpDisplay:hp?hp.style.display:'',hdDisplay:hd?hd.style.display:'',homelt:homelt?homelt.textContent:'',qrsDisplay:qrs?qrs.style.display:''},timestamp:Date.now()})}).catch(function(){});
+  // #endregion
   saveState();
 }
 
