@@ -614,8 +614,14 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
           <div onclick="event.stopPropagation();openMapPicker('to')" style="cursor:pointer;padding:4px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#2F80ED"/></svg></div>
         </div>
         <div class="srow-b">
-          <button class="sbb" onclick="openSheet('date')">📅 <span id="svd">Bu gün</span></button>
-          <button class="sbb" onclick="openSheet('pax')">👤 <span id="svp">1 sərnişin</span></button>
+          <button class="sbb" onclick="openSheet('date')">
+            📅 <span id="svd">Bu gün</span>
+            <span id="svd-clear" onclick="event.stopPropagation();clearField('date')" style="padding:0 2px;font-size:18px;line-height:1;color:var(--t2);cursor:pointer;margin-left:6px">×</span>
+          </button>
+          <button class="sbb" onclick="openSheet('pax')">
+            👤 <span id="svp">1 sərnişin</span>
+            <span id="svp-clear" onclick="event.stopPropagation();clearField('pax')" style="padding:0 2px;font-size:18px;line-height:1;color:var(--t2);cursor:pointer;margin-left:6px">×</span>
+          </button>
         </div>
         <button class="sbtn" onclick="doSearch()">Axtar</button>
       </div>
@@ -2879,6 +2885,7 @@ function updateRoleSwitcher() {
 
 // ── ROLE ───────────────────────────────────────────────
 function setRole(r) {
+  var prev = { role: role, sFrom: sFrom, sTo: sTo, sDate: sDate, sPax: sPax };
   role = r;
   const D = r === 'driver';
   document.getElementById('rs-p').className = 'rsb' + (D ? '' : ' on');
@@ -2888,6 +2895,9 @@ function setRole(r) {
   // For UX: keep the passenger-like search for both roles; hide green driver dpanel.
   document.getElementById('hp').style.display = 'block';
   document.getElementById('hd').style.display = 'none';
+
+  // Reset shared home-search so passenger settings don't leak into driver mode (and vice versa).
+  resetHomeSearchFieldsToDefaults();
   document.getElementById('homelt').textContent = D ? 'Aktiv Səfərlərim' : 'Yaxın səfərlər';
   // qrs handled by renderHome
   document.getElementById('phdr').className = 'phdr' + (D ? ' d' : '');
@@ -2913,7 +2923,7 @@ function setRole(r) {
 
   // #region agent log
   try {
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:setRole',message:'setRole top blocks toggled',data:{hypothesisId:'H14',role:r,hpDisplay:document.getElementById('hp')?document.getElementById('hp').style.display:'',hdDisplay:document.getElementById('hd')?document.getElementById('hd').style.display:''},timestamp:Date.now()})}).catch(function(){});
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:setRole',message:'reset shared home-search on role switch',data:{hypothesisId:'H22',role:r,hpDisplay:document.getElementById('hp')?document.getElementById('hp').style.display:'',hdDisplay:document.getElementById('hd')?document.getElementById('hd').style.display:'',prevSearch:{sFrom:prev.sFrom,sTo:prev.sTo,sDate:prev.sDate,sPax:prev.sPax},afterResetSearch:{sFrom:sFrom,sTo:sTo,sDate:sDate,sPax:sPax}},timestamp:Date.now()})}).catch(function(){});
   } catch (e) {}
   // #endregion
 }
@@ -3737,15 +3747,19 @@ function doDriverSearchPassReqs() {
   var list = base.slice();
   if (sFrom) list = list.filter(function(r){ return String(r.from||'').includes(sFrom); });
   if (sTo) list = list.filter(function(r){ return String(r.to||'').includes(sTo); });
-  if (sDate) list = list.filter(function(r){ return String(r.date||'') === String(sDate); });
-  if (sPax) list = list.filter(function(r){ return getPassRequestNeededSeats(r) >= sPax; });
+  var dateActive = !!sDate;
+  if (dateActive) list = list.filter(function(r){ return String(r.date||'') === String(sDate); });
+  var paxActive = !!sPax;
+  if (paxActive) list = list.filter(function(r){ return getPassRequestNeededSeats(r) >= sPax; });
 
   // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:doDriverSearchPassReqs',message:'driver search pass reqs',data:{hypothesisId:'H13',baseCount:base.length,afterFromTo:list.length,from:sFrom,to:sTo,date:sDate,pax:sPax},timestamp:Date.now()})}).catch(function(){});
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:doDriverSearchPassReqs',message:'driver search pass reqs',data:{hypothesisId:'H18',baseCount:base.length,from:sFrom,to:sTo,date:sDate,pax:sPax,dateActive:dateActive,paxActive:paxActive,resultCount:list.length},timestamp:Date.now()})}).catch(function(){});
   // #endregion
 
+  var sDateLbl = sDate || 'İstənilən tarix';
+  var sPaxLbl = sPax ? (sPax + ' nəfər') : 'Nəfər seçilməyib';
   document.getElementById('resq').textContent = (sFrom||'İstənilən') + ' → ' + (sTo||'İstənilən');
-  document.getElementById('ress').textContent = list.length + ' müraciət · ' + sDate + ' · ' + sPax + ' nəfər';
+  document.getElementById('ress').textContent = list.length + ' müraciət · ' + sDateLbl + ' · ' + sPaxLbl;
   renderDriverReqRes(list);
   go('results');
 }
@@ -3760,9 +3774,16 @@ function doSearch() {
   if (sFrom) list = list.filter(function(t){return t.from.includes(sFrom);});
   if (sTo) list = list.filter(function(t){return t.to.includes(sTo);});
   if (sPax) list = list.filter(function(t){return (t.seats - t.pax.length) >= sPax;});
+  var dateActive = !!sDate;
+  if (dateActive) list = list.filter(function(t){ return String(t.date||'') === String(sDate); });
+  var sDateLbl = sDate || 'İstənilən tarix';
+  var sPaxLbl = sPax ? (sPax + ' nəfər') : 'Nəfər seçilməyib';
   document.getElementById('resq').textContent = (sFrom||'İstənilən') + ' → ' + (sTo||'İstənilən');
-  document.getElementById('ress').textContent = list.length + ' səfər · ' + sDate + ' · ' + sPax + ' nəfər';
+  document.getElementById('ress').textContent = list.length + ' səfər · ' + sDateLbl + ' · ' + sPaxLbl;
   lastRes = list;
+  // #region agent log
+  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:doSearch(passenger)',message:'passenger search state',data:{hypothesisId:'H20',sDate:sDate,sPax:sPax,dateActive:dateActive,paxFilterActive:!!sPax,resultCount:list.length},timestamp:Date.now()})}).catch(function(){});
+  // #endregion
   // Apply prefs filter to results
   const filtered = aFilter.length > 0
     ? list.filter(function(t){return aFilter.every(function(f){return t.tags.includes(f);});})
@@ -4862,6 +4883,16 @@ function selBrand(b) { const el=document.getElementById('reg-brand-lbl'); if(el)
 function selYear(y) { const el=document.getElementById('reg-year-lbl'); if(el){el.textContent=y;el.classList.remove('ph');} closeSheet(); }
 
 // ── DATE PICKER ────────────────────────────────────────
+function clearSearchDate() {
+  clearField('date');
+  closeSheet();
+}
+
+function clearSearchPax() {
+  clearField('pax');
+  closeSheet();
+}
+
 function renderCal() {
   const now = new Date();
   renderCalMonth(now.getMonth(), now.getFullYear());
@@ -4876,7 +4907,10 @@ function renderCalMonth(m, y) {
   const isCd = shCtx==='c-date'||shCtx==='pr-date';
   const sel = isCd ? (shCtx==='c-date'?cDate:prDate) : sDate;
   const qd = ['Bu gün','Sabah'];
-  let html = `<div style="display:flex;gap:8px;padding:12px 16px 0">${qd.map(d =>
+  const topClear = shCtx === 'date'
+    ? `<div style="padding:0 16px 10px"><button type="button" class="gbtn-s" style="width:100%;margin:0" onclick="clearSearchDate()">Tarixi təmizlə</button></div>`
+    : '';
+  let html = topClear + `<div style="display:flex;gap:8px;padding:12px 16px 0">${qd.map(d =>
     `<button class="fb ${sel===d?'on':''}" onclick="selDate('${d}')">${d}</button>`).join('')}</div>
     <div class="dmon">
       <button class="dnav" onclick="renderCalMonth(${m===0?11:m-1},${m===0?y-1:y})">‹</button>
@@ -4897,14 +4931,21 @@ function renderCalMonth(m, y) {
 function selDate(l) {
   if (shCtx==='c-date') { cDate=l; document.getElementById('cdl').textContent=l; }
   else if (shCtx==='pr-date') { prDate=l; document.getElementById('pr-date-lbl').textContent=l; }
-  else { sDate=l; document.getElementById('svd').textContent=l; }
+  else {
+    sDate=l;
+    var svd = document.getElementById('svd'); if (svd) svd.textContent = l;
+    var clr = document.getElementById('svd-clear'); if (clr) clr.style.display = '';
+  }
   closeSheet();
 }
 
 function renderPax() {
   const sl = document.getElementById('slist');
+  const topClear = shCtx === 'pax'
+    ? `<div style="padding:0 16px 10px"><button type="button" class="gbtn-s" style="width:100%;margin:0" onclick="clearSearchPax()">Sayı təmizlə</button></div>`
+    : '';
   sl.innerHTML =
-    '<div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px 4px">' +
+    topClear + '<div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px 4px">' +
     [1,2,3,4].map(n =>
       `<button onclick="selPax(${n})" style="flex:1;min-width:56px;padding:12px 8px;border-radius:12px;border:2px solid ${sPax===n?'var(--blue)':'var(--bd)'};background:${sPax===n?'var(--blue-bg)':'var(--bg)'};font-size:16px;font-weight:600;color:${sPax===n?'var(--blue)':'var(--t1)'};cursor:pointer;font-family:Inter,sans-serif">${n}</button>`
     ).join('') +
@@ -4933,6 +4974,7 @@ function selPaxCustom() {
 function selPax(n) {
   sPax = n;
   document.getElementById('svp').textContent = n===1?'1 sərnişin':n+' sərnişin';
+  var clr2 = document.getElementById('svp-clear'); if (clr2) clr2.style.display = '';
   closeSheet();
 }
 
@@ -5677,13 +5719,70 @@ function clearField(field) {
     const v = document.getElementById('svfv');
     v.style.display = 'none'; v.textContent = '';
     document.getElementById('svf-clear').style.display = 'none';
-  } else {
+    return;
+  }
+  if (field === 'to') {
     sTo = '';
     document.getElementById('svtph').style.display = '';
     const v = document.getElementById('svtv');
     v.style.display = 'none'; v.textContent = '';
     document.getElementById('svt-clear').style.display = 'none';
+    return;
   }
+  if (field === 'date') {
+    sDate = '';
+    var svd = document.getElementById('svd');
+    if (svd) svd.textContent = 'Tarix seçin';
+    var clr = document.getElementById('svd-clear');
+    if (clr) clr.style.display = 'none';
+    // #region agent log
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:clearField(date)',message:'clear home date',data:{hypothesisId:'H15',sDate:sDate},timestamp:Date.now()})}).catch(function(){});
+    // #endregion
+    return;
+  }
+  if (field === 'pax') {
+    sPax = 0;
+    var svp = document.getElementById('svp');
+    if (svp) svp.textContent = 'Neçə nəfər';
+    var clr2 = document.getElementById('svp-clear');
+    if (clr2) clr2.style.display = 'none';
+    // #region agent log
+    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:clearField(pax)',message:'clear home pax',data:{hypothesisId:'H16',sPax:sPax},timestamp:Date.now()})}).catch(function(){});
+    // #endregion
+    return;
+  }
+}
+
+function resetHomeSearchFieldsToDefaults() {
+  // Reset both UI labels + underlying search state so driver/passenger don't share it.
+  sFrom = '';
+  sTo = '';
+  sDate = 'Bu gün';
+  sPax = 1;
+
+  var svfph = document.getElementById('svfph');
+  if (svfph) { svfph.textContent = 'Haradan'; svfph.classList.add('ph'); svfph.style.display = ''; }
+  var svfv = document.getElementById('svfv');
+  if (svfv) { svfv.style.display = 'none'; svfv.textContent = ''; }
+  var svfClear = document.getElementById('svf-clear');
+  if (svfClear) svfClear.style.display = 'none';
+
+  var svtph = document.getElementById('svtph');
+  if (svtph) { svtph.textContent = 'Hara'; svtph.classList.add('ph'); svtph.style.display = ''; }
+  var svtv = document.getElementById('svtv');
+  if (svtv) { svtv.style.display = 'none'; svtv.textContent = ''; }
+  var svtClear = document.getElementById('svt-clear');
+  if (svtClear) svtClear.style.display = 'none';
+
+  var svd = document.getElementById('svd');
+  if (svd) svd.textContent = 'Bu gün';
+  var svdClear = document.getElementById('svd-clear');
+  if (svdClear) svdClear.style.display = 'none';
+
+  var svp = document.getElementById('svp');
+  if (svp) svp.textContent = '1 sərnişin';
+  var svpClear = document.getElementById('svp-clear');
+  if (svpClear) svpClear.style.display = 'none';
 }
 
 // ── USER PREFERENCES ───────────────────────────────────
