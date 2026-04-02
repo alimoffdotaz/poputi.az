@@ -1,5 +1,5 @@
 /* poputi PWA — prototip SW: şəbəkə üstünlüklü, uğurlu cavabları keşə yazır, əlavə buraxılışda CACHE adını dəyişin */
-var CACHE = 'poputi-v6';
+var CACHE = 'poputi-v7';
 var PRECACHE_REL = ['./', './index.html', './sw.js', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function(e) {
