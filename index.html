@@ -5592,7 +5592,7 @@ function tick() {
 // Declared before loadState — updateProfileDisplay → updateAvatarDisplay reads userAvatarUrl
 let userAvatarUrl = null;
 loadState();
-fillDemoData();
+fillDemoData(true);
 (function() {
   var mx = document.getElementById('pr-pax-max-lbl');
   if (mx) mx.textContent = String(APP_PASS_REQ_PAX_MAX);
