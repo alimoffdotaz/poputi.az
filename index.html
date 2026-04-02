@@ -1760,9 +1760,6 @@ function getPassReqsForDriverFeed() {
   });
   var withCapacity = activeOnly.filter(driverHasAnyCarForPassReq);
   var withStrict = withCapacity.filter(driverProfileMatchesPassReqStrictPrefs);
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:getPassReqsForDriverFeed',message:'driver feed pass reqs',data:{hypothesisId:'H8',total:passReqs.length,active:activeOnly.length,afterCar:withCapacity.length,afterStrict:withStrict.length},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
   return withStrict;
 }
 function updateProfileDisplay() {
@@ -2294,9 +2291,6 @@ function renderMyBookings() {
   // ── ЗАПРОСЫ ──
   if (rl) {
     rl.innerHTML = '';
-    // #region agent log
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderMyBookings',message:'pass req sync state',data:{hypothesisId:'H5',myRequestsCount:myRequests.length,activeStillSuperseded:myRequests.filter(function(r){return passReqSupersededByConfirmedBooking(r);}).length},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
     var reqFiltered = filterRequestsForMB(myRequests);
     if (!myRequests.length) {
       rl.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="font-size:48px;margin-bottom:12px">🔍</div><div style="color:var(--t2);font-size:14px">Müraciət yoxdur</div></div>';
@@ -2924,12 +2918,6 @@ function setRole(r) {
   renderPMenu();
   renderHome();
   saveState();
-
-  // #region agent log
-  try {
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:setRole',message:'reset shared home-search on role switch',data:{hypothesisId:'H22',role:r,hpDisplay:document.getElementById('hp')?document.getElementById('hp').style.display:'',hdDisplay:document.getElementById('hd')?document.getElementById('hd').style.display:'',prevSearch:{sFrom:prev.sFrom,sTo:prev.sTo,sDate:prev.sDate,sPax:prev.sPax},afterResetSearch:{sFrom:sFrom,sTo:sTo,sDate:sDate,sPax:sPax}},timestamp:Date.now()})}).catch(function(){});
-  } catch (e) {}
-  // #endregion
 }
 
 // ── RENDER HELPERS ──────────────────────────────────────
@@ -3436,18 +3424,12 @@ function renderHome() {
       var hwLenBefore = hw ? String(hw.innerHTML || '').trim().length : 0;
       var hpEl = document.getElementById('hp');
       var hdEl = document.getElementById('hd');
-      // #region agent log
-      fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHome:driverDebug:pre',message:'driver home pre-render',data:{hypothesisId:'H11',homeWidgetLen:hwLenBefore,hpDisplay:hpEl?hpEl.style.display:'',hdDisplay:hdEl?hdEl.style.display:'',pendingBookings:pendingBookings.length,myTActive:myTActive.length,passReqsShown:show.length},timestamp:Date.now()})}).catch(function(){});
-      // #endregion
       container.innerHTML = driverBody.trim()
         ? driverBody
         : '<div style="text-align:center;padding:40px 20px;color:var(--t2);font-size:14px;line-height:1.5">Hələ aktiv elan və ya sərnişin müraciəti yoxdur.<br/><span style="font-size:13px">«Yarat» ilə səfər elanı əlavə edin — və ya sərnişinlər müraciət göndərəndə burada görünəcək.</span></div>';
 
       var firstMt = container.querySelector('.mtcard');
       var firstMtStatusEl = firstMt ? firstMt.querySelector('.mtst') : null;
-      // #region agent log
-      fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHome:driverDebug:post',message:'driver home DOM after render',data:{hypothesisId:'H10',firstMtExists:!!firstMt,firstMtStatusClasses:firstMtStatusEl?String(firstMtStatusEl.className):null,mtCardsCount:container.querySelectorAll('.mtcard').length,homeWidgetNowLen:hw ? String(hw.innerHTML || '').trim().length : 0},timestamp:Date.now()})}).catch(function(){});
-      // #endregion
     }
     document.getElementById('hfilters').style.display = 'none';
     document.getElementById('home-widget').innerHTML = '';
@@ -3470,9 +3452,6 @@ function renderHome() {
     widget.innerHTML = renderTodayWidget(todayTrip);
     // Show other trips below widget
     var feedTrips = trips.filter(tripPassengerCanStillBook).slice(0, 5);
-    // #region agent log
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHome:activeTripFeed',message:'passenger feed under widget',data:{hypothesisId:'H2',tripIds:feedTrips.map(function(x){return {id:x.id,free:countTripFreePassengerSeats(x)};})},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
     container.innerHTML = '<div style="padding:12px 16px 4px"><div style="font-size:13px;font-weight:600;color:var(--t1)">Digər mövcud səfərlər</div></div>' +
       feedTrips.map(function(t){return tcHTML(t,'home',true);}).join('');
   } else {
@@ -3525,9 +3504,6 @@ function renderTodayWidget(active) {
   var priceSrc = mb || b;
   var totalAzn = passengerBookingTotalPrice(t, priceSrc);
   var seatCnt = countPassengerBookingSeats(priceSrc);
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderTodayWidget',message:'widget total vs unit',data:{hypothesisId:'H1',tripId:active.id,seatCount:seatCnt,unitPrice:t&&t.price,totalAzn:totalAzn,hasMb:!!mb},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
   const isPending = b.status === 'pending';
   const statusColor = isPending ? '#F59E0B' : '#10B981';
   const statusText = isPending ? 'Təsdiq gözlənilir' : 'Təsdiqləndi ✓';
@@ -3591,9 +3567,6 @@ function renderHomeTrips(filter) {
   else if (filter==='cheap') list = list.slice().sort(function(a,b){return a.price-b.price;});
   else if (filter==='rating') list = list.slice().sort(function(a,b){return parseFloat(b.rating)-parseFloat(a.rating);});
   list = list.filter(tripPassengerCanStillBook);
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:renderHomeTrips',message:'home list after capacity filter',data:{hypothesisId:'H3',filter:filter,count:list.length,preview:list.slice(0,8).map(function(x){return {id:x.id,free:countTripFreePassengerSeats(x)};})},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
   if (!list.length) {
     container.innerHTML = '<div style="text-align:center;padding:36px 20px;color:var(--t2);font-size:14px;line-height:1.5">Hələ aktiv səfər elanı yoxdur.<br/><span style="font-size:13px">Uyğun elanlar burada görünəcək — əvvəlcə marşrut və tarix seçib axtarın. Özünüzə uyğun səfər tapılmasa, alt menyudan «+» ilə sərnişin müraciəti yerləşdirin.</span></div>';
     renderQR();
@@ -3756,10 +3729,6 @@ function doDriverSearchPassReqs() {
   var paxActive = !!sPax;
   if (paxActive) list = list.filter(function(r){ return getPassRequestNeededSeats(r) >= sPax; });
 
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:doDriverSearchPassReqs',message:'driver search pass reqs',data:{hypothesisId:'H18',baseCount:base.length,from:sFrom,to:sTo,date:sDate,pax:sPax,dateActive:dateActive,paxActive:paxActive,resultCount:list.length},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
-
   var sDateLbl = sDate || 'İstənilən tarix';
   var sPaxLbl = sPax ? (sPax + ' nəfər') : 'Nəfər seçilməyib';
   document.getElementById('resq').textContent = (sFrom||'İstənilən') + ' → ' + (sTo||'İstənilən');
@@ -3785,9 +3754,6 @@ function doSearch() {
   document.getElementById('resq').textContent = (sFrom||'İstənilən') + ' → ' + (sTo||'İstənilən');
   document.getElementById('ress').textContent = list.length + ' səfər · ' + sDateLbl + ' · ' + sPaxLbl;
   lastRes = list;
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:doSearch(passenger)',message:'passenger search state',data:{hypothesisId:'H20',sDate:sDate,sPax:sPax,dateActive:dateActive,paxFilterActive:!!sPax,resultCount:list.length},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
   // Apply prefs filter to results
   const filtered = aFilter.length > 0
     ? list.filter(function(t){return aFilter.every(function(f){return t.tags.includes(f);});})
@@ -4776,9 +4742,6 @@ function openSheet(ctx) {
         if (lbl2) { lbl2.textContent=c; lbl2.classList.remove('ph'); }
         closeSheet();
         // Auto-open year after color for both flows.
-        try {
-          fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:openSheet(car-color)',message:'auto open year after color',data:{hypothesisId:'H25',color:c,isReg:!!(document.getElementById('s-regcar') && document.getElementById('s-regcar').classList.contains('active'))},timestamp:Date.now()})}).catch(function(){});
-        } catch (e) {}
         setTimeout(function(){
           const isReg = !!(document.getElementById('s-regcar') && document.getElementById('s-regcar').classList.contains('active'));
           openSheet(isReg ? 'reg-year' : 'car-year');
@@ -4886,9 +4849,6 @@ function selCity(city) {
   }
   // Auto flow for main search: after selecting destination ("to") open date and then pax.
   if (shCtx === 'to') {
-    // #region agent log
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:selCity',message:'main search to->date autoOpen',data:{hypothesisId:'H23',city:city},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
     setTimeout(function(){ openSheet('date'); }, 150);
   }
 }
@@ -4956,7 +4916,6 @@ function selDate(l) {
     var clr = document.getElementById('svd-clear'); if (clr) clr.style.display = '';
     // Auto flow for main search: after picking date, open pax.
     if (shCtx === 'date') {
-      fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:selDate',message:'main search date->pax autoOpen',data:{hypothesisId:'H24',date:l},timestamp:Date.now()})}).catch(function(){});
       setTimeout(function(){ openSheet('pax'); }, 150);
     }
   }
@@ -5349,9 +5308,16 @@ function shouldAutoFillDemoData() {
     if (isNaN(id)) return false;
     return Array.isArray(trips) && trips[id];
   });
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:shouldAutoFillDemoData:pre',message:'demo gating inputs',data:{hypothesisId:'DEMO_H1',url:('[search:'+url+']'),force:force,doneFlag:localStorage.getItem('poputi_demo_autofill_done'),tripsLen:Array.isArray(trips)?trips.length:null,passReqsLen:Array.isArray(passReqs)?passReqs.length:null,userCarsLen:Array.isArray(userCars)?userCars.length:null,myBookedTripsLen:Array.isArray(myBookedTrips)?myBookedTrips.length:null,pendingBookingsLen:Array.isArray(pendingBookings)?pendingBookings.length:null,myTLen:Array.isArray(myT)?myT.length:null,myRequestsLen:Array.isArray(myRequests)?myRequests.length:null,activeBookingsKeysLen:activeBookingsKeysLen,activeBookingsAnyTripExists:activeBookingsAnyTripExists},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
+  var DEMO_PLATE = '10-AA-777';
+  var demoMarkerPresent =
+    (Array.isArray(userCars) && userCars.some(function(c){ return c && c.plate === DEMO_PLATE; })) ||
+    (Array.isArray(trips) && trips.some(function(t){ return t && t.plate === DEMO_PLATE; })) ||
+    (Array.isArray(passReqs) && passReqs.some(function(r){ return r && r.name === 'Aygül R.'; }));
+  var demoCoreSufficient =
+    (Array.isArray(trips) && trips.some(function(t){ return t && t.from === 'Bakı' && t.to === 'Gəncə' && t.date === 'Bu gün' && t.time === '13:00'; })) &&
+    (Array.isArray(passReqs) && passReqs.length >= 1) &&
+    (Array.isArray(pendingBookings) && pendingBookings.length >= 1) &&
+    (Array.isArray(myT) && myT.length >= 1);
   // "Core" data drives all major UI; don't block demo just because userCars exist.
   const activeBookingsEmpty = !activeBookingsKeysLen || !activeBookingsAnyTripExists;
   const coreEmpty =
@@ -5365,29 +5331,32 @@ function shouldAutoFillDemoData() {
   if (force) return true;
   // If the app "core" is empty, we can safely seed demo data even if userCars already exist.
   if (coreEmpty) {
-    // #region agent log
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:shouldAutoFillDemoData:post',message:'demo gating decision(coreEmpty)',data:{hypothesisId:'DEMO_H1_POST',force:force,doneFlag:localStorage.getItem('poputi_demo_autofill_done'),coreEmpty:coreEmpty,returnValue:true},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
+    return true;
+  }
+
+  // Cursor preview (localhost:8080) convenience:
+  // if profile is empty and demo core isn't sufficient, seed demo even when some partial data exists.
+  var host0 = String((location && location.hostname) || '');
+  var port0 = String((location && location.port) || '');
+  var isCursorPreview0 = (host0 === 'localhost' && port0 === '8080');
+  var profileEmpty0 = !String(regFirstName || '').trim() && !String(regLastName || '').trim() && !String(regPhone || '').trim();
+  if (!force && isCursorPreview0 && profileEmpty0 && !demoCoreSufficient) {
+    return true;
+  }
+
+  // Repair partial demo: if we already see demo marker but demo core is incomplete.
+  if (demoMarkerPresent && !demoCoreSufficient) {
     return true;
   }
 
   if (localStorage.getItem('poputi_demo_autofill_done') === '1') {
-    // #region agent log
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:shouldAutoFillDemoData:post',message:'demo gating decision(doneFlagBlock)',data:{hypothesisId:'DEMO_H1_POST',force:force,doneFlag:localStorage.getItem('poputi_demo_autofill_done'),coreEmpty:coreEmpty,returnValue:false},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
     return false;
   }
 
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:shouldAutoFillDemoData:post',message:'demo gating decision(default)',data:{hypothesisId:'DEMO_H1_POST',force:force,doneFlag:localStorage.getItem('poputi_demo_autofill_done'),coreEmpty:coreEmpty,returnValue:false},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
   return false;
 }
 
 function fillDemoData(force) {
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:fillDemoData:entry',message:'fillDemoData entry',data:{hypothesisId:'DEMO_H2',force:force},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
   if (!force && !shouldAutoFillDemoData()) return;
 
   // Profile: only overwrite when there's effectively no profile.
@@ -5438,102 +5407,49 @@ function fillDemoData(force) {
     }
   ];
 
-  // Trips (0 = full -> only widget; 1 = classic selection; 2 = abstract qty selection)
+  // Trips (demo set: more routes, all cars <= 4 seats)
   const demoTrips = [
-    {
-      id: 0,
-      from: 'Bakı',
-      to: 'Gəncə',
-      date: 'Bu gün',
-      time: '13:00',
-      dur: '40 dəq',
-      price: 8,
-      seats: 4,
-      seatLayoutMax: 4,
-      driver: 'Leyla',
-      driverFull: 'Leyla Əliyeva',
-      rating: '4.9',
-      tc: '12',
-      exp: '1',
-      car: 'Toyota Camry',
-      color: 'Boz',
-      plate: '10-AA-777',
-      chip: 'Rahat',
-      notes: '',
-      arrive: '—',
-      pax: ['Elvin', 'Aynur', 'Rəşad', 'Nigar'],
-      paxGenders: ['m', 'f', 'm', 'f'],
-      tags: [],
-      freeSeats: []
-    },
-    {
-      id: 1,
-      from: 'Bakı',
-      to: 'Şirvan',
-      date: 'Sabah',
-      time: '10:00',
-      dur: '35 dəq',
-      price: 7,
-      seats: 4,
-      seatLayoutMax: 4,
-      driver: 'Rəşad',
-      driverFull: 'Rəşad Əliyev',
-      rating: '4.7',
-      tc: '9',
-      exp: '1',
-      car: 'Toyota Camry',
-      color: 'Boz',
-      plate: '10-AA-777',
-      chip: 'Rahat',
-      notes: '',
-      arrive: '—',
-      pax: ['Elvin'],
-      paxGenders: ['m'],
-      tags: [],
-      // Seat #2 is reserved pending (pending booking)
-      freeSeats: [1, 3, 4]
-    },
-    {
-      id: 2,
-      from: 'Bakı',
-      to: 'Lənkəran',
-      date: 'Sabah',
-      time: '11:30',
-      dur: '1 s',
-      price: 8,
-      seats: 12,
-      seatLayoutMax: 12,
-      driver: 'Aysel',
-      driverFull: 'Aysel Məmmədova',
-      rating: '5.0',
-      tc: '21',
-      exp: '2',
-      car: 'Toyota Camry',
-      color: 'Boz',
-      plate: '10-AA-777',
-      chip: 'Rahat',
-      notes: '',
-      arrive: '—',
-      pax: ['Aysel', 'Əli', 'Samir', 'Nigar', 'Elvin', 'Aynur'],
-      paxGenders: ['f', 'm', 'm', 'f', 'm', 'f'],
-      tags: [],
-      freeSeats: [1, 2, 3, 5, 7, 9]
-    }
+    { id:0, from:'Bakı', to:'Gəncə', date:'Bu gün', time:'13:00', dur:'40 dəq', price:8, seats:4, seatLayoutMax:4, driver:'Leyla', driverFull:'Leyla Əliyeva', rating:'4.9', tc:'12', exp:'1', car:'Toyota Camry', color:'Boz', plate:'10-AA-777', chip:'Rahat', notes:'', arrive:'—', pax:['Elvin','Aynur','Rəşad','Nigar'], paxGenders:['m','f','m','f'], tags:['🚭 Siqaret yox'], freeSeats:[] },
+    { id:1, from:'Bakı', to:'Şirvan', date:'Sabah', time:'10:00', dur:'35 dəq', price:7, seats:4, seatLayoutMax:4, driver:'Rəşad', driverFull:'Rəşad Əliyev', rating:'4.7', tc:'9', exp:'1', car:'Kia Rio', color:'Ağ', plate:'10-AB-321', chip:'Rahat', notes:'', arrive:'—', pax:['Elvin'], paxGenders:['m'], tags:['🎵 Musiqi'], freeSeats:[1,3,4] },
+    { id:2, from:'Bakı', to:'Lənkəran', date:'Sabah', time:'11:30', dur:'1 s', price:8, seats:4, seatLayoutMax:4, driver:'Aysel', driverFull:'Aysel Məmmədova', rating:'5.0', tc:'21', exp:'2', car:'Hyundai Elantra', color:'Qara', plate:'10-AC-445', chip:'Rahat', notes:'', arrive:'—', pax:['Əli','Nigar'], paxGenders:['m','f'], tags:['❄️ Kondisioner'], freeSeats:[1,4] },
+    { id:3, from:'Sumqayıt', to:'Bakı', date:'Bu gün', time:'18:30', dur:'30 dəq', price:5, seats:4, seatLayoutMax:4, driver:'Murad', driverFull:'Murad Qasımov', rating:'4.8', tc:'16', exp:'2', car:'Honda Civic', color:'Mavi', plate:'10-AD-778', chip:'Ekonom', notes:'', arrive:'—', pax:[], paxGenders:[], tags:['🔇 Sakit'], freeSeats:[1,2,3,4] },
+    { id:4, from:'Gəncə', to:'Bakı', date:'Sabah', time:'09:00', dur:'45 dəq', price:9, seats:3, seatLayoutMax:3, driver:'Kamran', driverFull:'Kamran Həsənov', rating:'4.6', tc:'7', exp:'1', car:'Chevrolet Cruze', color:'Gümüşü', plate:'10-AE-990', chip:'Rahat', notes:'', arrive:'—', pax:['Nərmin'], paxGenders:['f'], tags:['💬 Söhbət'], freeSeats:[1,3] },
+    { id:5, from:'Bakı', to:'Quba', date:'Sabah', time:'07:30', dur:'55 dəq', price:10, seats:4, seatLayoutMax:4, driver:'Farid', driverFull:'Farid Məlikov', rating:'4.9', tc:'24', exp:'3', car:'Skoda Octavia', color:'Boz', plate:'10-AF-110', chip:'Premium', notes:'', arrive:'—', pax:['Səbinə','Emil'], paxGenders:['f','m'], tags:['🛋 Premium'], freeSeats:[2,4] },
+    { id:6, from:'Şəki', to:'Bakı', date:'Sabah', time:'16:00', dur:'1 s 10 dəq', price:11, seats:4, seatLayoutMax:4, driver:'Nihat', driverFull:'Nihat Məmmədli', rating:'4.7', tc:'11', exp:'2', car:'Toyota Corolla', color:'Ağ', plate:'10-AG-602', chip:'Rahat', notes:'', arrive:'—', pax:['Tural'], paxGenders:['m'], tags:['🎒 Bagaj'], freeSeats:[1,2,4] },
+    { id:7, from:'Lənkəran', to:'Bakı', date:'Bu gün', time:'20:00', dur:'1 s 5 dəq', price:9, seats:4, seatLayoutMax:4, driver:'Orxan', driverFull:'Orxan Əliyev', rating:'4.8', tc:'14', exp:'2', car:'Nissan Sunny', color:'Qırmızı', plate:'10-AH-443', chip:'Ekonom', notes:'', arrive:'—', pax:[], paxGenders:[], tags:['🚭 Siqaret yox'], freeSeats:[1,2,3,4] }
   ];
 
   trips = demoTrips;
   trips.forEach(function(t) { normalizeTripFreeSeats(t); });
 
   // Driver cards (myT) so driver home can show "Sərnişin Axtarır" feed
-  myTListKeySeq = 10002;
+  myTListKeySeq = 10004;
   myT = [
     {
       listKey: 10000,
       tripId: 2,
       route: 'Bakı → Lənkəran',
       date: 'Sabah, 11:30',
-      total: 12,
+      total: 4,
       pax: trips[2].pax.slice(),
+      status: 'open'
+    },
+    {
+      listKey: 10001,
+      tripId: 5,
+      route: 'Bakı → Quba',
+      date: 'Sabah, 07:30',
+      total: 4,
+      pax: trips[5].pax.slice(),
+      status: 'active'
+    },
+    {
+      listKey: 10002,
+      tripId: 7,
+      route: 'Lənkəran → Bakı',
+      date: 'Bu gün, 20:00',
+      total: 4,
+      pax: trips[7].pax.slice(),
       status: 'open'
     }
   ];
@@ -5561,36 +5477,65 @@ function fillDemoData(force) {
       seatNumbers: [2],
       driverRated: false,
       trip: trips[1]
+    },
+    {
+      id: 'bk_demo2',
+      tripId: 3,
+      status: 'confirmed',
+      date: trips[3].date,
+      time: trips[3].time,
+      seat: 'Ön sağ',
+      seatNumbers: [1],
+      driverRated: false,
+      trip: trips[3]
+    },
+    {
+      id: 'bk_demo3',
+      tripId: 6,
+      status: 'completed',
+      date: trips[6].date,
+      time: trips[6].time,
+      seat: 'Arxa sağ',
+      seatNumbers: [4],
+      driverRated: false,
+      trip: trips[6]
     }
   ];
 
-  // Requests: what passenger created (myRequests) + global requests list (passReqs)
-  const demoReq = {
-    id: 9001,
-    from: 'Bakı',
-    to: 'Lənkəran',
-    date: 'Sabah',
-    time: '11:30',
-    name: 'Aygül R.',
-    initial: 'A',
-    rating: '4.8',
-    prefs: [],
-    seats: 3,
-    buyoutAllSeats: false,
-    status: 'active',
-    note: '',
-    acceptedOffer: null,
-    offers: [],
-    driverRated: false,
-    seatInvite: { tripId: 2, driverFull: trips[2].driverFull || trips[2].driver, at: Date.now() }
+  // Requests: richer demo for both passenger and driver flows
+  const demoReq1 = {
+    id: 9001, from:'Bakı', to:'Lənkəran', date:'Sabah', time:'11:30',
+    name:'Aygül R.', initial:'A', rating:'4.8', prefs:['❄️ Kondisioner'], seats:3,
+    buyoutAllSeats:false, status:'active', note:'1 balaca çamadan var', acceptedOffer:null, offers:[],
+    driverRated:false, seatInvite:{ tripId:2, driverFull:trips[2].driverFull || trips[2].driver, at:Date.now() }
   };
-  myRequests = [demoReq];
-  passReqs = [demoReq];
+  const demoReq2 = {
+    id: 9002, from:'Sumqayıt', to:'Bakı', date:'Bu gün', time:'19:00',
+    name:'Kənan M.', initial:'K', rating:'4.6', prefs:['🔇 Sakit'], seats:1,
+    buyoutAllSeats:false, status:'offered', note:'', acceptedOffer:null, offers:[{price:6,driver:'Murad'}],
+    driverRated:false, seatInvite:null
+  };
+  const demoReq3 = {
+    id: 9003, from:'Gəncə', to:'Bakı', date:'Sabah', time:'09:30',
+    name:'Nigar A.', initial:'N', rating:'5.0', prefs:['🎒 Bagaj'], seats:2,
+    buyoutAllSeats:false, status:'active', note:'Vaxtında çıxış vacibdir', acceptedOffer:null, offers:[],
+    driverRated:false, seatInvite:null
+  };
+  const demoReq4 = {
+    id: 9004, from:'Bakı', to:'Quba', date:'Sabah', time:'07:30',
+    name:'Elvin T.', initial:'E', rating:'4.7', prefs:['🚭 Siqaret yox'], seats:1,
+    buyoutAllSeats:false, status:'active', note:'', acceptedOffer:null, offers:[],
+    driverRated:false, seatInvite:{ tripId:5, driverFull:trips[5].driverFull || trips[5].driver, at:Date.now() }
+  };
+  myRequests = [demoReq1, demoReq4];
+  passReqs = [demoReq1, demoReq2, demoReq3, demoReq4];
 
   // History (optional UI)
   histT = [
     { route: 'Bakı → Gəncə', status: 'done', date: 'Bu gün', drv: 'Leyla', price: 8, r: 5 },
-    { route: 'Bakı → Şirvan', status: 'up', date: 'Sabah', drv: 'Rəşad', price: 7, r: 4 }
+    { route: 'Bakı → Şirvan', status: 'up', date: 'Sabah', drv: 'Rəşad', price: 7, r: 4 },
+    { route: 'Sumqayıt → Bakı', status: 'done', date: 'Bu gün', drv: 'Murad', price: 5, r: 5 },
+    { route: 'Bakı → Quba', status: 'done', date: 'Dünən', drv: 'Farid', price: 10, r: 4 }
   ];
 
   // Inbox demo (optional UI)
@@ -5607,6 +5552,19 @@ function fillDemoData(force) {
         { out: false, text: 'Salam! Səfəriniz üçün hazıram.', time: '10:10' },
         { out: true, text: 'Əla, təşəkkürlər!', time: '10:12' }
       ]
+    },
+    {
+      id: 1,
+      peerName: trips[5].driverFull || trips[5].driver,
+      pi: (trips[5].driverFull || trips[5].driver).charAt(0),
+      role: 'driver',
+      rt: trips[5].from + ' → ' + trips[5].to,
+      mt: trips[5].date + ', ' + trips[5].time,
+      unread: 0,
+      msgs: [
+        { out: true, text: 'Sabah üçün yer varmı?', time: '09:05' },
+        { out: false, text: 'Bəli, 2 yer boşdur 👍', time: '09:06' }
+      ]
     }
   ];
 
@@ -5616,9 +5574,6 @@ function fillDemoData(force) {
 
   saveState();
   localStorage.setItem('poputi_demo_autofill_done', '1');
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:fillDemoData:exit',message:'demo filled',data:{hypothesisId:'DEMO_H2_POST',force:force,tripsLen:Array.isArray(trips)?trips.length:null,passReqsLen:Array.isArray(passReqs)?passReqs.length:null,userCarsLen:Array.isArray(userCars)?userCars.length:null,myBookedTripsLen:Array.isArray(myBookedTrips)?myBookedTrips.length:null,pendingBookingsLen:Array.isArray(pendingBookings)?pendingBookings.length:null,myTLen:Array.isArray(myT)?myT.length:null,myRequestsLen:Array.isArray(myRequests)?myRequests.length:null,doneFlag:localStorage.getItem('poputi_demo_autofill_done')},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
 }
 
 function toast(msg) {
@@ -6043,9 +5998,6 @@ function clearField(field) {
     if (svd) svd.textContent = 'Tarix seçin';
     var clr = document.getElementById('svd-clear');
     if (clr) clr.style.display = 'none';
-    // #region agent log
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:clearField(date)',message:'clear home date',data:{hypothesisId:'H15',sDate:sDate},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
     return;
   }
   if (field === 'pax') {
@@ -6054,9 +6006,6 @@ function clearField(field) {
     if (svp) svp.textContent = 'Neçə nəfər';
     var clr2 = document.getElementById('svp-clear');
     if (clr2) clr2.style.display = 'none';
-    // #region agent log
-    fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:clearField(pax)',message:'clear home pax',data:{hypothesisId:'H16',sPax:sPax},timestamp:Date.now()})}).catch(function(){});
-    // #endregion
     return;
   }
 }
@@ -6223,9 +6172,6 @@ function switchRole(newRole) {
   renderPMenu();
   renderHome();
   toast(D ? '🚗 Sürücü rejiminə keçdiniz' : '👤 Sərnişin rejiminə keçdiniz');
-  // #region agent log
-  fetch('http://127.0.0.1:7560/ingest/70420eff-43fe-46e3-af3d-62bc5c904d23',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3a02cf'},body:JSON.stringify({sessionId:'3a02cf',location:'index.html:switchRole',message:'toggle home top blocks',data:{hypothesisId:'H12',role:role,hpDisplay:hp?hp.style.display:'',hdDisplay:hd?hd.style.display:'',homelt:homelt?homelt.textContent:'',qrsDisplay:qrs?qrs.style.display:''},timestamp:Date.now()})}).catch(function(){});
-  // #endregion
   saveState();
 }
 
