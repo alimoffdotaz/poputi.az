@@ -1055,7 +1055,7 @@ body{font-family:'Inter',sans-serif;background:#1a3260;display:flex;justify-cont
 
 <!-- MY CAR -->
 <div class="screen" id="s-car">
-    <div class="bhdr"><button class="bbtn" onclick="go('profile')">←</button><div class="bhdr-t">Mənim Maşınım</div><button class="bbtn" onclick="showAddCar()" style="background:var(--green);color:#fff;border-color:var(--green)">+</button></div>
+    <div class="bhdr"><button class="bbtn" onclick="carScreenBack()">←</button><div class="bhdr-t">Mənim Maşınım</div><button class="bbtn" onclick="showAddCar()" style="background:var(--green);color:#fff;border-color:var(--green)">+</button></div>
   <div class="scr" id="car-list-view">
     <div style="padding:16px">
       <div id="car-list-items"></div>
@@ -2610,6 +2610,16 @@ function showCarList() {
   renderCarList();
 }
 
+/** «←» на экране авто: из формы добавления — к списку машин, со списка — в профиль. */
+function carScreenBack() {
+  var addEl = document.getElementById('car-add-view');
+  if (addEl && addEl.style.display === 'block') {
+    showCarList();
+    return;
+  }
+  go('profile');
+}
+
 function deleteCar(i) {
   showConfirm('Avtomobili sil', 'Bu avtomobili silmək istədiyinizə əminsiniz?', function() {
     userCars.splice(i, 1);
@@ -2738,7 +2748,7 @@ function go(n) {
   if (n === 'mybookings') renderMyBookings();
   if (n === 'mytrips') renderDriverMyTrips();
   if (n === 'notifs') { applyNotifToggleButtonsUI(); renderNotifs(); }
-  if (n === 'car') renderCarList();
+  if (n === 'car') showCarList();
   if (n === 'profile') renderPMenu();
   if (n === 'create') {
     renderTripPrefs();
@@ -6414,9 +6424,8 @@ function initCreateTripOptions() {
   select.value = createTripSelectedCarPlate;
   const selected = getCreateSelectedCar();
   const maxPassengerSeats = getCreateLayoutMaxFromCar(selected);
-  var defaultSeatCount = Math.min(4, maxPassengerSeats);
   createTripFreeSeats = [];
-  for (var i = 1; i <= defaultSeatCount; i++) createTripFreeSeats.push(i);
+  for (var i = 1; i <= maxPassengerSeats; i++) createTripFreeSeats.push(i);
   syncCreateSeatAvailability(maxPassengerSeats);
 }
 
@@ -6424,14 +6433,8 @@ function onCreateCarChange(plate) {
   createTripSelectedCarPlate = plate;
   const selected = getCreateSelectedCar();
   const maxPassengerSeats = getCreateLayoutMaxFromCar(selected);
-  if (createTripSeatsLocked) {
-    createTripFreeSeats = [];
-    for (var i = 1; i <= maxPassengerSeats; i++) createTripFreeSeats.push(i);
-  } else {
-    var dc = Math.min(4, maxPassengerSeats);
-    createTripFreeSeats = [];
-    for (var j = 1; j <= dc; j++) createTripFreeSeats.push(j);
-  }
+  createTripFreeSeats = [];
+  for (var j = 1; j <= maxPassengerSeats; j++) createTripFreeSeats.push(j);
   syncCreateSeatAvailability(maxPassengerSeats);
 }
 
